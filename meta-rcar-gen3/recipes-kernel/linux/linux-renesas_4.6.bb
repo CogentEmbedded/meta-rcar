@@ -53,6 +53,7 @@ SRC_URI_append = " \
     ${@base_conditional("LVDSCAMERA_SIX", "1", " file://0060-arm64-dts-Gen3-view-boards-stream-from-6-cam.patch", "", d)} \
     ${@base_conditional("LVDSCAMERA_SEVEN", "1", " file://0061-arm64-dts-Gen3-view-boards-stream-from-7-cam.patch", "", d)} \
     file://0001-add-a-flag-to-kconfig-bin-dep-for-R-Car-gen3-usb.patch \
+    file://remove_useless_board-target.cfg \
 "
 
 SRC_URI_append_h3ulcb = " \
