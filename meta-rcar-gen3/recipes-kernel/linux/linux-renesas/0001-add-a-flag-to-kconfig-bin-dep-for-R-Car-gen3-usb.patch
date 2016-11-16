@@ -1,0 +1,12 @@
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index b869b98..8fc0df1 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -132,6 +132,7 @@ config PHY_RCAR_GEN3_USB2
+ 	depends on ARCH_RENESAS
+ 	depends on EXTCON
+ 	select GENERIC_PHY
++	select USB_PHY
+ 	help
+ 	  Support for USB 2.0 PHY found on Renesas R-Car generation 3 SoCs.
+ 
