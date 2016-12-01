@@ -67,6 +67,9 @@ do_install() {
         fi
     fi
     if [ ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)} ]; then
+        # if we do not move rc.pvr, it will be remove by "rm_systemd_unitdir"
+        install -d ${D}${localedir}/bin/
+        mv ${D}/etc/init.d/rc.pvr ${D}${localedir}/bin/
         install -d ${D}/${systemd_unitdir}/system/
         install -m 644 ${WORKDIR}/rc.pvr.service ${D}/${systemd_unitdir}/system/
     fi
@@ -81,6 +84,7 @@ FILES_${PN} = " \
     ${sysconfdir}/* \
     ${libdir}/* \
     /usr/local/bin/* \
+    ${localedir}/bin/* \
 "
 
 FILES_${PN}-dev = " \
