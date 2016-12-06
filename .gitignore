@@ -1,0 +1,6 @@
+*.swp
+*.orig
+*.rej
+*~
+*.tar.bz2
+*.tar.gz
