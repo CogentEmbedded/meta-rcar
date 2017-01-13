@@ -13,7 +13,7 @@ SRC_URI_append = " \
 "
 
 do_install_append() {
-    if [ "${@base_contains('MACHINE_FEATURES', 'h3ulcb-had', 'h3ulcb-had', '', d)}" = "h3ulcb-had" ]; then
+    if [ "${@bb.utils.contains('MACHINE_FEATURES', 'h3ulcb-had', 'h3ulcb-had', '', d)}" = "h3ulcb-had" ]; then
         if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
             install -d ${D}${systemd_unitdir}/system
             install -m 0644 ${SS}/adas-switch-init.service ${D}${systemd_unitdir}/system/

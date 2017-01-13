@@ -8,7 +8,7 @@ SRC_URI_append = " \
 
 do_install_append() {
     install -d ${D}/${sysconfdir}/init.d
-    if [ "${@base_contains('MACHINE_FEATURES', 'h3ulcb-had', 'h3ulcb-had', '', d)}" = "h3ulcb-had" ]; then
+    if [ "${@bb.utils.contains('MACHINE_FEATURES', 'h3ulcb-had', 'h3ulcb-had', '', d)}" = "h3ulcb-had" ]; then
         install -m 755 ${S}/adas-switch-init ${D}/${sysconfdir}/init.d/adas-switch-init
         update-rc.d -r ${D} adas-switch-init start 5 S .
     fi

@@ -25,17 +25,17 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 OPENGLES3 ?= "0"
 
 SRC_URI_r8a7791 = "file://r8a7743_linux_sgx_binaries_gles2.tar.bz2"
-SRC_URI_append_r8a7791 = " ${@base_contains("DISTRO_FEATURES", "wayland", " \
+SRC_URI_append_r8a7791 = " ${@bb.utils.contains("DISTRO_FEATURES", "wayland", " \
     file://EGL_headers_for_wayland.patch \
     ", "", d)}"
 
 SRC_URI_r8a7792 = "file://r8a7792_linux_sgx_binaries_gles2.tar.bz2"
-SRC_URI_append_r8a7792 = " ${@base_contains("DISTRO_FEATURES", "wayland", " \
+SRC_URI_append_r8a7792 = " ${@bb.utils.contains("DISTRO_FEATURES", "wayland", " \
     file://EGL_headers_for_wayland.patch \
     ", "", d)}"
 
 SRC_URI_r8a7794 = "file://r8a7794_linux_sgx_binaries_gles2.tar.bz2"
-SRC_URI_append_r8a7794 = " ${@base_contains("DISTRO_FEATURES", "wayland", " \
+SRC_URI_append_r8a7794 = " ${@bb.utils.contains("DISTRO_FEATURES", "wayland", " \
     file://EGL_headers_for_wayland.patch \
     ", "", d)}"
 
@@ -90,7 +90,7 @@ FILES_${PN}-dev = " \
 inherit update-rc.d systemd
 
 PROVIDES = "virtual/libgles2"
-PROVIDES_append = "${@base_contains("DISTRO_FEATURES", "wayland", "", " virtual/egl", d)}"
+PROVIDES_append = "${@bb.utils.contains("DISTRO_FEATURES", "wayland", "", " virtual/egl", d)}"
 RPROVIDES_${PN} += "${GLES}-user-module libgles2-mesa libgles2-mesa-dev libgles2 libgles2-dev"
 INSANE_SKIP_${PN} += "ldflags already-stripped"
 INSANE_SKIP_${PN}-dev += "ldflags"
