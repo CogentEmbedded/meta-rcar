@@ -1,0 +1,70 @@
+From c000f14fa42e835d80fac0a00f42df32e5a680ee Mon Sep 17 00:00:00 2001
+From: Stefan Hepp <stefan.hepp@tttech-automotive.com>
+Date: Tue, 15 Nov 2016 01:23:23 -0800
+Subject: [PATCH] ADAS-2178: Set DDR configuration to H3 SiP 8Gb
+
+---
+ plat/renesas/rcar/ddr/boot_init_dram_config.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/plat/renesas/rcar/ddr/boot_init_dram_config.c b/plat/renesas/rcar/ddr/boot_init_dram_config.c
+index 483aacb..c8b40b1 100644
+--- a/plat/renesas/rcar/ddr/boot_init_dram_config.c
++++ b/plat/renesas/rcar/ddr/boot_init_dram_config.c
+@@ -37,7 +37,7 @@
+ /*******************************************************************************
+  *	PLEASE SET board number or board judge function
+  ******************************************************************************/
+-#define BOARD_JUDGE_AUTO
++//#define BOARD_JUDGE_AUTO
+ #ifdef BOARD_JUDGE_AUTO
+ static uint32_t _board_judge(void);
+ static uint32_t boardcnf_get_brd_type(void) {
+@@ -45,7 +45,7 @@ static uint32_t boardcnf_get_brd_type(void) {
+ }
+ #else
+ static uint32_t boardcnf_get_brd_type(void) {
+-		return (1);
++		return (2);
+ }
+ #endif
+ 
+@@ -239,7 +239,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ 	0x0a0,		/* dqdm_dly_r */
+ 	{
+ /*ch[0]*/	{
+-/*ddr_density[]*/	{ 0x02, 0xff }, 
++/*ddr_density[]*/	{ 0x02, 0x02 },
+ /*ca_swap*/		0x00543210,
+ /*dqs_swap*/		0x3210,
+ /*dq_swap[]*/		{ 0x20741365, 0x34256107, 0x57460321, 0x70614532 },
+@@ -259,7 +259,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ 			  0, 0, 0, 0, 0, 0, 0, 0}
+ 		},
+ /*ch[1]*/	{
+-/*ddr_density[]*/	{ 0x02, 0xff }, 
++/*ddr_density[]*/	{ 0x02, 0x02 },
+ /*ca_swap*/		0x00543210,
+ /*dqs_swap*/		0x3102,
+ /*dq_swap*/		{ 0x23547610, 0x34526107, 0x67452310, 0x32106754 },
+@@ -279,7 +279,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ 			  0, 0, 0, 0, 0, 0, 0, 0}
+ 		},
+ /*ch[2]*/	{
+-/*ddr_density[]*/	{ 0x02, 0xff }, 
++/*ddr_density[]*/	{ 0x02, 0x02 },
+ /*ca_swap*/		0x00543210,
+ /*dqs_swap*/		0x0213,
+ /*dq_swap[]*/		{ 0x30216754, 0x67453210, 0x70165243, 0x07162345 },
+@@ -299,7 +299,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ 			  0, 0, 0, 0, 0, 0, 0, 0}
+ 		},
+ /*ch[3]*/	{
+-/*ddr_density[]*/	{ 0x02, 0xff }, 
++/*ddr_density[]*/	{ 0x02, 0x02 },
+ /*ca_swap*/		0x00543210,
+ /*dqs_swap*/		0x0213,
+ /*dq_swap*/		{ 0x01327654, 0x70615432, 0x54760123, 0x07162345 },
+-- 
+2.7.4
+

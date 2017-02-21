@@ -4,7 +4,7 @@ require include/avb-control.inc
 require recipes-kernel/linux/linux-yocto.inc
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}/${MACHINE}:"
-COMPATIBLE_MACHINE = "(salvator-x|h3ulcb|m3ulcb)"
+COMPATIBLE_MACHINE = "(salvator-x|h3ulcb|m3ulcb|ttardrive)"
 
 RENESAS_BSP_URL = "git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git"
 BRANCH = "v4.6/rcar-3.3.x"
@@ -57,6 +57,7 @@ SRC_URI_append = " \
     file://0056-arm64-dts-r8a7795-h3ulcb-had-route-RAVB-to-rdrive.patch \
     file://0057-arm64-renesas-H3ULCB-Kingfisher-board-support.patch \
     file://0058-arm64-renesas-M3ULCB-Kingfisher-board-support.patch \
+    file://0059-arm64-renesas-TTA-R-Drive-board-support.patch \
     ${@base_conditional("LVDSCAMERA_FIRST4_TYPE1", "1", " file://0070-arm64-dts-Gen3-view-boards-TYPE1-first-4-cameras.patch", "", d)} \
     ${@base_conditional("LVDSCAMERA_FIRST4_TYPE2", "1", " file://0071-arm64-dts-Gen3-view-boards-TYPE2-first-4-cameras.patch", "", d)} \
     ${@base_conditional("LVDSCAMERA_SECOND4_TYPE1", "1", " file://0072-arm64-dts-Gen3-view-boards-TYPE1-second-4-cameras.patch", "", d)} \
@@ -73,6 +74,10 @@ SRC_URI_append_salvator-x = " \
 
 SRC_URI_append_m3ulcb = " \
     file://m3ulcb.cfg \
+"
+
+SRC_URI_append_ttardrive = " \
+    file://ttardrive.cfg \
 "
 
 KERNEL_DEVICETREE_append_h3ulcb = '${@ \

@@ -1,0 +1,37 @@
+From 23e0725daf7ab27d9fa85201b4097112d8c74e1e Mon Sep 17 00:00:00 2001
+From: Valentine Barshak <valentine.barshak@cogentembedded.com>
+Date: Sat, 11 Jun 2016 00:50:06 +0300
+Subject: [PATCH 10/15] board: renesas: salvator-x: Enable RPC clock
+
+The RPC clock should have been enabled by the ARM trusted firmware.
+Enable it here just in case.
+
+Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+---
+ board/renesas/salvator-x/salvator-x.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/board/renesas/salvator-x/salvator-x.c b/board/renesas/salvator-x/salvator-x.c
+index 491d378..803636e 100644
+--- a/board/renesas/salvator-x/salvator-x.c
++++ b/board/renesas/salvator-x/salvator-x.c
+@@ -31,6 +31,7 @@ DECLARE_GLOBAL_DATA_PTR;
+ #define SCIF2_MSTP310	(1 << 10)
+ #define ETHERAVB_MSTP812	(1 << 12)
+ #define DVFS_MSTP926	(1 << 26)
++#define RPC_MSTP917	(1 << 17)
+ #define SD0_MSTP314	(1 << 14)
+ #define SD1_MSTP313	(1 << 13)
+ #define SD2_MSTP312	(1 << 12)		/* either MMC0 */
+@@ -51,6 +52,8 @@ int board_early_init_f(void)
+ 	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, SCIF2_MSTP310);
+ 	/* EHTERAVB */
+ 	mstp_clrbits_le32(MSTPSR8, SMSTPCR8, ETHERAVB_MSTP812);
++	/* RPC */
++	mstp_clrbits_le32(MSTPSR9, SMSTPCR9, RPC_MSTP917);
+ 	/* eMMC */
+ 	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, SD1_MSTP313 | SD2_MSTP312);
+ 	/* SDHI0, 3 */
+-- 
+1.9.3
+

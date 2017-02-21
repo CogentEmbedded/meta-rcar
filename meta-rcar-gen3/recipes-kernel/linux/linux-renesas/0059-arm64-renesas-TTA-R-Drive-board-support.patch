@@ -1,0 +1,1314 @@
+From 408420d2ceedc1b8c92dd132fd2617bc001120b8 Mon Sep 17 00:00:00 2001
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Date: Thu, 16 Feb 2017 05:42:47 +0300
+Subject: [PATCH] arm64: renesas: TTA-R-Drive board support
+
+Add support for TTA-R-Drive board
+
+Signed-off-by: Stefan Hepp <stefan.hepp@tttech-automotive.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+ arch/arm64/boot/dts/renesas/Makefile               |   3 +-
+ .../boot/dts/renesas/r8a7795-ttardrive-alfa.dts    | 225 +++++
+ .../boot/dts/renesas/r8a7795-ttardrive-beta.dts    | 129 +++
+ arch/arm64/boot/dts/renesas/r8a7795-ttardrive.dtsi | 909 +++++++++++++++++++++
+ 4 files changed, 1265 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-ttardrive-alfa.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-ttardrive-beta.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-ttardrive.dtsi
+
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index e42396e..fc4438b 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,7 +1,8 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb \
+ 			      r8a7795-salvator-x-view.dtb r8a7795-h3ulcb-had.dtb \
+ 			      r8a7795-h3ulcb-view.dtb \
+-			      r8a7795-h3ulcb-kf.dtb
++			      r8a7795-h3ulcb-kf.dtb \
++			      r8a7795-ttardrive-alfa.dtb r8a7795-ttardrive-beta.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb \
+ 			      r8a7796-salvator-x-view.dtb r8a7796-m3ulcb-view.dtb \
+ 			      r8a7796-m3ulcb-kf.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-ttardrive-alfa.dts b/arch/arm64/boot/dts/renesas/r8a7795-ttardrive-alfa.dts
+new file mode 100644
+index 0000000..2a1ae85
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-ttardrive-alfa.dts
+@@ -0,0 +1,224 @@
++/*
++ * Base Device Tree Source for the TTA-R-Drive board Alfa CPU
++ *
++ * Copyright (C) 2016 TTTech Automotive GmbH
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7795-ttardrive.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++        model = "TTTech TTA-R-Drive board Alfa CPU based on r8a7795";
++
++	aliases {
++	        /* Using GPIO SPI instead of MSIOF; remove to use HW MSIOF */
++		/* On Alfa:
++		 * MSIOF0   is interconnect master
++		 * MSIOF1_C is Switch 1 master
++		 * MSIOF2_B is FPDLink master
++		 * MSIOF2_D is RH850 slave (not used)
++		 * MSIOF3_A is Switch 2 master
++		 */
++		spi1 = &spi0_gpio;
++		spi2 = &spi1_gpio;
++		spi3 = &spi2_gpio;
++		spi4 = &spi3_gpio;
++	};
++
++	/* Software SPI driver */
++        spi0_gpio: spi_gpio@0 {
++                compatible = "spi-gpio";
++                num-chipselects = <1>;
++                gpio-sck = <&gpio5 17 0>;
++                gpio-mosi = <&gpio5 20 0>;
++                gpio-miso = <&gpio5 22 0>;
++                cs-gpios = <&gpio5 18 0>;
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                spidev@0 {
++                        compatible = "spi-gpio";
++                        reg = <0>;
++                        spi-max-frequency = <2000000>;
++                        spi-cpha;
++                        spi-cpol;
++                };
++        };
++
++        spi1_gpio: spi_gpio@1 {
++                compatible = "spi-gpio";
++                num-chipselects = <1>;
++                gpio-sck = <&gpio6 17 0>;
++                gpio-mosi = <&gpio6 20 0>;
++                gpio-miso = <&gpio6 19 0>;
++                cs-gpios = <&gpio6 18 0>;
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                spidev@0 {
++                        compatible = "spi-gpio";
++                        reg = <0>;
++                        spi-max-frequency = <2000000>;
++                        spi-cpha;
++                        spi-cpol;
++                };
++        };
++
++        spi2_gpio: spi_gpio@2 {
++                compatible = "spi-gpio";
++                num-chipselects = <1>;
++                gpio-sck = <&gpio0 4 0>;
++                gpio-mosi = <&gpio0 7 0>;
++                gpio-miso = <&gpio0 6 0>;
++                cs-gpios = <&gpio0 5 0>;
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                spidev@0 {
++                        compatible = "spi-gpio";
++                        reg = <0>;
++                        spi-max-frequency = <2000000>;
++                        spi-cpha;
++                        spi-cpol;
++                };
++        };
++
++        spi3_gpio: spi_gpio@3 {
++                compatible = "spi-gpio";
++                num-chipselects = <1>;
++                gpio-sck = <&gpio0 0 0>;
++                gpio-mosi = <&gpio0 3 0>;
++                gpio-miso = <&gpio0 2 0>;
++                cs-gpios = <&gpio0 1 0>;
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                spidev@0 {
++                        compatible = "spi-gpio";
++                        reg = <0>;
++                        spi-max-frequency = <2000000>;
++                        spi-cpha;
++                        spi-cpol;
++                };
++        };
++
++};
++
++&pcie_bus_clk {
++	clock-frequency = <100000000>;
++};
++
++&pfc {
++        msiof0_pins: spi1 {
++                groups = "msiof0_clk", "msiof0_sync",
++                                "msiof0_rxd",  "msiof0_txd";
++                function = "msiof0";
++        };
++
++        msiof1_pins: spi2 {
++                groups = "msiof1_clk_c", "msiof1_sync_c",
++                                "msiof1_rxd_c",  "msiof1_txd_c";
++                function = "msiof1";
++        };
++
++        msiof2_pins: spi3 {
++                groups = "msiof2_clk_b", "msiof2_sync_b",
++                                "msiof2_rxd_b",  "msiof2_txd_b";
++                function = "msiof2";
++        };
++
++        msiof3_pins: spi4 {
++                groups = "msiof3_clk_a", "msiof3_sync_a",
++                                "msiof3_rxd_a",  "msiof3_txd_a";
++                function = "msiof3";
++        };
++};
++
++&msiof0 {
++        pinctrl-0 = <&msiof0_pins>;
++        pinctrl-names = "default";
++        status = "disabled";
++        cs-gpios = <&gpio5 18 0>;
++
++        spidev@0 {
++                compatible = "renesas,sh-msiof";
++                reg = <0>;
++                spi-max-frequency = <66666666>;
++                spi-cpha;
++                spi-cpol;
++        };
++};
++
++&msiof1 {
++        pinctrl-0 = <&msiof1_pins>;
++        pinctrl-names = "default";
++        status = "disabled";
++        cs-gpios = <&gpio6 18 0>;
++
++        spidev@0 {
++                compatible = "renesas,sh-msiof";
++                reg = <0>;
++                spi-max-frequency = <33333333>;
++                spi-cpha;
++                spi-cpol;
++        };
++};
++
++&msiof2 {
++        pinctrl-0 = <&msiof2_pins>;
++        pinctrl-names = "default";
++        status = "disabled";
++        cs-gpios = <&gpio0 5 0>;
++
++        spidev@0 {
++                compatible = "renesas,sh-msiof";
++                reg = <0>;
++                spi-max-frequency = <66666666>;
++                spi-cpha;
++                spi-cpol;
++        };
++};
++
++&msiof3 {
++        pinctrl-0 = <&msiof3_pins>;
++        pinctrl-names = "default";
++        status = "disabled";
++        cs-gpios = <&gpio0 1 0>;
++
++        spidev@0 {
++                compatible = "renesas,sh-msiof";
++                reg = <0>;
++                spi-max-frequency = <66666666>;
++                spi-cpha;
++                spi-cpol;
++        };
++};
++
++
++&i2c4 {
++        status = "okay";
++        clock-frequency = <100000>;
++
++        /* TODO support for 5P49V5901B device, is it compatible??
++        clk_5p49v5901b: programmable_clk@6a {
++                compatible = "idt,5p49v5923a";
++                reg = <0x6a>;
++
++                programable_clk0: 5p49v5901b_clk1@6a {
++                        #clock-cells = <0>;
++                        clocks = <&dclkin_p0>;
++                };
++
++                programable_clk1: 5p49v5901b_clk2@6a {
++                        #clock-cells = <0>;
++                        clocks = <&dclkin_p3>;
++                };
++        };
++        */
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-ttardrive-beta.dts b/arch/arm64/boot/dts/renesas/r8a7795-ttardrive-beta.dts
+new file mode 100644
+index 0000000..234bb68
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-ttardrive-beta.dts
+@@ -0,0 +1,128 @@
++/*
++ * Base Device Tree Source for the TTA-R-Drive board Beta CPU
++ *
++ * Copyright (C) 2016 TTTech Automotive GmbH
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7795-ttardrive.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++        model = "TTTech TTA-R-Drive board Beta CPU based on r8a7795";
++
++        aliases {
++                /* Using GPIO SPI instead of MSIOF; remove to use HW MSIOF */
++                /* On Beta:
++                 * MSIOF0   is interconnect slave (not used)
++                 * MSIOF1_C is RH850 slave (not used)
++                 * MSIOF3_B is FPDLink master
++                 */
++                spi4 = &spi3_gpio;
++        };
++
++        /* Software SPI driver */
++        spi3_gpio: spi_gpio@3 {
++                compatible = "spi-gpio";
++                num-chipselects = <1>;
++                gpio-sck = <&gpio1 2 0>;
++                gpio-mosi = <&gpio1 1 0>;
++                gpio-miso = <&gpio1 3 0>;
++                cs-gpios = <&gpio1 0 0>;
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                spidev@0 {
++                        compatible = "spi-gpio";
++                        reg = <0>;
++                        spi-max-frequency = <2000000>;
++                        spi-cpha;
++                        spi-cpol;
++                };
++        };
++
++};
++
++&pcie_bus_clk {
++        clock-frequency = <100000000>;
++};
++
++&pfc {
++        msiof3_pins: spi4 {
++                groups = "msiof3_clk_b", "msiof3_sync_b",
++                                "msiof3_rxd_b",  "msiof3_txd_b";
++                function = "msiof3";
++        };
++
++        can0_pins: can0 {
++                groups = "can0_data_b";
++                function = "can0";
++        };
++
++        can1_pins: can1 {
++                groups = "can1_data";
++                function = "can1";
++	};
++
++        canfd0_pins: canfd0 {
++                groups = "canfd0_data_b";
++                function = "canfd0";
++        };
++
++        canfd1_pins: canfd1 {
++                groups = "canfd1_data";
++                function = "canfd1";
++        };
++};
++
++&msiof3 {
++        pinctrl-0 = <&msiof3_pins>;
++        pinctrl-names = "default";
++        status = "disabled";
++        cs-gpios = <&gpio1 0 0>;
++
++        spidev@0 {
++                compatible = "renesas,sh-msiof";
++                reg = <0>;
++                spi-max-frequency = <66666666>;
++                spi-cpha;
++                spi-cpol;
++        };
++};
++
++&can0 {
++        pinctrl-0 = <&can0_pins>;
++        pinctrl-names = "default";
++        status = "okay";
++
++        renesas,can-clock-select = <0x0>;
++};
++
++&can1 {
++        pinctrl-0 = <&can1_pins>;
++        pinctrl-names = "default";
++        status = "okay";
++
++        renesas,can-clock-select = <0x0>;
++};
++
++
++&canfd {
++        pinctrl-0 = <&canfd0_pins &canfd1_pins>;
++        pinctrl-names = "default";
++        status = "disabled";
++
++        renesas,can-clock-select = <0x0>;
++
++        channel0 {
++                status = "okay";
++        };
++        channel1 {
++                status = "okay";
++        };
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-ttardrive.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-ttardrive.dtsi
+new file mode 100644
+index 0000000..e74a2c1
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-ttardrive.dtsi
+@@ -0,0 +1,908 @@
++/*
++ * Base Device Tree Source for the TTA-R-Drive board
++ *
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ * Copyright (C) 2016 TTTech Automotive GmbH
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7795.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	compatible = "tttech,ttardrive", "renesas,r8a7795";
++
++	aliases {
++		serial0 = &scif2;
++		serial1 = &scif1;
++		serial2 = &scif0;
++		serial3 = &hscif0;
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x80000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x80000000>;
++	};
++
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x80000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		/* device specific region for Lossy Decompression */
++		lossy_decompress: linux,lossy_decompress {
++			no-map;
++			reg = <0x00000000 0x54000000 0x0 0x03000000>;
++		};
++
++		/* For Audio DSP */
++		adsp_reserved: linux,adsp {
++			compatible = "shared-dma-pool";
++			reusable;
++			reg = <0x00000000 0x57000000 0x0 0x01000000>;
++		};
++
++		/* global autoconfigured region for contiguous allocations */
++		linux,cma {
++			compatible = "shared-dma-pool";
++			reusable;
++			reg = <0x00000000 0x58000000 0x0 0x18000000>;
++			linux,cma-default;
++		};
++
++		/* device specific region for contiguous allocations */
++		linux,multimedia {
++			compatible = "shared-dma-pool";
++			reusable;
++			reg = <0x00000000 0x70000000 0x0 0x10000000>;
++		};
++	};
++
++	mmngr {
++		compatible = "renesas,mmngr";
++		memory-region = <&lossy_decompress>;
++	};
++
++	mmngrbuf {
++		compatible = "renesas,mmngrbuf";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		pwr {
++			gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++		load {
++			gpios = <&gpio6 5 GPIO_ACTIVE_HIGH>;
++			default-state = "off";
++			linux,default-trigger = "heartbeat";
++		};
++
++		/* Workaround to avoid clearing the USB clock enable during boot.
++		 * Should be moved to the clock driver */
++		clken {
++			gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
++			default-state = "keep";
++		};
++	};
++
++	fixedregulator3v3: regulator@0 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	fixedregulator1v8: regulator@1 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	vspm_if {
++		compatible = "renesas,vspm_if";
++	};
++
++	hdmi0-encoder {
++		compatible = "rockchip,rcar-dw-hdmi";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			port@0 {
++				reg = <0>;
++				rcar_dw_hdmi0_in: endpoint {
++					remote-endpoint = <&du_out_hdmi0>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				rcar_dw_hdmi0_out: endpoint {
++					remote-endpoint = <&hdmi0_con>;
++				};
++			};
++		};
++	};
++
++	hdmi0-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi0_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi0_out>;
++			};
++		};
++	};
++
++        hdmi1-encoder {
++                compatible = "rockchip,rcar-dw-hdmi";
++
++                ports {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++                        port@0 {
++                                reg = <0>;
++                                rcar_dw_hdmi1_in: endpoint {
++                                        remote-endpoint = <&du_out_hdmi1>;
++                                };
++                        };
++                        port@1 {
++                                reg = <1>;
++                                rcar_dw_hdmi1_out: endpoint {
++                                        remote-endpoint = <&hdmi1_con>;
++                                };
++                        };
++                };
++        };
++
++        hdmi1-out {
++                compatible = "hdmi-connector";
++                type = "a";
++
++                port {
++                        hdmi1_con: endpoint {
++                                remote-endpoint = <&rcar_dw_hdmi1_out>;
++                        };
++                };
++        };
++
++	/* TODO check clcoks */
++	programable_clk0: 5p49v5923a_clk0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <148500000>;
++	};
++
++	x21_clk: 5p49v5923a_clk2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <33000000>;
++	};
++
++	x22_clk: 5p49v5923a_clk3 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <33000000>;
++	};
++
++	programable_clk1: 5p49v5923a_clk1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <108000000>;
++	};
++
++	/* Module clock for all MSIOFs baud rate generators, provided by CPG */
++	msiof_ref_clk: msiof-ref-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <66666666>;
++	};
++};
++
++&du {
++	status = "okay";
++
++	ports {
++		port@1 {
++			endpoint {
++				remote-endpoint = <&rcar_dw_hdmi0_in>;
++			};
++		};
++                port@2 {
++                        endpoint {
++                                remote-endpoint = <&rcar_dw_hdmi1_in>;
++                        };
++                };
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
++&pfc {
++        pwm1_pins: pwm1 {
++                groups = "pwm1_b";
++                function = "pwm1";
++        };
++
++        pwm2_pins: pwm2 {
++                groups = "pwm2_b";
++                function = "pwm2";
++        };
++
++        scif0_pins: scif0 {
++                groups = "scif0_data";
++                function = "scif0";
++        };
++        scif1_pins: scif1 {
++                groups = "scif1_data_a";
++                function = "scif1";
++        };
++        scif2_pins: scif2 {
++                groups = "scif2_data_a";
++                function = "scif2";
++        };
++
++        hscif0_pins: hscif0 {
++                groups = "hscif0_data";
++                function = "hscif0";
++        };
++
++	i2c1_pins: i2c1 {
++		groups = "i2c1_b";
++		function = "i2c1";
++	};
++
++	avb_pins: avb {
++		groups = "avb_mdc";
++		function = "avb";
++	};
++
++	mmc1_pins_3v3: mmc1_3v3 {
++		groups = "sdhi3_data8", "sdhi3_ctrl";
++		function = "sdhi3";
++		power-source = <3300>;
++	};
++
++	usb2_pins: usb2 {
++		groups = "usb2";
++		function = "usb2";
++	};
++};
++
++/* PWMs */
++&pwm1 {
++        pinctrl-0 = <&pwm1_pins>;
++        pinctrl-names = "default";
++        status = "okay";
++};
++
++&pwm2 {
++        pinctrl-0 = <&pwm2_pins>;
++        pinctrl-names = "default";
++        status = "okay";
++};
++
++/* UARTs */
++
++&scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif1 {
++	pinctrl-0 = <&scif1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif2 {
++	pinctrl-0 = <&scif2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&hscif0 {
++	pinctrl-0 = <&hscif0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++/* eMMC */
++&mmc1 {
++	pinctrl-0 = <&mmc1_pins_3v3>;
++	pinctrl-1 = <&mmc1_pins_3v3>;
++	pinctrl-names = "default", "state_uhs";
++
++	/delete-property/mmc-hs200-1_8v;
++
++	vmmc-supply = <&fixedregulator3v3>;
++	vqmmc-supply = <&fixedregulator3v3>;
++	bus-width = <8>;
++	status = "okay";
++};
++
++/* I2C busses */
++&i2c0 {
++	status = "okay";
++	clock-frequency = <400000>;
++
++	ov106xx@0 {
++		compatible = "ovti,ov106xx";
++		reg = <0x60>;
++
++		port@0 {
++			ov106xx_in0: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&vin0ep0>;
++			};
++		};
++		port@1 {
++			ov106xx_max9286_des0ep0: endpoint@0 {
++				remote-endpoint = <&max9286_des0ep0>;
++			};
++		};
++	};
++
++	ov106xx@1 {
++		compatible = "ovti,ov106xx";
++		reg = <0x61>;
++
++		port@0 {
++			ov106xx_in1: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&vin1ep0>;
++			};
++		};
++		port@1 {
++			ov106xx_max9286_des0ep1: endpoint@0 {
++				remote-endpoint = <&max9286_des0ep1>;
++			};
++		};
++	};
++
++	ov106xx@2 {
++		compatible = "ovti,ov106xx";
++		reg = <0x62>;
++
++		port@0 {
++			ov106xx_in2: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&vin2ep0>;
++			};
++		};
++		port@1 {
++			ov106xx_max9286_des0ep2: endpoint@0 {
++				remote-endpoint = <&max9286_des0ep2>;
++			};
++		};
++	};
++
++	ov106xx@3 {
++		compatible = "ovti,ov106xx";
++		reg = <0x63>;
++
++		port@0 {
++			ov106xx_in3: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&vin3ep0>;
++			};
++		};
++		port@1 {
++			ov106xx_des0ep3: endpoint {
++				remote-endpoint = <&max9286_des0ep3>;
++			};
++		};
++	};
++
++	max9286-max9271@0 {
++		compatible = "maxim,max9286-max9271";
++		reg = <0x48>;
++		gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
++		maxim,sensor_delay = <0>;
++		maxim,links = <4>;
++		maxim,lanes = <4>;
++		maxim,resetb-gpio = <1>;
++		maxim,fsync-mode = "automatic";
++		maxim,timeout = <100>;
++
++		port@0 {
++			max9286_des0ep0: endpoint@0 {
++				max9271-addr = <0x50>;
++				dvp-order = <1>;
++				remote-endpoint = <&ov106xx_in0>;
++			};
++			max9286_des0ep1: endpoint@1 {
++				max9271-addr = <0x51>;
++				dvp-order = <1>;
++				remote-endpoint = <&ov106xx_in1>;
++			};
++			max9286_des0ep2: endpoint@2 {
++				max9271-addr = <0x52>;
++				dvp-order = <1>;
++				remote-endpoint = <&ov106xx_in2>;
++			};
++			max9286_des0ep3: endpoint@3 {
++				max9271-addr = <0x53>;
++				dvp-order = <1>;
++				remote-endpoint = <&ov106xx_in3>;
++			};
++		};
++		port@1 {
++			max9286_csi0ep0: endpoint {
++				csi-rate = <700>;
++				remote-endpoint = <&csi2_40_ep>;
++			};
++		};
++	};
++};
++
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <100000>;
++
++	/* TODO FPDLink support */
++};
++
++&i2c3 {
++	status = "okay";
++	clock-frequency = <400000>;
++
++	ov106xx@4 {
++		compatible = "ovti,ov106xx";
++		reg = <0x64>;
++
++		port@0 {
++			ov106xx_in4: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&vin4ep0>;
++			};
++		};
++		port@1 {
++			ov106xx_max9286_des1ep0: endpoint@0 {
++				remote-endpoint = <&max9286_des1ep0>;
++			};
++		};
++	};
++
++	ov106xx@5 {
++		compatible = "ovti,ov106xx";
++		reg = <0x65>;
++
++		port@0 {
++			ov106xx_in5: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&vin5ep0>;
++			};
++		};
++		port@1 {
++			ov106xx_max9286_des1ep1: endpoint@0 {
++				remote-endpoint = <&max9286_des1ep1>;
++			};
++		};
++	};
++
++	max9286-max9271@1 {
++		compatible = "maxim,max9286-max9271";
++		reg = <0x48>;
++		gpios = <&gpio4 4 GPIO_ACTIVE_HIGH>;
++		maxim,sensor_delay = <0>;
++		maxim,links = <2>;
++		maxim,lanes = <2>;
++		maxim,resetb-gpio = <1>;
++		maxim,fsync-mode = "automatic";
++		maxim,timeout = <100>;
++
++		port@0 {
++			max9286_des1ep0: endpoint@0 {
++				max9271-addr = <0x54>;
++				dvp-order = <1>;
++				remote-endpoint = <&ov106xx_in4>;
++			};
++			max9286_des1ep1: endpoint@1 {
++				max9271-addr = <0x55>;
++				dvp-order = <1>;
++				remote-endpoint = <&ov106xx_in5>;
++			};
++		};
++		port@1 {
++			max9286_csi2ep0: endpoint {
++				csi-rate = <700>;
++				remote-endpoint = <&csi2_20_ep>;
++			};
++		};
++	};
++};
++
++&i2c5 {
++	status = "okay";
++	clock-frequency = <100000>;
++
++	/* TODO support for 5P49V5901B device, is it compatible??
++        clk_5p49v5923a: programmable_clk@6a {
++                compatible = "idt,5p49v5923a";
++                reg = <0x6a>;
++
++                programable_clk0: 5p49v5923a_clk1@6a {
++                        #clock-cells = <0>;
++                        clocks = <&dclkin_p0>;
++                };
++
++                programable_clk1: 5p49v5923a_clk2@6a {
++                        #clock-cells = <0>;
++                        clocks = <&dclkin_p3>;
++                };
++        };
++	*/
++};
++
++&i2c_dvfs {
++	status = "okay";
++
++	vdd_dvfs: regulator@30 {
++		compatible = "rohm,bd9571mwv";
++		reg = <0x30>;
++
++		regulator-min-microvolt = <750000>;
++		regulator-max-microvolt = <1030000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++};
++
++/* Ethernet */
++&avb {
++        pinctrl-0 = <&avb_pins>;
++        pinctrl-names = "default";
++        renesas,no-ether-link;
++        status = "okay";
++
++        fixed-link {
++                speed = <1000>;
++                full-duplex;
++		reg = <0>;
++        };
++};
++
++/* USB */
++&usb2_phy2 {
++	pinctrl-0 = <&usb2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&ehci2 {
++	status = "okay";
++};
++
++&ohci2 {
++	status = "okay";
++};
++
++/* PCIe and SATA */
++&pcie_bus_clk {
++          clock-frequency = <100000000>;
++          status = "okay";
++};
++
++&pciec0 {
++          status = "disabled";
++};
++
++&pciec1 {
++          status = "disabled";
++};
++
++&sata {
++          status = "okay";
++};
++
++/* Watchdog timer */
++&wdt0 {
++	status = "okay";
++};
++
++
++/* Video Codec interfaces. */
++&vin0 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			vin0ep0: endpoint {
++				csi,select = "csi40";
++				virtual,channel = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&ov106xx_in0>;
++			};
++		};
++		port@1 {
++			csi0ep0: endpoint {
++				remote-endpoint = <&csi2_40_ep>;
++			};
++		};
++		port@2 {
++			vin0_max9286_des0ep0: endpoint@0 {
++				remote-endpoint = <&max9286_des0ep0>;
++			};
++		};
++	};
++};
++
++&vin1 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			vin1ep0: endpoint {
++				csi,select = "csi40";
++				virtual,channel = <1>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&ov106xx_in1>;
++			};
++		};
++		port@1 {
++			csi0ep1: endpoint {
++				remote-endpoint = <&csi2_40_ep>;
++			};
++		};
++		port@2 {
++			vin1_max9286_des0ep1: endpoint@0 {
++				remote-endpoint = <&max9286_des0ep1>;
++			};
++		};
++	};
++};
++
++&vin2 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			vin2ep0: endpoint {
++				csi,select = "csi40";
++				virtual,channel = <2>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&ov106xx_in2>;
++			};
++		};
++		port@1 {
++			csi0ep2: endpoint {
++				remote-endpoint = <&csi2_40_ep>;
++			};
++		};
++		port@2 {
++			vin2_max9286_des0ep2: endpoint@0 {
++				remote-endpoint = <&max9286_des0ep2>;
++			};
++		};
++	};
++};
++
++&vin3 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			vin3ep0: endpoint {
++				csi,select = "csi40";
++				virtual,channel = <3>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&ov106xx_in3>;
++			};
++		};
++		port@1 {
++			csi0ep3: endpoint {
++				remote-endpoint = <&csi2_40_ep>;
++			};
++		};
++		port@2 {
++			vin3_max9286_des0ep3: endpoint@0 {
++				remote-endpoint = <&max9286_des0ep3>;
++			};
++		};
++	};
++};
++
++&vin4 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			vin4ep0: endpoint {
++				csi,select = "csi20";
++				virtual,channel = <0>;
++				remote-endpoint = <&ov106xx_in4>;
++				data-lanes = <1 2>;
++			};
++		};
++		port@1 {
++			csi1ep0: endpoint {
++				remote-endpoint = <&csi2_20_ep>;
++			};
++		};
++		port@2 {
++			vin4_max9286_des1ep0: endpoint@0 {
++				remote-endpoint = <&max9286_des1ep0>;
++			};
++		};
++	};
++};
++
++&vin5 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			vin5ep0: endpoint@0 {
++				csi,select = "csi20";
++				virtual,channel = <1>;
++				remote-endpoint = <&ov106xx_in5>;
++				data-lanes = <1 2>;
++			};
++		};
++		port@1 {
++			csi1ep1: endpoint {
++				remote-endpoint = <&csi2_20_ep>;
++			};
++		};
++		port@2 {
++			vin5_max9286_des1ep1: endpoint@0 {
++				remote-endpoint = <&max9286_des1ep1>;
++			};
++		};
++	};
++};
++
++&csi2_40 {
++	status = "okay";
++
++	virtual,channel {
++		csi2_vc0 {
++			data,type = "ycbcr422";
++			receive,vc = <0>;
++		};
++		csi2_vc1 {
++			data,type = "ycbcr422";
++			receive,vc = <1>;
++		};
++		csi2_vc2 {
++			data,type = "ycbcr422";
++			receive,vc = <2>;
++		};
++		csi2_vc3 {
++			data,type = "ycbcr422";
++			receive,vc = <3>;
++		};
++	};
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		csi2_40_ep: endpoint {
++			clock-lanes = <0>;
++			data-lanes = <1 2 3 4>;
++			csi-rate = <700>;
++		};
++	};
++};
++
++&csi2_20 {
++	status = "okay";
++
++	virtual,channel {
++		csi2_vc0 {
++			data,type = "ycbcr422";
++			receive,vc = <0>;
++		};
++		csi2_vc1 {
++			data,type = "ycbcr422";
++			receive,vc = <1>;
++		};
++	};
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		csi2_20_ep: endpoint {
++			clock-lanes = <0>;
++			data-lanes = <1 2>;
++			csi-rate = <350>;
++		};
++	};
++};
++
++&vspbc {
++	status = "okay";
++};
++
++&vspbd {
++	status = "okay";
++};
++
++&vspi0 {
++	status = "okay";
++};
++
++&vspi1 {
++	status = "okay";
++};
++
++&vspi2 {
++	status = "okay";
++};
+-- 
+1.9.1
+

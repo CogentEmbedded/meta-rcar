@@ -1,0 +1,224 @@
+From 2b31e91d7ea86934badebcebb2309b09b79725ca Mon Sep 17 00:00:00 2001
+From: Valentine Barshak <valentine.barshak@cogentembedded.com>
+Date: Mon, 4 Apr 2016 18:39:26 +0300
+Subject: [PATCH 08/15] ARM: rcar_gen3: Add RPC flash definitions
+
+This adds common RPC flash definitions to RCAR Gen3 platform.
+
+Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+---
+ arch/arm/include/asm/arch-rcar_gen3/rcar-base.h |   6 +
+ arch/arm/include/asm/arch-rcar_gen3/rpc-flash.h | 184 ++++++++++++++++++++++++
+ 2 files changed, 190 insertions(+)
+ create mode 100644 arch/arm/include/asm/arch-rcar_gen3/rpc-flash.h
+
+diff --git a/arch/arm/include/asm/arch-rcar_gen3/rcar-base.h b/arch/arm/include/asm/arch-rcar_gen3/rcar-base.h
+index 59d34b8..538cdc2 100644
+--- a/arch/arm/include/asm/arch-rcar_gen3/rcar-base.h
++++ b/arch/arm/include/asm/arch-rcar_gen3/rcar-base.h
+@@ -78,6 +78,12 @@
+ #define CONFIG_SYS_SH_SDHI2_BASE	0xEE140000
+ #define CONFIG_SYS_SH_SDHI3_BASE	0xEE160000
+ 
++/* RPC */
++#define CONFIG_SYS_RPC_BASE		0xEE200000
++
++#define CONFIG_SYS_RPC_FLASH_BASE	0x08000000
++#define CONFIG_SYS_RPC_FLASH_SIZE	0x04000000
++
+ /* PFC */
+ #define PFC_PUEN6       0xE6060418
+ #define PUEN_USB1_OVC   (1 << 2)
+diff --git a/arch/arm/include/asm/arch-rcar_gen3/rpc-flash.h b/arch/arm/include/asm/arch-rcar_gen3/rpc-flash.h
+new file mode 100644
+index 0000000..403aaee
+--- /dev/null
++++ b/arch/arm/include/asm/arch-rcar_gen3/rpc-flash.h
+@@ -0,0 +1,184 @@
++/*
++ * Copyright (C) 2016 Renesas Electronics Corporation
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0
++ */
++
++#ifndef __RPC_FLASH_H__
++#define __RPC_FLASH_H__
++
++#include <common.h>
++#include <flash.h>
++#include <asm/io.h>
++#include <asm/arch/rcar_gen3.h>
++
++#ifndef CONFIG_SYS_NO_FLASH
++#define RPC_CMNCR		0x0000	/* R/W */
++#define RPC_CMNCR_MD		(0x1 << 31)
++#define RPC_CMNCR_MOIIO0(val)	(((val) & 0x3) << 16)
++#define RPC_CMNCR_MOIIO1(val)	(((val) & 0x3) << 18)
++#define RPC_CMNCR_MOIIO2(val)	(((val) & 0x3) << 20)
++#define RPC_CMNCR_MOIIO3(val)	(((val) & 0x3) << 22)
++#define RPC_CMNCR_MOIIO_HIZ	(RPC_CMNCR_MOIIO0(3) | RPC_CMNCR_MOIIO1(3) | \
++				 RPC_CMNCR_MOIIO2(3) | RPC_CMNCR_MOIIO3(3))
++#define RPC_CMNCR_IO0FV(val)	(((val) & 0x3) << 8)
++#define RPC_CMNCR_IO2FV(val)	(((val) & 0x3) << 12)
++#define RPC_CMNCR_IO3FV(val)	(((val) & 0x3) << 14)
++#define RPC_CMNCR_IOFV_HIZ	(RPC_CMNCR_IO0FV(3) | RPC_CMNCR_IO2FV(3) | \
++				 RPC_CMNCR_IO3FV(3))
++#define RPC_CMNCR_BSZ(val)	(((val) & 0x3) << 0)
++
++#define RPC_SSLDR		0x0004	/* R/W */
++#define RPC_SSLDR_SPNDL(d)	(((d) & 0x7) << 16)
++#define RPC_SSLDR_SLNDL(d)	(((d) & 0x7) << 8)
++#define RPC_SSLDR_SCKDL(d)	(((d) & 0x7) << 0)
++
++#define RPC_DRCR		0x000C	/* R/W */
++#define RPC_DRCR_SSLN		(0x1 << 24)
++#define RPC_DRCR_RBURST(v)	(((v) & 0x1F) << 16)
++#define RPC_DRCR_RCF		(0x1 << 9)
++#define RPC_DRCR_RBE		(0x1 << 8)
++#define RPC_DRCR_SSLE		(0x1 << 0)
++
++#define RPC_DRCMR		0x0010	/* R/W */
++#define RPC_DRCMR_CMD(c)	(((c) & 0xFF) << 16)
++#define RPC_DRCMR_OCMD(c)	(((c) & 0xFF) << 0)
++
++#define RPC_DREAR		0x0014	/* R/W */
++#define RPC_DREAR_EAV(v)	(((v) & 0xFF) << 16)
++#define RPC_DREAR_EAC(v)	(((v) & 0x7) << 0)
++
++#define RPC_DROPR		0x0018	/* R/W */
++#define RPC_DROPR_OPD3(o)	(((o) & 0xFF) << 24)
++#define RPC_DROPR_OPD2(o)	(((o) & 0xFF) << 16)
++#define RPC_DROPR_OPD1(o)	(((o) & 0xFF) << 8)
++#define RPC_DROPR_OPD0(o)	(((o) & 0xFF) << 0)
++
++#define RPC_DRENR		0x001C	/* R/W */
++#define RPC_DRENR_CDB(o)	(((o) & 0x3) << 30)
++#define RPC_DRENR_OCDB(o)	(((o) & 0x3) << 28)
++#define RPC_DRENR_ADB(o)	(((o) & 0x3) << 24)
++#define RPC_DRENR_OPDB(o)	(((o) & 0x3) << 20)
++#define RPC_DRENR_SPIDB(o)	(((o) & 0x3) << 16)
++#define RPC_DRENR_DME		(0x1 << 15)
++#define RPC_DRENR_CDE		(0x1 << 14)
++#define RPC_DRENR_OCDE		(0x1 << 12)
++#define RPC_DRENR_ADE(v)	(((v) & 0xF) << 8)
++#define RPC_DRENR_OPDE(v)	(((v) & 0xF) << 4)
++
++#define RPC_SMCR		0x0020	/* R/W */
++#define RPC_SMCR_SSLKP		(0x1 << 8)
++#define RPC_SMCR_SPIRE		(0x1 << 2)
++#define RPC_SMCR_SPIWE		(0x1 << 1)
++#define RPC_SMCR_SPIE		(0x1 << 0)
++
++#define RPC_SMCMR		0x0024	/* R/W */
++#define RPC_SMCMR_CMD(c)	(((c) & 0xFF) << 16)
++#define RPC_SMCMR_OCMD(c)	(((c) & 0xFF) << 0)
++
++#define RPC_SMADR		0x0028	/* R/W */
++#define RPC_SMOPR		0x002C	/* R/W */
++#define RPC_SMOPR_OPD0(o)	(((o) & 0xFF) << 0)
++#define RPC_SMOPR_OPD1(o)	(((o) & 0xFF) << 8)
++#define RPC_SMOPR_OPD2(o)	(((o) & 0xFF) << 16)
++#define RPC_SMOPR_OPD3(o)	(((o) & 0xFF) << 24)
++
++#define RPC_SMENR		0x0030	/* R/W */
++#define RPC_SMENR_CDB(o)	(((o) & 0x3) << 30)
++#define RPC_SMENR_OCDB(o)	(((o) & 0x3) << 28)
++#define RPC_SMENR_ADB(o)	(((o) & 0x3) << 24)
++#define RPC_SMENR_OPDB(o)	(((o) & 0x3) << 20)
++#define RPC_SMENR_SPIDB(o)	(((o) & 0x3) << 16)
++#define RPC_SMENR_DME		(0x1 << 15)
++#define RPC_SMENR_CDE		(0x1 << 14)
++#define RPC_SMENR_OCDE		(0x1 << 12)
++#define RPC_SMENR_ADE(v)	(((v) & 0xF) << 8)
++#define RPC_SMENR_OPDE(v)	(((v) & 0xF) << 4)
++#define RPC_SMENR_SPIDE(v)	(((v) & 0xF) << 0)
++
++#define RPC_SMRDR0		0x0038	/* R */
++#define RPC_SMRDR1		0x003C	/* R */
++#define RPC_SMWDR0		0x0040	/* R/W */
++#define RPC_SMWDR1		0x0044	/* R/W */
++#define RPC_CMNSR		0x0048	/* R */
++#define RPC_CMNSR_SSLF		(0x1 << 1)
++#define	RPC_CMNSR_TEND		(0x1 << 0)
++
++#define RPC_DRDMCR		0x0058	/* R/W */
++#define RPC_DRDMCR_DMCYC(v)	(((v) & 0xF) << 0)
++
++#define RPC_DRDRENR		0x005C	/* R/W */
++#define RPC_DRDRENR_HYPE	(0x5 << 12)
++#define RPC_DRDRENR_ADDRE	(0x1 << 0x8)
++#define RPC_DRDRENR_OPDRE	(0x1 << 0x4)
++#define RPC_DRDRENR_DRDRE	(0x1 << 0x0)
++
++#define RPC_SMDMCR		0x0060	/* R/W */
++#define RPC_SMDMCR_DMCYC(v)	(((v) & 0xF) << 0)
++
++#define RPC_SMDRENR		0x0064	/* R/W */
++#define RPC_SMDRENR_HYPE	(0x5 << 12)
++#define RPC_SMDRENR_ADDRE	(0x1 << 0x8)
++#define RPC_SMDRENR_OPDRE	(0x1 << 0x4)
++#define RPC_SMDRENR_SPIDRE	(0x1 << 0x0)
++
++#define RPC_PHYCNT		0x007C	/* R/W */
++#define RPC_PHYCNT_CAL		(0x1 << 31)
++#define PRC_PHYCNT_OCTA_AA	(0x1 << 22)
++#define PRC_PHYCNT_OCTA_SA	(0x2 << 22)
++#define PRC_PHYCNT_EXDS		(0x1 << 21)
++#define RPC_PHYCNT_OCT		(0x1 << 20)
++#define RPC_PHYCNT_WBUF2	(0x1 << 4)
++#define RPC_PHYCNT_WBUF		(0x1 << 2)
++#define RPC_PHYCNT_MEM(v)	(((v) & 0x3) << 0)
++
++#define RPC_PHYINT		0x0088	/* R/W */
++#define RPC_PHYINT_RSTEN	(0x1 << 18)
++#define RPC_PHYINT_WPEN		(0x1 << 17)
++#define RPC_PHYINT_INTEN	(0x1 << 16)
++#define RPC_PHYINT_RST		(0x1 << 2)
++#define RPC_PHYINT_WP		(0x1 << 1)
++#define RPC_PHYINT_INT		(0x1 << 0)
++
++#define RPC_WBUF		0x8000	/* R/W size=4/8/16/32/64Bytes */
++#define RPC_WBUF_SIZE		0x100
++
++static inline phys_addr_t rpc_addr(flash_info_t *info, u32 offset)
++{
++	return offset + CONFIG_SYS_RPC_BASE;
++}
++
++static inline u32 rpc_readl(flash_info_t *info, u32 offset)
++{
++	u32 val;
++
++	val = readl(rpc_addr(info, offset));
++	return val;
++}
++
++static inline void rpc_writel(flash_info_t *info, u32 offset, u32 val)
++{
++	writel(val, rpc_addr(info, offset));
++}
++
++static inline void rpc_setl(flash_info_t *info, u32 offset, u32 msk, u32 set)
++{
++	phys_addr_t addr;
++	u32 val;
++
++	addr = rpc_addr(info, offset);
++	val = readl(addr);
++	val &= msk;
++	val |= set;
++	writel(val, addr);
++}
++
++static void rpc_wait_tend(flash_info_t *info)
++{
++	while (!(rpc_readl(info, RPC_CMNSR) & RPC_CMNSR_TEND))
++		barrier();
++}
++#endif	/* CONFIG_SYS_NO_FLASH */
++
++#endif	/* __RPC_FLASH_H__ */
+-- 
+1.9.3
+

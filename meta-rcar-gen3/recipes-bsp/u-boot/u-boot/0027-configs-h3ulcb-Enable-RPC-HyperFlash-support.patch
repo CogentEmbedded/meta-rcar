@@ -1,0 +1,36 @@
+From be046fe3844db04b04a0c1051375ce7bde7c1dc7 Mon Sep 17 00:00:00 2001
+From: Valentine Barshak <valentine.barshak@cogentembedded.com>
+Date: Wed, 2 Nov 2016 21:34:50 +0300
+Subject: [PATCH 14/15] configs: h3ulcb: Enable RPC HyperFlash support
+
+This enables flash commands along with the RPC HyperFlash support.
+
+Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+---
+ include/configs/h3ulcb.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/include/configs/h3ulcb.h b/include/configs/h3ulcb.h
+index 73e856d..edda5e8 100644
+--- a/include/configs/h3ulcb.h
++++ b/include/configs/h3ulcb.h
+@@ -27,7 +27,15 @@
+ #define CONFIG_CONS_SCIF2
+ #define CONFIG_SH_SCIF_CLK_FREQ	CONFIG_S3D4_CLK_FREQ
+ 
+-#define CONFIG_SYS_NO_FLASH
++/* [A] Hyper Flash */
++/* use to RPC(SPI Multi I/O Bus Controller) */
++#define CONFIG_RPC_HYPERFLASH
++
++#define CONFIG_SYS_FLASH_BASE		CONFIG_SYS_RPC_FLASH_BASE
++#define CONFIG_SYS_MAX_FLASH_BANKS	1
++#define CONFIG_SYS_MAX_FLASH_SECT	256
++
++#define CONFIG_CMD_FLASH
+ 
+ /* Ethernet RAVB */
+ #define CONFIG_RAVB
+-- 
+1.9.3
+

@@ -1,0 +1,35 @@
+From 573a190264dabefd8899c681f62d3eb3ec94a18f Mon Sep 17 00:00:00 2001
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Date: Mon, 20 Nov 2016 22:17:32 +0300
+Subject: [PATCH] configs: ttardrive: Enable RPC HyperFlash support
+
+This enables flash commands along with the RPC HyperFlash support.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+ include/configs/r8a7796_ttardrive.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/include/configs/ttardrive.h b/include/configs/ttardrive.h
+index 2926b95..6d6a2ef 100644
+--- a/include/configs/ttardrive.h
++++ b/include/configs/ttardrive.h
+@@ -28,10 +28,13 @@
+ 
+ /* [A] Hyper Flash */
+ /* use to RPC(SPI Multi I/O Bus Controller) */
++#define CONFIG_RPC_HYPERFLASH
+ 
+-	/* underconstruction */
++#define CONFIG_SYS_FLASH_BASE		CONFIG_SYS_RPC_FLASH_BASE
++#define CONFIG_SYS_MAX_FLASH_BANKS	1
++#define CONFIG_SYS_MAX_FLASH_SECT	256
+ 
+-#define CONFIG_SYS_NO_FLASH
++#define CONFIG_CMD_FLASH
+ 
+ /* Ethernet RAVB */
+ #define CONFIG_RAVB
+-- 
+1.9.3
+

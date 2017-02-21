@@ -1,0 +1,95 @@
+From 9f488a125735b1bf5ad881abb1002a10e95498ed Mon Sep 17 00:00:00 2001
+From: Stefan Hepp <stefan.hepp@tttech-automotive.com>
+Date: Wed, 9 Nov 2016 04:50:43 -0800
+Subject: [PATCH 1/2] ADAS-2178: Set BKUP_TRG pin to GP6_16
+
+---
+ plat/renesas/rcar/bl2_rcar_setup.c    | 10 +++++-----
+ plat/renesas/rcar/ddr/dram_sub_func.c | 15 ++++++++-------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/plat/renesas/rcar/bl2_rcar_setup.c b/plat/renesas/rcar/bl2_rcar_setup.c
+index 5176e9a..3a9fc4c 100755
+--- a/plat/renesas/rcar/bl2_rcar_setup.c
++++ b/plat/renesas/rcar/bl2_rcar_setup.c
+@@ -112,8 +112,8 @@ typedef uint32_t(*ROM_GETLCS_API)(uint32_t *pLcs);
+ 
+ /* for SuspendToRAM */
+ #define	GPIO_BASE	(0xE6050000U)
+-#define	GPIO_INDT1	(GPIO_BASE + 0x100CU)
+-#define	BIT8		((uint32_t)1U<<8)
++#define	GPIO_INDT6	(GPIO_BASE + 0x540CU)
++#define	BIT16		((uint32_t)1U<<16)
+ static uint32_t isDdrBackupMode(void);
+ 
+ /*******************************************************************************
+@@ -618,7 +618,7 @@ void bl2_early_platform_setup(meminfo_t *mem_layout)
+ 
+ /*******************************************************************************
+  * Get DDR Backup Mode from GPIO
+- *  BKUP_TRG(IO port A8, GPIO GP-0-8): LOW=Cold boot, HIGH=Warm boot
++ *  BKUP_TRG(IO port SSI_DATA6, GPIO GP-1-16): LOW=Cold boot, HIGH=Warm boot
+  * return: uint8_t
+  *  0: DDR is not backup mode.
+  *  1: DDR is backup mode.
+@@ -629,8 +629,8 @@ static uint32_t isDdrBackupMode(void)
+ 	static uint32_t backupTrigger = 0U;
+ 	if (backupTriggerOnce == 1U) {
+ 		backupTriggerOnce = 0U;
+-		/* Read and return BKUP_TRG(IO port B8, GPIO GP-1-8) */
+-		if ((mmio_read_32((uintptr_t)GPIO_INDT1) & BIT8) != 0U) {
++		/* Read and return BKUP_TRG(IO port SSI_DATA6, GPIO GP-6-16) */
++		if ((mmio_read_32((uintptr_t)GPIO_INDT6) & BIT16) != 0U) {
+ 			backupTrigger = 1U;
+ 		}
+ 	}
+diff --git a/plat/renesas/rcar/ddr/dram_sub_func.c b/plat/renesas/rcar/ddr/dram_sub_func.c
+index 52ec54b..699c3ee 100644
+--- a/plat/renesas/rcar/ddr/dram_sub_func.c
++++ b/plat/renesas/rcar/ddr/dram_sub_func.c
+@@ -45,6 +45,7 @@
+ #define	BIT_BKUP_CTRL_OUT	((uint8_t)(1U << 4))
+ 
+ #define GPIO_INDT1		(0xE605100CU)
++#define GPIO_INDT6		(0xE605540CU)
+ #if DRAM_BACKUP_GPIO_USE==1
+ #define	GPIO_OUTDT1		(0xE6051008U)
+ #endif
+@@ -53,8 +54,8 @@ void dram_get_boot_status(uint32_t *status)
+ {
+ 	uint32_t reg_data;
+ 
+-	reg_data = mmio_read_32(GPIO_INDT1);
+-	if (0 != (reg_data & (1 << 8))) {
++	reg_data = mmio_read_32(GPIO_INDT6);
++	if (0 != (reg_data & (1 << 16))) {
+ 		*status = DRAM_BOOT_STATUS_WARM;
+ 	} else {
+ 		*status = DRAM_BOOT_STATUS_COLD;
+@@ -94,18 +95,18 @@ int32_t dram_update_boot_status(uint32_t status)
+ 				ret = DRAM_UPDATE_STATUS_ERR;
+ 			} else {
+ 				INFO("BKUP_TRG = %s, BKUP_REQB = %s\n",
+-					*((volatile uint32_t*)GPIO_INDT1)
+-					& (1<<8) ? "1" : "0",
++					*((volatile uint32_t*)GPIO_INDT6)
++					& (1<<16) ? "1" : "0",
+ 					*((volatile uint32_t*)GPIO_INDT1)
+ 					& (1<<9) ? "1" : "0");
+ 			}
+ 		}
+ #endif
+-		/* Wait GP1_8(BKUP_TRG)=Low */
++		/* Wait GP6_16(BKUP_TRG)=Low */
+ 		loop_count = 1000;
+ 		while (0 < loop_count) {
+-			reg_data = mmio_read_32(GPIO_INDT1);
+-			if ((reg_data & (1 << 8)) == 0) {
++			reg_data = mmio_read_32(GPIO_INDT6);
++			if ((reg_data & (1 << 16)) == 0) {
+ 				break;
+ 			}
+ 			loop_count--;
+-- 
+2.7.4
+

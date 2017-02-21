@@ -1,0 +1,47 @@
+From 4eb58860f534991277492ec8e2322381293efa85 Mon Sep 17 00:00:00 2001
+From: Stefan Hepp <stefan.hepp@tttech-automotive.com>
+Date: Thu, 3 Nov 2016 16:57:09 +0100
+Subject: [PATCH 2/2] ADAS-2178: All pins as GPIO inputs, setup correct voltage
+ levels for TTA-R-Drive
+
+---
+ plat/renesas/rcar/pfc/H3/pfc_init_h3.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
+
+diff --git a/plat/renesas/rcar/pfc/H3/pfc_init_h3.c b/plat/renesas/rcar/pfc/H3/pfc_init_h3.c
+index fc3160c..7069072 100644
+--- a/plat/renesas/rcar/pfc/H3/pfc_init_h3.c
++++ b/plat/renesas/rcar/pfc/H3/pfc_init_h3.c
+@@ -1093,13 +1093,7 @@ void pfc_init_h3(void)
+ 				  | POC_SD3_DAT1_33V
+ 				  | POC_SD3_DAT0_33V
+ 				  | POC_SD3_CMD_33V
+-				  | POC_SD3_CLK_33V
+-				  | POC_SD0_DAT3_33V
+-				  | POC_SD0_DAT2_33V
+-				  | POC_SD0_DAT1_33V
+-				  | POC_SD0_DAT0_33V
+-				  | POC_SD0_CMD_33V
+-				  | POC_SD0_CLK_33V);
++				  | POC_SD3_CLK_33V);
+ 
+ 	/* initialize DRV control register */
+ 	pfc_reg_write(PFC_DRVCTRL0, DRVCTRL0_QSPI0_SPCLK(3)
+@@ -1343,10 +1337,10 @@ void pfc_init_h3(void)
+ 
+ 	/* initialize general input/output switching */
+ 	mmio_write_32(GPIO_INOUTSEL0, 0x00000000U);
+-	mmio_write_32(GPIO_INOUTSEL1, 0x01000A00U);
+-	mmio_write_32(GPIO_INOUTSEL2, 0x00000400U);
+-	mmio_write_32(GPIO_INOUTSEL3, 0x0000C000U);
++	mmio_write_32(GPIO_INOUTSEL1, 0x00000000U);
++	mmio_write_32(GPIO_INOUTSEL2, 0x00000000U);
++	mmio_write_32(GPIO_INOUTSEL3, 0x00000000U);
+ 	mmio_write_32(GPIO_INOUTSEL4, 0x00000000U);
+-	mmio_write_32(GPIO_INOUTSEL5, 0x0000020EU);
+-	mmio_write_32(GPIO_INOUTSEL6, 0x00013880U);
++	mmio_write_32(GPIO_INOUTSEL5, 0x00000000U);
++	mmio_write_32(GPIO_INOUTSEL6, 0x00000000U);
+ }
+-- 
+1.9.1

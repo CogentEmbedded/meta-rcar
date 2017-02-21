@@ -20,10 +20,17 @@ SRCREV = "3ad02acfc46bfbebb4a5986b250b31a1f871d2b1"
 SRC_URI_append_m3ulcb = \
     " file://0003-IPL-ddrinit-rev-0.20rc8.patch \
 "
+SRC_URI_append_ttardrive = \
+    " file://0011-rcar-gen3-new-dram-2120-31.patch \
+      file://0012-ADAS-2178-All-pins-as-GPIO-inputs-setup-correct-volt.patch \
+      file://0013-ADAS-2178-Set-BKUP_TRG-pin-to-GP6_16.patch \
+      file://0014-ADAS-2178-Pull-BKUP_REQ-pin-A9-to-high-on-boot.patch \
+      file://0015-ADAS-2178-Set-DDR-configuration-to-H3-SiP-8Gb.patch \
+"
 
 PV = "v1.1+renesas+git${SRCPV}"
 
-COMPATIBLE_MACHINE = "(salvator-x|h3ulcb|m3ulcb)"
+COMPATIBLE_MACHINE = "(salvator-x|h3ulcb|m3ulcb|ttardrive)"
 PLATFORM = "rcar"
 ATFW_OPT_LOSSY = "${@base_conditional("USE_MULTIMEDIA", "1", "RCAR_LOSSY_ENABLE=1", "", d)}"
 ATFW_OPT_BKUP_h3ulcb = "RCAR_BKUP_ENABLE=0"

@@ -15,6 +15,14 @@ SRC_URI_append = " \
     file://0003-board-renesas-Add-H3ULCB-board.patch \
     file://0004-board-renesas-Add-M3ULCB-board.patch \
     file://0009-rcar-gen3-add-CMD_GPIO.patch \
+    file://0011-uboot-board-ulcb-Add-CPLD-support.patch \
+    file://0012-ADAS-2184-Added-TTA-R-Drive-u-boot-BSP-support.patch \
+    file://0021-ARM-rcar_gen3-Add-RPC-flash-definitions.patch \
+    file://0022-mtd-Add-RPC-HyperFlash-support.patch \
+    file://0024-board-renesas-ulcb-Enable-RPC-clock.patch \
+    file://0027-configs-h3ulcb-Enable-RPC-HyperFlash-support.patch \
+    file://0029-configs-ttardrive-Enable-RPC-HyperFlash-support.patch \
+    file://0030-board-renesas-ttardrive-Enable-RPC-clock.patch \
 "
 SRC_URI_append_h3ulcb = '${@ \
     " file://0005-uboot-H3ULCB-support-fixed-PHY.patch \
