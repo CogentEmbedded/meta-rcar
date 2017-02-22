@@ -29,9 +29,9 @@ index 491d378..803636e 100644
  	mstp_clrbits_le32(MSTPSR8, SMSTPCR8, ETHERAVB_MSTP812);
 +	/* RPC */
 +	mstp_clrbits_le32(MSTPSR9, SMSTPCR9, RPC_MSTP917);
- 	/* eMMC */
- 	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, SD1_MSTP313 | SD2_MSTP312);
- 	/* SDHI0, 3 */
+         /* SATA */
+ 	mstp_clrbits_le32(MSTPSR8, SMSTPCR8, SATA_MSTP815);
+ 	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, PCIE1_MSTP318);
 -- 
 1.9.3
 

@@ -8,18 +8,17 @@ TTA-R-Drive is an ADAS development board based on R-Car H3 SoC (R8A7795)
 Signed-off-by: Stefan Hepp <stefan.hepp@tttech-automotive.com>
 Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- arch/arm/cpu/armv8/Kconfig         |   6 +-
+ arch/arm/cpu/armv8/Kconfig          |   6 +-
  board/renesas/ttardrive/Kconfig     |  15 ++
  board/renesas/ttardrive/MAINTAINERS |   6 +
  board/renesas/ttardrive/Makefile    |   9 +
- board/renesas/ttardrive/ttardrive.c | 317 ++++++++++++++++++++++++++++++++++
- common/cmd_i2c.c                   | 261 +++++++++++++++++++++++++++-
- configs/ttardrive_defconfig        |   9 +
- drivers/i2c/Makefile               |   1 +
- drivers/i2c/rcar_i2c.c             |  31 +++-
- drivers/i2c/rcar_i2c_bitbang.c     | 338 +++++++++++++++++++++++++++++++++++++
- include/configs/ttardrive.h        | 181 ++++++++++++++++++++
- 11 files changed, 1169 insertions(+), 5 deletions(-)
+ board/renesas/ttardrive/ttardrive.c | 421 ++++++++++++++++++++++++++++++++++++
+ configs/ttardrive_defconfig         |  10 +
+ drivers/i2c/Makefile                |   1 +
+ drivers/i2c/rcar_i2c.c              |  47 +++-
+ drivers/i2c/rcar_i2c_bitbang.c      | 340 +++++++++++++++++++++++++++++
+ include/configs/ttardrive.h         | 191 ++++++++++++++++
+ 10 files changed, 1039 insertions(+), 7 deletions(-)
  create mode 100644 board/renesas/ttardrive/Kconfig
  create mode 100644 board/renesas/ttardrive/MAINTAINERS
  create mode 100644 board/renesas/ttardrive/Makefile
@@ -29,7 +28,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  create mode 100644 include/configs/ttardrive.h
 
 diff --git a/arch/arm/cpu/armv8/Kconfig b/arch/arm/cpu/armv8/Kconfig
-index 028be7f..0c18fe0 100644
+index 028be7f..a998698 100644
 --- a/arch/arm/cpu/armv8/Kconfig
 +++ b/arch/arm/cpu/armv8/Kconfig
 @@ -16,6 +16,9 @@ config TARGET_SALVATOR_X
@@ -57,7 +56,7 @@ index 028be7f..0c18fe0 100644
  endif
 diff --git a/board/renesas/ttardrive/Kconfig b/board/renesas/ttardrive/Kconfig
 new file mode 100644
-index 0000000..7f196d3
+index 0000000..eec721e
 --- /dev/null
 +++ b/board/renesas/ttardrive/Kconfig
 @@ -0,0 +1,15 @@
@@ -78,7 +77,7 @@ index 0000000..7f196d3
 +endif
 diff --git a/board/renesas/ttardrive/MAINTAINERS b/board/renesas/ttardrive/MAINTAINERS
 new file mode 100644
-index 0000000..951eca5
+index 0000000..b23e36e
 --- /dev/null
 +++ b/board/renesas/ttardrive/MAINTAINERS
 @@ -0,0 +1,6 @@
@@ -90,7 +89,7 @@ index 0000000..951eca5
 +F:	configs/ttardrive_defconfig
 diff --git a/board/renesas/ttardrive/Makefile b/board/renesas/ttardrive/Makefile
 new file mode 100644
-index 0000000..b67a43b
+index 0000000..3b771ca
 --- /dev/null
 +++ b/board/renesas/ttardrive/Makefile
 @@ -0,0 +1,9 @@
@@ -105,10 +104,10 @@ index 0000000..b67a43b
 +obj-y	:= ttardrive.o ../rcar-gen3-common/common.o
 diff --git a/board/renesas/ttardrive/ttardrive.c b/board/renesas/ttardrive/ttardrive.c
 new file mode 100644
-index 0000000..764c4c4
+index 0000000..e306563
 --- /dev/null
 +++ b/board/renesas/ttardrive/ttardrive.c
-@@ -0,0 +1,317 @@
+@@ -0,0 +1,421 @@
 +/*
 + * board/renesas/ttardrive/ttardrive.c
 + *     This file is the TTA-R-Drive board support.
@@ -137,6 +136,7 @@ index 0000000..764c4c4
 +#include <asm/arch/sh_sdhi.h>
 +#include <i2c.h>
 +#include <mmc.h>
++#include <phy.h>
 +
 +DECLARE_GLOBAL_DATA_PTR;
 +
@@ -147,11 +147,47 @@ index 0000000..764c4c4
 +#define SD1_MSTP313	(1 << 13)
 +#define SD2_MSTP312	(1 << 12)		/* either MMC0 */
 +#define SD3_MSTP311	(1 << 11)		/* either MMC1 */
++#define PCIE0_MSTP319   (1 << 19)
++#define PCIE1_MSTP318   (1 << 18)
++#define SATA_MSTP815    (1 << 15)
 +
 +#define SD0CKCR		0xE6150074
 +#define SD1CKCR		0xE6150078
 +#define SD2CKCR		0xE6150268
 +#define SD3CKCR		0xE615026C
++
++#define REFSEL          0xE65E4024
++#define REFSEL_INTCLK   2
++
++#ifdef CONFIG_DM_I2C
++#define DEFAULT_ADDR_LEN        (-1)
++#else
++#define DEFAULT_ADDR_LEN        1
++#endif
++
++
++#define CLK_CFG_SZ      106
++#define CLK_I2C_ADDR    0x6A
++
++/* Configuration for USB, Ethernet, HDMI clocks */
++static const unsigned char clk_config_x6x9[CLK_CFG_SZ] = {
++    0x61,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0x01,0xC0,0x00,0xB6,0xB4,0x92,
++    0x80,0x0C,0xFD,0xFC,0x00,0x03,0x8C,0x06,0x40,0x00,0x00,0x00,0x9F,0xFF,0xE0,0x80,
++    0x00,0x81,0x03,0x83,0xE0,0xF8,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x02,0x50,0x00,
++    0x00,0x81,0x03,0x83,0xE0,0xF8,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x02,0x50,0x00,
++    0x00,0x81,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x01,0x90,0x00,
++    0x00,0x81,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xA0,0x00,
++    0x23,0x01,0x23,0x01,0x23,0x01,0x3B,0x01,0xFC,0x7C};
++
++/* Configuration for PCIe and SATA clocks */
++static const unsigned char clk_config_pcie[CLK_CFG_SZ] = {
++    0x61,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0x01,0xC0,0x00,0xB6,0xB4,0x92,
++    0x80,0x0C,0xFD,0xFC,0x00,0x03,0x8C,0x06,0x40,0x00,0x00,0x00,0x9F,0xFF,0xE0,0x80,
++    0x00,0x81,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xC0,0x00,
++    0x00,0x81,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xC0,0x00,
++    0x00,0x81,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xC0,0x00,
++    0x00,0x81,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xC0,0x00,
++    0x5B,0x01,0x5B,0x01,0x5B,0x01,0x5B,0x01,0xFC,0x7C};
 +
 +int board_early_init_f(void)
 +{
@@ -164,6 +200,10 @@ index 0000000..764c4c4
 +	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, SCIF2_MSTP310);
 +	/* EHTERAVB */
 +	mstp_clrbits_le32(MSTPSR8, SMSTPCR8, ETHERAVB_MSTP812);
++        /* SATA */
++	mstp_clrbits_le32(MSTPSR8, SMSTPCR8, SATA_MSTP815);
++	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, PCIE1_MSTP318);
++	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, PCIE0_MSTP319);
 +	/* eMMC */
 +	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, SD3_MSTP311);
 +
@@ -217,7 +257,9 @@ index 0000000..764c4c4
 +#define GPIO_SWITCH_RESET_2     GPIO_GP_6_14
 +#define GPIO_GMSL_PWDN_1        GPIO_GP_3_7
 +#define GPIO_GMSL_PWDN_2        GPIO_GP_4_4
-+
++#define GPIO_FPDLINK_PDB	GPIO_GP_6_3
++#define GPIO_RH850_GPIO0	GPIO_GP_2_3
++#define GPIO_RH850_GPIO1	GPIO_GP_2_4
 +
 +/* SYSC */
 +#define	SYSC_PWRSR2	0xE6180100	/* R/- 32 Power status register 2(3DG) */
@@ -236,9 +278,44 @@ index 0000000..764c4c4
 +	writel(val, reg);
 +}
 +
++static int write_clk_config ( int bus_clk, const unsigned char *data, int length, int delay )
++{       
++        uint    chip;
++        uint    addr;
++        int     alen;
++        int     bus_no;
++	int	count;
++
++        bus_no = i2c_get_bus_num();
++        
++        if(bus_no != bus_clk)
++        {       
++                i2c_set_bus_num(bus_clk);
++        }
++        
++        chip = CLK_I2C_ADDR;
++        addr = 0x00;
++        alen = DEFAULT_ADDR_LEN;
++
++	if (delay == 0) {
++
++	   i2c_write(chip, addr, alen, data, length);
++
++	} else {
++
++	    for (addr = 0x00; addr < length; addr++, data++) { 
++		i2c_write(chip, addr, alen, data, count);
++		udelay(delay);
++	    }
++	}
++
++        return 0;
++}
++
 +int board_init(void)
 +{
 +	u32 val;
++	int is_rcar_alfa;
 +
 +	/* adress of boot parameters */
 +	gd->bd->bi_boot_params = CONFIG_SYS_TEXT_BASE + 0x50000;
@@ -256,11 +333,12 @@ index 0000000..764c4c4
 +        writel(~val, PFC_PMMR);
 +        writel(val, PFC_MOD_SEL2);
 +
-+	/* Setup GPIO output pins */
++	/* Setup GPIO pins */
 +	gpio_request(GPIO_EMMC_RESET, NULL);
 +	gpio_request(GPIO_LED_ON, NULL);
 +	gpio_request(GPIO_LED_LOAD, NULL);
 +	gpio_request(GPIO_CLOCKGEN_OE, NULL);
++	gpio_request(GPIO_CLOCKGEN_PCIE_OE, NULL);
 +	gpio_request(GPIO_CAM_POC_ENABLE, NULL);
 +	gpio_request(GPIO_GMSL_PWDN_1, NULL);
 +	gpio_request(GPIO_GMSL_PWDN_2, NULL);
@@ -268,16 +346,35 @@ index 0000000..764c4c4
 +	gpio_request(GPIO_STARTUP_MODE_1, NULL);
 +	gpio_request(GPIO_SWITCH_RESET_1, NULL);
 +	gpio_request(GPIO_SWITCH_RESET_2, NULL);
++	gpio_request(GPIO_FPDLINK_PDB, NULL);
++	gpio_request(GPIO_RH850_GPIO0, NULL);
++	gpio_request(GPIO_RH850_GPIO1, NULL);
 +
-+	/* LEDs, clock output enable (low active) */
++	/* Check which R-Car we are .. */
++	gpio_direction_input(GPIO_RH850_GPIO0);
++
++	is_rcar_alfa = gpio_get_value(GPIO_RH850_GPIO0);
++
++	printf("R-Car: %s\n", (is_rcar_alfa ? "Alfa" : "Beta"));
++
++	/* LEDs, clock output enable (low active) */ 
 +	gpio_direction_output(GPIO_LED_ON, 1);
 +	gpio_direction_output(GPIO_LED_LOAD, 0);
 +	gpio_direction_output(GPIO_CLOCKGEN_OE, 0);
++	gpio_direction_output(GPIO_CLOCKGEN_PCIE_OE, 0);
 +
-+	/* Camera PoE disable, GMSL power down (low active) */
-+	gpio_direction_output(GPIO_CAM_POC_ENABLE, 0);
-+	gpio_direction_output(GPIO_GMSL_PWDN_1, 0);
-+	gpio_direction_output(GPIO_GMSL_PWDN_2, 0);
++	/* Camera PoE enable, GMSL power up (low active), FPDLink enable */
++	gpio_direction_output(GPIO_CAM_POC_ENABLE, 1);
++	gpio_direction_output(GPIO_GMSL_PWDN_1, 1);
++	gpio_direction_output(GPIO_GMSL_PWDN_2, 1);
++	gpio_direction_output(GPIO_FPDLINK_PDB, 1);
++
++	/* Setup clock generators */
++	write_clk_config( 1, clk_config_x6x9, CLK_CFG_SZ, 0 );
++	if (is_rcar_alfa) {
++	    /* TODO Check why we need a delay on the hardware I2C bus for the clock */
++	    write_clk_config( 0, clk_config_pcie, CLK_CFG_SZ, 10 );
++	}
 +
 +#ifdef CONFIG_RAVB
 +	/* EtherAVB Enable */
@@ -304,10 +401,13 @@ index 0000000..764c4c4
 +	/* IPSR3 */
 +	gpio_request(GPIO_FN_AVB_AVTP_CAPTURE_B, NULL);
 +
-+	/* EtherAVB */
++	/* EtherAVB drive strength */
 +	write_drvctrl(0x00000777, 0x00000777, (void *)PFC_DRVCTRL2);
 +	write_drvctrl(0x77700000, 0x77700000, (void *)PFC_DRVCTRL3);
 +#endif
++
++        /* Enable SATA internal clock source */
++        writel( REFSEL_INTCLK, REFSEL );
 +
 +	return 0;
 +}
@@ -320,8 +420,10 @@ index 0000000..764c4c4
 +	u32 val;
 +	unsigned char enetaddr[6];
 +
-+	if (!eth_getenv_enetaddr("ethaddr", enetaddr))
++	if (!eth_getenv_enetaddr("ethaddr", enetaddr)) {
++		printf("MAC address not set! Use 'setev ethaddr' to define the MAC address for ravb.\n");
 +		return ret;
++	}
 +
 +	/* Set Mac address */
 +	val = enetaddr[0] << 24 | enetaddr[1] << 16 |
@@ -340,6 +442,8 @@ index 0000000..764c4c4
 +/* TTA-R-Drive uses a fixed-PHY hardware setup */
 +int board_phy_config(struct phy_device *phydev)
 +{
++        if (!strncmp(phydev->drv->name, "fixed-PHY", 9) && phydev->drv->config)
++               return phydev->drv->config(phydev);
 +	return 0;
 +}
 +
@@ -412,10 +516,9 @@ index 0000000..764c4c4
 +{
 +#if defined(CONFIG_SYS_I2C)
 +#if defined(CONFIG_SYS_I2C_SH)
++	i2c_set_bus_num(2);
 +	i2c_reg_write(CONFIG_SYS_I2C_POWERIC_ADDR, 0x20, 0x80);
 +#endif
-+	/* In u-boot, bus '0' will be the I2C bus where the clock generator can be accessed on. */
-+	i2c_set_bus_num(0);
 +#endif
 +}
 +
@@ -426,301 +529,12 @@ index 0000000..764c4c4
 +	return 0;
 +}
 +#endif
-diff --git a/common/cmd_i2c.c b/common/cmd_i2c.c
-index ad38cbf..3d0f191 100644
---- a/common/cmd_i2c.c
-+++ b/common/cmd_i2c.c
-@@ -92,6 +92,19 @@ static uint	i2c_mm_last_chip;
- static uint	i2c_mm_last_addr;
- static uint	i2c_mm_last_alen;
- 
-+#define CLK_CFG_SZ	106
-+#define PMIC_I2C_ADDR	0x50
-+#define CLK_I2C_ADDR	0x6A
-+
-+char clk_config_ttardrive[CLK_CFG_SZ] = {
-+0x61,0xFF,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0x01,0xC0,0x00,0xB6,0xB4,0x92,0x80,0x0C,0x81,0x80,0x00,0x03,0x8C,0x06,0x40,0x00,0x00,0x00,0x9F,0xFF,0xE0,0x80,0x00,
-+0x81,0x02,0x6A,0x79,0x48,0x00,0x00,0x00,0x00,0x04,0x00,0x01,0x01,0x60,0x00,0x00,0x0C,0x02,0x6A,0x79,0x48,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x01,0x60,0x00,0x00,0x81,
-+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x01,0x90,0x00,0x00,0x81,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0xA0,0x00,0x23,0x01,0x23,
-+0x01,0x23,0x01,0x3B,0x01,0xFF,0x7C};
-+
-+
-+
-+
- /* If only one I2C bus is present, the list of devices to ignore when
-  * the probe command is issued is represented by a 1D array of addresses.
-  * When multiple buses are present, the list is an array of bus-address
-@@ -478,7 +491,6 @@ static int do_i2c_md ( cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]
- #ifdef CONFIG_DM_I2C
- 	struct udevice *dev;
- #endif
--
- 	/* We use the last specified parameters, unless new ones are
- 	 * entered.
- 	 */
-@@ -575,6 +587,243 @@ static int do_i2c_md ( cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]
- }
- 
- /**
-+ * do_read_pmic() - Handle the "i2c md 50 0 {nb_elem_to_read}" command-line command
-+ * @cmdtp:	Command data struct pointer
-+ * @flag:	Command flag
-+ * @argc:	Command-line argument count
-+ * @argv:	Array of command-line arguments
-+ *
-+ * Returns zero on success, negative
-+ * on error.
-+ *
-+ * Syntax:
-+ *	rd_pmic_cfg {nb_elem_to_read}
-+ * 	by default nb_elem_to_read = 0xff
-+ */
-+static int do_read_pmic ( cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
-+{
-+	uint	chip;
-+	uint	addr, length;
-+	int alen;
-+	int	j, nbytes, linebytes;
-+	int ret, bus_no	;
-+
-+	bus_no = i2c_get_bus_num();
-+
-+	if(bus_no != 1)
-+	{
-+		i2c_set_bus_num(1);
-+		printf("Switched to I2C bus 1\n");
-+	}
-+
-+	chip = PMIC_I2C_ADDR;
-+	addr = 0x00;
-+	if(argv[1] == NULL)
-+	{
-+		printf("number of elements to read missing, default set to 255\n");
-+		length = 0xFF;
-+	}
-+	else
-+	{
-+		length = simple_strtoul(argv[1], NULL, 16);
-+	}
-+
-+	alen = DEFAULT_ADDR_LEN;
-+	nbytes = length;
-+	do {
-+		unsigned char	linebuf[DISP_LINE_LEN];
-+		unsigned char	*cp;
-+
-+		linebytes = (nbytes > DISP_LINE_LEN) ? DISP_LINE_LEN : nbytes;
-+		ret = i2c_read(chip, addr, alen, linebuf, linebytes);
-+		if (ret)
-+			return i2c_report_err(ret, I2C_ERR_READ);
-+		else {
-+			printf("%04x:", addr);
-+			cp = linebuf;
-+			for (j=0; j<linebytes; j++) {
-+				printf(" %02x", *cp++);
-+				addr++;
-+			}
-+			puts ("    ");
-+			cp = linebuf;
-+			for (j=0; j<linebytes; j++) {
-+				if ((*cp < 0x20) || (*cp > 0x7e))
-+					puts (".");
-+				else
-+					printf("%c", *cp);
-+				cp++;
-+			}
-+			putc ('\n');
-+		}
-+		nbytes -= linebytes;
-+	} while (nbytes > 0);
-+
-+	return 0;
-+}
-+
-+/**
-+ * do_write_pmic() - Handle the "i2c mw 50 {addr} {data} {count}" command-line command
-+ * @cmdtp:	Command data struct pointer
-+ * @flag:	Command flag
-+ * @argc:	Command-line argument count
-+ * @argv:	Array of command-line arguments
-+ *
-+ * Returns zero on success, negative
-+ * on error.
-+ *
-+ * Syntax:
-+ *	wr_pmic_cfg
-+ * 	by default addr = 0x50, data= pmic_config[TBD] , count=TBD
-+ */
-+static int do_write_pmic ( cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
-+{
-+	printf("No configuration defined");
-+	return 0;
-+}
-+
-+
-+/**
-+ * do_write_clk() - Handle the "i2c mw 6a {addr} {data} {count}" command-line command
-+ * @cmdtp:	Command data struct pointer
-+ * @flag:	Command flag
-+ * @argc:	Command-line argument count
-+ * @argv:	Array of command-line arguments
-+ *
-+ * Returns zero on success, negative
-+ * on error.
-+ *
-+ * Syntax:
-+ *	wr_clk_cfg
-+ * 	default addr = 0, data = clk_config_ttardrive, count = 106
-+ */
-+static int do_write_clk ( cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
-+{
-+	uint	chip;
-+	uint	addr;
-+	int     alen;
-+	int 	ret, bus_no;
-+	int	count;
-+	uchar	byte;
-+	uchar 	index;
-+
-+	bus_no = i2c_get_bus_num();
-+
-+	if(bus_no != 0)
-+	{
-+		i2c_set_bus_num(0);
-+		printf("Switched to I2C bus 0\n");
-+	}
-+
-+	chip = CLK_I2C_ADDR;
-+	count = CLK_CFG_SZ;
-+	addr = 0x00;
-+
-+	alen = DEFAULT_ADDR_LEN;
-+
-+	i2c_write(chip, addr, alen, clk_config_ttardrive, count);
-+
-+	/*
-+	for(index = 0; index < count; index++ ) {
-+		byte = clk_config_ttardrive[index];
-+		ret = i2c_write(chip, addr++, alen, &byte, 1);
-+		if (ret)
-+			return i2c_report_err(ret, I2C_ERR_WRITE);
-+
-+		*
-+		 * Wait for the write to complete.  The write can take
-+		 * up to 10mSec (we allow a little more time).
-+		 *
-+*
-+ * No write delay with FRAM devices.
-+ *
-+#if !defined(CONFIG_SYS_I2C_FRAM)
-+		udelay(11000);
-+#endif
-+	}
-+	*/
-+
-+	return 0;
-+}
-+
-+/**
-+ * do_read_clk() - Handle the "i2c md 6a 0 {nb_elem_to_read}" command-line command
-+ * @cmdtp:	Command data struct pointer
-+ * @flag:	Command flag
-+ * @argc:	Command-line argument count
-+ * @argv:	Array of command-line arguments
-+ *
-+ * Returns zero on success, CMD_RET_USAGE in case of misuse and negative
-+ * on error.
-+ *
-+ * Syntax:
-+ *	rd_clk_cfg
-+ * 	default nb_elem_to_read = 0xff
-+ */
-+static int do_read_clk ( cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
-+{
-+	uint	chip;
-+	uint	addr, length;
-+	int alen;
-+	int	j, nbytes, linebytes;
-+	int ret, bus_no	;
-+
-+	bus_no = i2c_get_bus_num();
-+
-+	if(bus_no != 0)
-+	{
-+		i2c_set_bus_num(0);
-+		printf("Switched to I2C bus 0\n");
-+	}
-+
-+	chip = CLK_I2C_ADDR;
-+	addr = 0x00;
-+	if(argv[1] == NULL)
-+	{
-+		printf("number of elements to read missing, default set to 255\n");
-+		length = 0xFF;
-+	}
-+	else
-+	{
-+		length = simple_strtoul(argv[1], NULL, 16);
-+	}
-+
-+	alen = DEFAULT_ADDR_LEN;
-+	nbytes = length;
-+	do {
-+		unsigned char	linebuf[DISP_LINE_LEN];
-+		unsigned char	*cp;
-+
-+		linebytes = (nbytes > DISP_LINE_LEN) ? DISP_LINE_LEN : nbytes;
-+		ret = i2c_read(chip, addr, alen, linebuf, linebytes);
-+		if (ret)
-+			return i2c_report_err(ret, I2C_ERR_READ);
-+		else {
-+			printf("%04x:", addr);
-+			cp = linebuf;
-+			for (j=0; j<linebytes; j++) {
-+				printf(" %02x", *cp++);
-+				addr++;
-+			}
-+			puts ("    ");
-+			cp = linebuf;
-+			for (j=0; j<linebytes; j++) {
-+				if ((*cp < 0x20) || (*cp > 0x7e))
-+					puts (".");
-+				else
-+					printf("%c", *cp);
-+				cp++;
-+			}
-+			putc ('\n');
-+		}
-+		nbytes -= linebytes;
-+	} while (nbytes > 0);
-+
-+	return 0;
-+}
-+
-+
-+/**
-  * do_i2c_mw() - Handle the "i2c mw" command-line command
-  * @cmdtp:	Command data struct pointer
-  * @flag:	Command flag
-@@ -1937,3 +2186,12 @@ U_BOOT_CMD(
- 	"I2C sub-system",
- 	i2c_help_text
- );
-+
-+U_BOOT_CMD(
-+	rd_pmic_cfg, 3, 0, do_read_pmic, "Read PMIC's EEPROM", "");
-+U_BOOT_CMD(
-+	wr_pmic_cfg, 3, 0, do_write_pmic, "Write to PMIC's EEPROM", "");
-+U_BOOT_CMD(
-+	rd_clk_cfg, 3, 0, do_read_clk, "Read clock configuration", "");
-+U_BOOT_CMD(
-+	wr_clk_cfg, 3, 0, do_write_clk, "Write clock configuration", "");
 diff --git a/configs/ttardrive_defconfig b/configs/ttardrive_defconfig
 new file mode 100644
-index 0000000..ae51789
+index 0000000..223f77a
 --- /dev/null
 +++ b/configs/ttardrive_defconfig
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,10 @@
 +CONFIG_ARM=y
 +CONFIG_RCAR_GEN3=y
 +CONFIG_DM_SERIAL=y
@@ -730,6 +544,7 @@ index 0000000..ae51789
 +CONFIG_SH_SDHI=y
 +CONFIG_CMD_I2C=y
 +CONFIG_SYS_I2C_RCAR_BB=y
++CONFIG_SYS_I2C_RCAR=y
 diff --git a/drivers/i2c/Makefile b/drivers/i2c/Makefile
 index 26ea854..5516a3a 100644
 --- a/drivers/i2c/Makefile
@@ -743,10 +558,10 @@ index 26ea854..5516a3a 100644
  obj-$(CONFIG_SYS_I2C_SANDBOX) += sandbox_i2c.o i2c-emul-uclass.o
  obj-$(CONFIG_SYS_I2C_SH) += sh_i2c.o
 diff --git a/drivers/i2c/rcar_i2c.c b/drivers/i2c/rcar_i2c.c
-index 90ad116..cb9c271 100644
+index 90ad116..08c8701 100644
 --- a/drivers/i2c/rcar_i2c.c
 +++ b/drivers/i2c/rcar_i2c.c
-@@ -48,11 +48,20 @@ struct rcar_i2c {
+@@ -48,15 +48,26 @@ struct rcar_i2c {
  #define MSR_MDR		0x02
  #define MSR_MAT		0x01	/* slave addr xfer done	*/
  
@@ -766,8 +581,15 @@ index 90ad116..cb9c271 100644
 +#endif
  };
  
- static void rcar_i2c_raw_rw_common(struct rcar_i2c *dev, u8 chip, uint addr)
-@@ -66,9 +75,15 @@ static void rcar_i2c_raw_rw_common(struct rcar_i2c *dev, u8 chip, uint addr)
+-static void rcar_i2c_raw_rw_common(struct rcar_i2c *dev, u8 chip, uint addr)
++static int rcar_i2c_raw_rw_common(struct rcar_i2c *dev, u8 chip, uint addr)
+ {
++	u32 status;
++
+ 	/* set slave address */
+ 	writel(chip << 1, &dev->icmar);
+ 	/* set register address */
+@@ -66,9 +77,17 @@ static void rcar_i2c_raw_rw_common(struct rcar_i2c *dev, u8 chip, uint addr)
  	/* start master send */
  	writel(MCR_MDBS | MCR_MIE | MCR_ESG, &dev->icmcr);
  
@@ -782,11 +604,44 @@ index 90ad116..cb9c271 100644
 +            }
 +            if (status != (MSR_MAT | MSR_MDE))
 +                udelay(10);
++	    else
++		break;
 +        }
  
  	/* clear ESG */
  	writel(MCR_MDBS | MCR_MIE, &dev->icmcr);
-@@ -276,15 +291,25 @@ static unsigned int rcar_i2c_set_bus_speed(struct i2c_adapter *adap,
+@@ -77,6 +96,8 @@ static void rcar_i2c_raw_rw_common(struct rcar_i2c *dev, u8 chip, uint addr)
+ 
+ 	while (!(readl(&dev->icmsr) & MSR_MDE))
+ 		udelay(10);
++	
++	return 0;
+ }
+ 
+ static void rcar_i2c_raw_rw_finish(struct rcar_i2c *dev)
+@@ -90,7 +111,9 @@ static void rcar_i2c_raw_rw_finish(struct rcar_i2c *dev)
+ static int
+ rcar_i2c_raw_write(struct rcar_i2c *dev, u8 chip, uint addr, u8 *val, int size)
+ {
+-	rcar_i2c_raw_rw_common(dev, chip, addr);
++	if (rcar_i2c_raw_rw_common(dev, chip, addr) < 0) {
++	    return -1;
++	}
+ 
+ 	/* set send date */
+ 	writel(*val, &dev->icrxdtxd);
+@@ -115,7 +138,9 @@ rcar_i2c_raw_read(struct rcar_i2c *dev, u8 chip, uint addr)
+ {
+ 	u8 ret;
+ 
+-	rcar_i2c_raw_rw_common(dev, chip, addr);
++	if (rcar_i2c_raw_rw_common(dev, chip, addr) < 0) {
++	    return 0;
++	}
+ 
+ 	/* set slave address, receive */
+ 	writel((chip << 1) | 1, &dev->icmar);
+@@ -276,15 +301,25 @@ static unsigned int rcar_i2c_set_bus_speed(struct i2c_adapter *adap,
  /*
   * Register RCAR i2c adapters
   */
@@ -814,10 +669,10 @@ index 90ad116..cb9c271 100644
 +#endif
 diff --git a/drivers/i2c/rcar_i2c_bitbang.c b/drivers/i2c/rcar_i2c_bitbang.c
 new file mode 100644
-index 0000000..4cf3b6c
+index 0000000..540f60f
 --- /dev/null
 +++ b/drivers/i2c/rcar_i2c_bitbang.c
-@@ -0,0 +1,339 @@
+@@ -0,0 +1,340 @@
 +/*
 + * drivers/i2c/rcar_i2c_bitbang.c
 + *
@@ -886,7 +741,7 @@ index 0000000..4cf3b6c
 +};
 +
 +static void
-+rcar_i2c_init(struct i2c_adapter *adap, int speed, int slaveadd)
++rcar_i2c_bb_init(struct i2c_adapter *adap, int speed, int slaveadd)
 +{
 +	struct rcar_i2c *dev = (struct rcar_i2c *)i2c_dev[adap->hwadapnr];
 +
@@ -917,6 +772,7 @@ index 0000000..4cf3b6c
 +static void rcar_i2c_bb_set_scl_sda(struct rcar_i2c *dev, char scl, char sda) {
 +	u32 val;
 +	val = MCR_OBPC;
++	/* SCL and SDA swapped intentionally because of wrong wiring on TTA-R-Drive. */
 +	if (scl)
 +		val |= MCR_FSDA;
 +	if (sda)
@@ -937,7 +793,7 @@ index 0000000..4cf3b6c
 +}
 +
 +static void rcar_i2c_bb_start(struct rcar_i2c *dev, char repeat) {
-+	/* For some reason, reading back SDA does not work correctly
++	/* For some reason, reading back SDA does not work correctly 
 +	 * the first time before any transmission has been done
 +	 */
 +	/*
@@ -975,7 +831,7 @@ index 0000000..4cf3b6c
 +		rcar_i2c_bb_set_scl_sda(dev, 0, bit);
 +		udelay(1);
 +	}
-+
++	
 +	/* release SDA, read ack bit */
 +	rcar_i2c_bb_set_scl_sda(dev, 0, bit);
 +	rcar_i2c_bb_set_scl_sda(dev, 0, 1);
@@ -995,21 +851,22 @@ index 0000000..4cf3b6c
 +	int i;
 +	char bit;
 +	u8 data = 0;
-+
++	
 +	/* release SDA */
 +	rcar_i2c_bb_set_scl_sda(dev, 0, 1);
 +
 +	for (i = 7; i >= 0; i--) {
 +		udelay(5);
 +		rcar_i2c_bb_set_scl_sda(dev, 1, 1);
-+
-+		/* wait for clock stretching */
++		
++		/* Wait for clock stretching */
++		/* Reading back SDA pin does not work properly, so this would delay endlessly */
 +		/*
 +		while (rcar_i2c_bb_read_scl(dev) == 0) {
 +		    udelay(1);
 +		}
 +		*/
-+
++		
 +		udelay(2);
 +		bit = rcar_i2c_bb_read_sda(dev);
 +		data = (data << 1) | bit;
@@ -1043,7 +900,7 @@ index 0000000..4cf3b6c
 +}
 +
 +
-+static int rcar_i2c_read(struct i2c_adapter *adap, uint8_t chip,
++static int rcar_i2c_bb_read(struct i2c_adapter *adap, uint8_t chip,
 +			uint addr, int alen, u8 *data, int len)
 +{
 +	struct rcar_i2c *dev = (struct rcar_i2c *)i2c_dev[adap->hwadapnr];
@@ -1061,9 +918,9 @@ index 0000000..4cf3b6c
 +		puts("rcar-i2c-bb: got address NACK\n");
 +		return -1;
 +	}
-+
++	
 +	rcar_i2c_bb_start(dev, 1);
-+
++	
 +	/* Read data */
 +	if (rcar_i2c_bb_tx(dev, (chip << 1) | 0x1)) {
 +		rcar_i2c_bb_stop(dev);
@@ -1080,14 +937,13 @@ index 0000000..4cf3b6c
 +	return 0;
 +}
 +
-+static int rcar_i2c_write(struct i2c_adapter *adap, uint8_t chip, uint addr,
++static int rcar_i2c_bb_write(struct i2c_adapter *adap, uint8_t chip, uint addr,
 +			int alen, u8 *data, int len)
 +{
 +	struct rcar_i2c *dev = (struct rcar_i2c *)i2c_dev[adap->hwadapnr];
 +	int i;
 +
 +	rcar_i2c_bb_start(dev, 0);
-+
 +	if (rcar_i2c_bb_tx(dev, chip << 1)) {
 +		rcar_i2c_bb_stop(dev);
 +		puts("rcar-i2c-bb: got chip NACK\n");
@@ -1098,7 +954,7 @@ index 0000000..4cf3b6c
 +		puts("rcar-i2c-bb: got address NACK\n");
 +		return -1;
 +	}
-+
++	
 +	for (i = 0; i < len; i++) {
 +		if (rcar_i2c_bb_tx(dev, data[i])) {
 +			rcar_i2c_bb_stop(dev);
@@ -1113,12 +969,12 @@ index 0000000..4cf3b6c
 +}
 +
 +static int
-+rcar_i2c_probe(struct i2c_adapter *adap, u8 dev)
++rcar_i2c_bb_probe(struct i2c_adapter *adap, u8 dev)
 +{
-+	return rcar_i2c_read(adap, dev, 0, 0, NULL, 0);
++	return rcar_i2c_bb_read(adap, dev, 0, 0, NULL, 0);
 +}
 +
-+static unsigned int rcar_i2c_set_bus_speed(struct i2c_adapter *adap,
++static unsigned int rcar_i2c_bb_set_bus_speed(struct i2c_adapter *adap,
 +			unsigned int speed)
 +{
 +	struct rcar_i2c *dev = (struct rcar_i2c *)i2c_dev[adap->hwadapnr];
@@ -1137,32 +993,32 @@ index 0000000..4cf3b6c
 + */
 +#ifdef CONFIG_SYS_I2C_RCAR_BB
 +#ifdef CONFIG_SYS_RCAR_BB_I2C0_BASE
-+U_BOOT_I2C_ADAP_COMPLETE(rcar_0, rcar_i2c_init, rcar_i2c_probe, rcar_i2c_read,
-+			 rcar_i2c_write, rcar_i2c_set_bus_speed,
++U_BOOT_I2C_ADAP_COMPLETE(rcar_bb_0, rcar_i2c_bb_init, rcar_i2c_bb_probe, rcar_i2c_bb_read,
++			 rcar_i2c_bb_write, rcar_i2c_bb_set_bus_speed,
 +			 CONFIG_SYS_RCAR_BB_I2C0_SPEED, 0, 0)
 +#endif
 +#ifdef CONFIG_SYS_RCAR_BB_I2C1_BASE
-+U_BOOT_I2C_ADAP_COMPLETE(rcar_1, rcar_i2c_init, rcar_i2c_probe, rcar_i2c_read,
-+			 rcar_i2c_write, rcar_i2c_set_bus_speed,
-+			 CONFIG_SYS_RCAR_BB_I2C1_SPEED, 0, 1)
++U_BOOT_I2C_ADAP_COMPLETE(rcar_bb_1, rcar_i2c_bb_init, rcar_i2c_bb_probe, rcar_i2c_bb_read,
++			 rcar_i2c_bb_write, rcar_i2c_bb_set_bus_speed,
++			 CONFIG_SYS_RCAR_BB_I2C0_SPEED, 0, 1)
 +#endif
 +#ifdef CONFIG_SYS_RCAR_BB_I2C2_BASE
-+U_BOOT_I2C_ADAP_COMPLETE(rcar_2, rcar_i2c_init, rcar_i2c_probe, rcar_i2c_read,
-+			 rcar_i2c_write, rcar_i2c_set_bus_speed,
-+			 CONFIG_SYS_RCAR_BB_I2C2_SPEED, 0, 2)
++U_BOOT_I2C_ADAP_COMPLETE(rcar_bb_2, rcar_i2c_bb_init, rcar_i2c_bb_probe, rcar_i2c_bb_read,
++			 rcar_i2c_bb_write, rcar_i2c_bb_set_bus_speed,
++			 CONFIG_SYS_RCAR_BB_I2C0_SPEED, 0, 2)
 +#endif
 +#ifdef CONFIG_SYS_RCAR_BB_I2C3_BASE
-+U_BOOT_I2C_ADAP_COMPLETE(rcar_3, rcar_i2c_init, rcar_i2c_probe, rcar_i2c_read,
-+			 rcar_i2c_write, rcar_i2c_set_bus_speed,
-+			 CONFIG_SYS_RCAR_BB_I2C3_SPEED, 0, 3)
++U_BOOT_I2C_ADAP_COMPLETE(rcar_bb_3, rcar_i2c_bb_init, rcar_i2c_bb_probe, rcar_i2c_bb_read,
++			 rcar_i2c_bb_write, rcar_i2c_bb_set_bus_speed,
++			 CONFIG_SYS_RCAR_BB_I2C0_SPEED, 0, 3)
 +#endif
 +#endif
 diff --git a/include/configs/ttardrive.h b/include/configs/ttardrive.h
 new file mode 100644
-index 0000000..45186b4
+index 0000000..939391c
 --- /dev/null
 +++ b/include/configs/ttardrive.h
-@@ -0,0 +1,181 @@
+@@ -0,0 +1,191 @@
 +/*
 + * include/configs/ttardrive.h
 + *     This file is TTA-R-Drive configuration.
@@ -1220,7 +1076,9 @@ index 0000000..45186b4
 +#define CONFIG_RAVB_PHY_MODE PHY_INTERFACE_MODE_RGMII_ID
 +#define CONFIG_NET_MULTI
 +#define CONFIG_PHYLIB
-+#define CONFIG_PHY_MICREL
++#define CONFIG_PHY_FIXED
++#define CONFIG_PHY_FIXED_SPEED	SPEED_1000
++#define CONFIG_PHY_FIXED_DUPLEX DUPLEX_FULL
 +#define CONFIG_BITBANGMII
 +#define CONFIG_BITBANGMII_MULTI
 +#define CONFIG_SH_ETHER_BITBANG
@@ -1249,6 +1107,7 @@ index 0000000..45186b4
 +#define CONFIG_HARD_I2C
 +#define CONFIG_SYS_I2C
 +#define CONFIG_SYS_I2C_SH
++#define CONFIG_SYS_I2C_RCAR
 +#define CONFIG_SYS_I2C_RCAR_BB
 +#define CONFIG_SYS_I2C_SLAVE		0x60
 +
@@ -1267,12 +1126,15 @@ index 0000000..45186b4
 +*  I2C bus accessing clock generator 5p49V59xx
 +*  in u-boot.
 +*/
++/* Enable I2C4 */
++#define CONFIF_SYS_RCAR_I2C_NUM_CONTROLLERS     1
++#define CONFIG_SYS_RCAR_I2C0_BASE		0xE66D8000
++#define CONFIG_SYS_RCAR_I2C0_SPEED		100000
++
 +/* Enable I2C5 */
 +#define CONFIG_SYS_RCAR_BB_I2C_NUM_CONTROLLERS  1
 +#define CONFIG_SYS_RCAR_BB_I2C0_BASE		0xE66E0000
 +#define CONFIG_SYS_RCAR_BB_I2C0_SPEED		100000
-+/* Disable I2C4 (enabled by default) */
-+#undef CONFIG_SYS_RCAR_I2C3_BASE
 +
 +/* USB */
 +#define CONFIG_USB_STORAGE
@@ -1316,23 +1178,27 @@ index 0000000..45186b4
 +	"_bsp=ttardrive-alfa\0" \
 +	"_console=ttySC0,115200\0" \
 +	"_bootoptions=consoleblank=0 video=HDMI-A-1:1024x768-32@60\0" \
++	"_mmcload=ext2load mmc 0:1\0" \
++	"_mmcroot=/dev/mmcblk0p1\0" \
++	"_usbload=fatload usb 0:1\0" \
 +	"_usbroot=PARTUUID=95d6f043-02\0" \
 +	"baudrate=115200\0" \
 +	"bootdelay=3\0" \
 +	"bootargs=console=ttySC0,115200 rw root=PARTUUID=95d6f043-02 rootwait bootwait consoleblank=0 ignore_loglevel\0" \
-+	"bootNET=run mkBootargsNFS; run bootcmdNET\0" \
-+	"bootUSB=wr_clk_cfg; usb reset; run mkBootargsUSB; run bootcmdUSB\0" \
-+	"bootMMC=run mkBootargsMMC; run bootcmdMMC\0" \
++	"bootNET=run mkIp; run mkBootargsNFS; run bootcmdNET\0" \
++	"bootUSB=usb reset; run mkIp; run mkBootargsUSB; run bootcmdUSB\0" \
++	"bootMMC=run mkIp; run mkBootargsMMC; run bootcmdMMC\0" \
 +	"ethact=ravb\0" \
 +	"ethaddr=68:05:ca:42:11:b7\0" \
 +	"ipaddr=192.168.0.4\0" \
 +	"serverip=192.168.0.1\0" \
-+	"mkBootargsNFS=setenv bootargs console=${_console} rw root=/dev/nfs nfsroot=${serverip}:/srv/nfs/${_distrib} ip=${ipaddr} ${_bootoptions}\0" \
-+	"mkBootargsMMC=setenv bootargs console=${_console} rw root=/dev/mmcblk1p1 bootwait rootwait ${_bootoptions}\0" \
-+	"mkBootargsUSB=setenv bootargs console=${_console} rw root=${_usbroot} bootwait rootwait ${_bootoptions}\0" \
++	"mkBootargsNFS=setenv bootargs console=${_console} rw root=/dev/nfs nfsroot=${serverip}:/srv/nfs/${_distrib} ${ip} ${_bootoptions}\0" \
++	"mkBootargsMMC=setenv bootargs console=${_console} rw root=${_mmcroot} rootwait ${ip} ${_bootoptions}\0" \
++	"mkBootargsUSB=setenv bootargs console=${_console} rw root=${_usbroot} rootwait ${ip} ${_bootoptions}\0" \
++	"mkIp=setenv ip ip=${ipaddr}:${serverip}\0" \
 +	"bootcmdNET=tftp 0x48080000 ${_distrib}/Image; tftp 0x48000000 ${_distrib}/Image-r8a7795-${_bsp}.dtb; booti 0x48080000 - 0x48000000\0" \
-+	"bootcmdUSB=fatload usb 0:1 0x48080000 Image; fatload usb 0:1 0x48000000 Image-r8a7795-${_bsp}.dtb; booti 0x48080000 - 0x48000000\0" \
-+	"bootcmdMMC=ext2load mmc 0:1 0x48080000 /boot/Image; ext2load mmc 0:1 0x48000000 /boot/Image-r8a7795-${_bsp}.dtb; booti 0x48080000 - 0x48000000\0" \
++	"bootcmdUSB=${_usbload} 0x48080000 Image; ${_usbload} 0x48000000 Image-r8a7795-${_bsp}.dtb; booti 0x48080000 - 0x48000000\0" \
++	"bootcmdMMC=${_mmcload} 0x48080000 /boot/Image; ${_mmcload} 0x48000000 /boot/Image-r8a7795-${_bsp}.dtb; booti 0x48080000 - 0x48000000\0" \
 +	"stderr=serial\0" \
 +	"stdin=serial\0" \
 +	"stdout=serial\0"
@@ -1341,9 +1207,9 @@ index 0000000..45186b4
 +	"console=ttySC0,115200 rw root=PARTUUID=95d6f043-02 bootwait rootwait"
 +
 +#define CONFIG_BOOTCOMMAND      \
-+	"run bootUSB"
++	"run bootMMC; run bootUSB"
 +
 +#endif /* __TTARDRIVE_H */
 -- 
-2.7.4
+1.9.1
 
