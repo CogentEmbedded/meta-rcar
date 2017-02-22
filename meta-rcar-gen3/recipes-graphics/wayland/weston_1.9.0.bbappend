@@ -11,6 +11,8 @@ SRC_URI_rcar-gen3 = " \
     file://0001-make-error-portable.patch \
     file://libsystemd.patch \
     file://explicit-enable-disable-systemd.patch \
+    file://0001-Allow-to-boot-without-input-device.patch \
+    file://0001-Fix-crash-when-touchscreen-generates-out-of-screen-c.patch \
 "
 
 GL_SRCREV = "02a9ef290df887a815b71a49e8521c7909d7acc1"
