@@ -3,6 +3,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 COMPATIBLE_MACHINE_eagle = "eagle"
 COMPATIBLE_MACHINE_v3msk = "v3msk"
 COMPATIBLE_MACHINE_condor = "condor"
+COMPATIBLE_MACHINE_v3mzf = "v3mzf"
 
 SRC_URI_append = " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'h3ulcb-had', ' file://hyperflash.cfg', '', d)} \
@@ -88,6 +89,7 @@ SRC_URI_append_salvator-x = " file://salvator-x.cfg"
 SRC_URI_append_eagle = " file://eagle.cfg"
 SRC_URI_append_v3msk = " file://v3msk.cfg"
 SRC_URI_append_condor = " file://condor.cfg"
+SRC_URI_append_v3mzf = " file://v3mzf.cfg"
 
 KERNEL_DEVICETREE_append_h3ulcb = " \
     renesas/r8a7795-es1-h3ulcb-view.dtb \
@@ -127,6 +129,10 @@ KERNEL_DEVICETREE_append_v3msk = " \
     renesas/r8a7797-v3msk-kf.dtb \
     renesas/r8a7797-v3msk-vbm.dtb \
     renesas/r8a7797-v3msk-view.dtb \
+"
+
+KERNEL_DEVICETREE_append_v3mzf = " \
+    renesas/r8a7797-v3mzf.dtb \
 "
 
 KERNEL_DEVICETREE_append_condor = " \
