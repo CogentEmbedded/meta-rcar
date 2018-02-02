@@ -33,11 +33,11 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
  arch/arm64/boot/dts/renesas/Makefile               |   22 +
  arch/arm64/boot/dts/renesas/legacy/Makefile        |    8 +
- .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts    | 1624 ++++++++++++++++++
- .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts    |  441 +++++
+ .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts    | 1624 +++++++++++++++++++
+ .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts    |  441 ++++++
  .../dts/renesas/legacy/r8a7795-h3ulcb-kf-v0.dts    | 1638 +++++++++++++++++++
  .../dts/renesas/legacy/r8a7795-h3ulcb-kf-v1.dts    |  465 ++++++
- .../dts/renesas/legacy/r8a7796-m3ulcb-kf-v0.dts    | 1171 +++++++++++++
+ .../dts/renesas/legacy/r8a7796-m3ulcb-kf-v0.dts    | 1171 ++++++++++++++
  .../dts/renesas/legacy/r8a7796-m3ulcb-kf-v1.dts    |  465 ++++++
  .../dts/renesas/legacy/r8a7797-v3msk-kf-v0.dts     |   82 +
  .../boot/dts/renesas/legacy/ulcb-kf-cmos.dtsi      |   75 +
@@ -49,7 +49,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  .../boot/dts/renesas/r8a7795-es1-h3ulcb-vb.dts     |   69 +
  .../boot/dts/renesas/r8a7795-es1-h3ulcb-vb2.dts    |   77 +
  .../boot/dts/renesas/r8a7795-es1-h3ulcb-vbm.dts    |   26 +
- .../boot/dts/renesas/r8a7795-es1-h3ulcb-view.dts   |  544 ++++++
+ .../boot/dts/renesas/r8a7795-es1-h3ulcb-view.dts   |  544 +++++++
  .../dts/renesas/r8a7795-es1-salvator-x-view.dts    |  550 +++++++
  .../boot/dts/renesas/r8a7795-h3ulcb-had-alfa.dts   |   22 +
  .../boot/dts/renesas/r8a7795-h3ulcb-had-beta.dts   |   23 +
@@ -58,28 +58,28 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-vb.dts  |   68 +
  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-vb2.dts |   68 +
  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-vbm.dts |   26 +
- .../arm64/boot/dts/renesas/r8a7795-h3ulcb-view.dts |  544 ++++++
+ .../arm64/boot/dts/renesas/r8a7795-h3ulcb-view.dts |  544 +++++++
  .../boot/dts/renesas/r8a7795-salvator-x-view.dts   |  550 +++++++
  arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts  |   40 +
  .../arm64/boot/dts/renesas/r8a7796-m3ulcb-view.dts |  286 ++++
  .../boot/dts/renesas/r8a7796-salvator-x-view.dts   |  317 ++++
  .../boot/dts/renesas/r8a7797-eagle-function.dts    |   62 +
  arch/arm64/boot/dts/renesas/r8a7797-eagle.dts      |  575 +++++++
- arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts   |  533 ++++++
- arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts  |  548 +++++++
+ arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts   |  520 ++++++
+ arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts  |  513 ++++++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk-view.dts |  297 ++++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts      |  314 ++++
  arch/arm64/boot/dts/renesas/r8a7797-v3mzf.dts      |  424 +++++
- arch/arm64/boot/dts/renesas/r8a7798-condor.dts     |  963 +++++++++++
- arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi      |  498 ++++++
+ arch/arm64/boot/dts/renesas/r8a7798-condor.dts     |  963 ++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi      |  462 ++++++
  arch/arm64/boot/dts/renesas/ulcb-kf-most.dtsi      |   30 +
  arch/arm64/boot/dts/renesas/ulcb-kf-sd3.dtsi       |   46 +
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           | 1492 +++++++++++++++++
- arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi      |  495 ++++++
- arch/arm64/boot/dts/renesas/ulcb-vb.dtsi           | 1678 +++++++++++++++++++
- arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi          | 1724 ++++++++++++++++++++
- arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi          |  577 +++++++
- 48 files changed, 20093 insertions(+)
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           | 1458 +++++++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi      |  459 ++++++
+ arch/arm64/boot/dts/renesas/ulcb-vb.dtsi           | 1610 +++++++++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi          | 1656 ++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi          |  543 +++++++
+ 48 files changed, 19769 insertions(+)
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/Makefile
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts
@@ -10812,10 +10812,10 @@ index 0000000..ce7a88e
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts
 new file mode 100644
-index 0000000..c61b613
+index 0000000..862236f
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts
-@@ -0,0 +1,533 @@
+@@ -0,0 +1,520 @@
 +/*
 + * Device Tree Source for the V3MSK Kingfisher board on r8a7797
 + *
@@ -10999,6 +10999,11 @@ index 0000000..c61b613
 +				ti,forwarding-mode = "round-robin";
 +				ti,cable-mode = "coax";
 +
++				POC0-gpios = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
++
 +				port@0 {
 +					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
@@ -11039,6 +11044,11 @@ index 0000000..c61b613
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
 +
++				POC0-gpios = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
++
 +				port@0 {
 +					max9286_des0ep0: endpoint@0 {
 +						max9271-addr = <0x50>;
@@ -11076,9 +11086,10 @@ index 0000000..c61b613
 +			reg = <6>;
 +			/* Slot B (CN11) */
 +
-+			video_a_ext0: pca9535@27 {
++			/* PCA9535 is a redundant/deprecated card */
++			gpio_exp_a_26: gpio@26 {
 +				compatible = "nxp,pca9535";
-+				reg = <0x27>;
++				reg = <0x26>;
 +				gpio-controller;
 +				#gpio-cells = <2>;
 +
@@ -11138,7 +11149,7 @@ index 0000000..c61b613
 +				};
 +			};
 +
-+			video_a_ext1: max7325@5c {
++			gpio_exp_a_5c: gpio@5c {
 +				compatible = "maxim,max7325";
 +				reg = <0x5c>;
 +				gpio-controller;
@@ -11167,30 +11178,6 @@ index 0000000..c61b613
 +					gpios = <14 GPIO_ACTIVE_HIGH>;
 +					output-high;
 +					line-name = "Video-A PWR_SHDN";
-+				};
-+				video_a_cam_pwr0 {
-+					gpio-hog;
-+					gpios = <8 GPIO_ACTIVE_HIGH>;
-+					output-high;
-+					line-name = "Video-A PWR0";
-+				};
-+				video_a_cam_pwr1 {
-+					gpio-hog;
-+					gpios = <9 GPIO_ACTIVE_HIGH>;
-+					output-high;
-+					line-name = "Video-A PWR1";
-+				};
-+				video_a_cam_pwr2 {
-+					gpio-hog;
-+					gpios = <10 GPIO_ACTIVE_HIGH>;
-+					output-high;
-+					line-name = "Video-A PWR2";
-+				};
-+				video_a_cam_pwr3 {
-+					gpio-hog;
-+					gpios = <11 GPIO_ACTIVE_HIGH>;
-+					output-high;
-+					line-name = "Video-A PWR3";
 +				};
 +				video_a_des_shdn {
 +					gpio-hog;
@@ -11351,10 +11338,10 @@ index 0000000..c61b613
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
 new file mode 100644
-index 0000000..d355adb
+index 0000000..226b659
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
-@@ -0,0 +1,548 @@
+@@ -0,0 +1,513 @@
 +/*
 + * Device Tree Source for the V3MSK Videobox Mini board on r8a7797
 + *
@@ -11372,42 +11359,6 @@ index 0000000..d355adb
 +
 +	aliases {
 +		serial1 = &scif3;
-+	};
-+
-+	pwr0: regulator-pwr0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1: regulator-pwr1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2: regulator-pwr2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3: regulator-pwr3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_6c 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
 +	};
 +};
 +
@@ -11570,10 +11521,11 @@ index 0000000..d355adb
 +				maxim,resetb-gpio = <1>;
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
-+				POC0-supply = <&pwr0>;
-+				POC1-supply = <&pwr1>;
-+				POC2-supply = <&pwr2>;
-+				POC3-supply = <&pwr3>;
++
++				POC0-gpios = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_6c 11 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des0ep0: endpoint@0 {
@@ -11612,10 +11564,10 @@ index 0000000..d355adb
 +				ti,lanes = <4>;
 +				ti,forwarding-mode = "round-robin";
 +				ti,cable-mode = "coax";
-+				POC0-supply = <&pwr0>;
-+				POC1-supply = <&pwr1>;
-+				POC2-supply = <&pwr2>;
-+				POC3-supply = <&pwr3>;
++				POC0-gpio = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpio = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpio = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpio = <&gpio_exp_6c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					ti9x4_des0ep0: endpoint@0 {
@@ -13927,10 +13879,10 @@ index 0000000..cdd9844
 +};
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi
 new file mode 100644
-index 0000000..095a503
+index 0000000..a87c38b
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi
-@@ -0,0 +1,498 @@
+@@ -0,0 +1,462 @@
 +/*
 + * Device Tree Source for the H3ULCB Kingfisher board:
 + *  this adding conflicting resource on VIN4/VIN5/VIN6/VIN7 for CN11
@@ -13943,44 +13895,6 @@ index 0000000..095a503
 + * version 2.  This program is licensed "as is" without any warranty of any
 + * kind, whether express or implied.
 + */
-+
-+/ {
-+	pwr0B: regulator-pwr0B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1B: regulator-pwr1B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2B: regulator-pwr2B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3B: regulator-pwr3B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+};
 +
 +&i2cswitch4 {
 +	i2c@2 {
@@ -14080,10 +13994,11 @@ index 0000000..095a503
 +			ti,lanes = <4>;
 +			ti,forwarding-mode = "round-robin";
 +			ti,cable-mode = "coax";
-+			POC0-supply = <&pwr0B>;
-+			POC1-supply = <&pwr1B>;
-+			POC2-supply = <&pwr2B>;
-+			POC3-supply = <&pwr3B>;
++
++			POC0-gpios = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
++			POC1-gpios = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
++			POC2-gpios = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
++			POC3-gpios = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
 +
 +			port@0 {
 +				ti9x4_des1ep0: endpoint@0 {
@@ -14125,10 +14040,11 @@ index 0000000..095a503
 +			maxim,resetb-gpio = <1>;
 +			maxim,fsync-mode = "automatic";
 +			maxim,timeout = <100>;
-+			POC0-supply = <&pwr1B>;
-+			POC1-supply = <&pwr0B>;
-+			POC2-supply = <&pwr3B>;
-+			POC3-supply = <&pwr2B>;
++
++			POC0-gpios = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
++			POC1-gpios = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
++			POC2-gpios = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
++			POC3-gpios = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
 +
 +			port@0 {
 +				max9286_des1ep0: endpoint@0 {
@@ -14519,10 +14435,10 @@ index 0000000..b854216
 +};
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
 new file mode 100644
-index 0000000..a33a2a0
+index 0000000..447cfc3
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -0,0 +1,1492 @@
+@@ -0,0 +1,1458 @@
 +/*
 + * Device Tree Source for the ULCB Kingfisher board
 + *
@@ -14639,42 +14555,6 @@ index 0000000..a33a2a0
 +		regulator-max-microvolt = <1800000>;
 +		gpio = <&gpio_ext_77 15 GPIO_ACTIVE_HIGH>;
 +		startup-delay-us = <200000>;
-+		enable-active-high;
-+	};
-+
-+	pwr0A: regulator-pwr0A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1A: regulator-pwr1A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2A: regulator-pwr2A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3A: regulator-pwr3A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
 +		enable-active-high;
 +	};
 +
@@ -15415,10 +15295,11 @@ index 0000000..a33a2a0
 +				ti,lanes = <4>;
 +				ti,forwarding-mode = "round-robin";
 +				ti,cable-mode = "coax";
-+				POC0-supply = <&pwr0A>;
-+				POC1-supply = <&pwr1A>;
-+				POC2-supply = <&pwr2A>;
-+				POC3-supply = <&pwr3A>;
++
++				POC0-gpios = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					ti9x4_des0ep0: endpoint@0 {
@@ -15459,10 +15340,11 @@ index 0000000..a33a2a0
 +				maxim,resetb-gpio = <1>;
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
-+				POC0-supply = <&pwr1A>;
-+				POC1-supply = <&pwr0A>;
-+				POC2-supply = <&pwr3A>;
-+				POC3-supply = <&pwr2A>;
++
++				POC0-gpios = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des0ep0: endpoint@0 {
@@ -16017,10 +15899,10 @@ index 0000000..a33a2a0
 +
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi
 new file mode 100644
-index 0000000..778a477
+index 0000000..b29fc18
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi
-@@ -0,0 +1,495 @@
+@@ -0,0 +1,459 @@
 +/*
 + * Device Tree Source for the H3ULCB Videobox board:
 + *  this adding conflicting resource on VIN4/VIN5/VIN6/VIN7 for CN12
@@ -16032,44 +15914,6 @@ index 0000000..778a477
 + * version 2.  This program is licensed "as is" without any warranty of any
 + * kind, whether express or implied.
 + */
-+
-+/ {
-+	pwr0C: regulator-pwr0C {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0C";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_c_5c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1C: regulator-pwr1C {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1C";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_c_5c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2C: regulator-pwr2C {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2C";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_c_5c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3C: regulator-pwr3C {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3C";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_c_5c 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+};
 +
 +&i2cswitch2 {
 +	i2c@3 {
@@ -16171,10 +16015,11 @@ index 0000000..778a477
 +			ti,lanes = <2>;
 +			ti,forwarding-mode = "round-robin";
 +			ti,cable-mode = "coax";
-+			POC0-supply = <&pwr0C>;
-+			POC1-supply = <&pwr1C>;
-+			POC2-supply = <&pwr2C>;
-+			POC3-supply = <&pwr3C>;
++
++			POC0-gpios = <&gpio_exp_c_5c 8 GPIO_ACTIVE_HIGH>;
++			POC1-gpios = <&gpio_exp_c_5c 9 GPIO_ACTIVE_HIGH>;
++			POC2-gpios = <&gpio_exp_c_5c 10 GPIO_ACTIVE_HIGH>;
++			POC3-gpios = <&gpio_exp_c_5c 11 GPIO_ACTIVE_HIGH>;
 +
 +			port@0 {
 +				ti9x4_des2ep0: endpoint@0 {
@@ -16216,10 +16061,11 @@ index 0000000..778a477
 +			maxim,resetb-gpio = <1>;
 +			maxim,fsync-mode = "automatic";
 +			maxim,timeout = <100>;
-+			POC0-supply = <&pwr1C>;
-+			POC1-supply = <&pwr0C>;
-+			POC2-supply = <&pwr3C>;
-+			POC3-supply = <&pwr2C>;
++
++			POC0-gpios = <&gpio_exp_c_5c 9 GPIO_ACTIVE_HIGH>;
++			POC1-gpios = <&gpio_exp_c_5c 8 GPIO_ACTIVE_HIGH>;
++			POC2-gpios = <&gpio_exp_c_5c 11 GPIO_ACTIVE_HIGH>;
++			POC3-gpios = <&gpio_exp_c_5c 10 GPIO_ACTIVE_HIGH>;
 +
 +			port@0 {
 +				max9286_des2ep0: endpoint@0 {
@@ -16518,10 +16364,10 @@ index 0000000..778a477
 +};
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vb.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vb.dtsi
 new file mode 100644
-index 0000000..07594447
+index 0000000..0185e46
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vb.dtsi
-@@ -0,0 +1,1678 @@
+@@ -0,0 +1,1610 @@
 +/*
 + * Device Tree Source for the ULCB Videobox board
 + *
@@ -16622,78 +16468,6 @@ index 0000000..07594447
 +		gpio = <&gpio6 28 0>;
 +		enable-active-high;
 +		regulator-always-on;
-+	};
-+
-+	pwr0A: regulator-pwr0A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1A: regulator-pwr1A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2A: regulator-pwr2A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3A: regulator-pwr3A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr0B: regulator-pwr0B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1B: regulator-pwr1B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2B: regulator-pwr2B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3B: regulator-pwr3B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
 +	};
 +
 +	/delete-node/sound;
@@ -17127,10 +16901,11 @@ index 0000000..07594447
 +				ti,lanes = <4>;
 +				ti,forwarding-mode = "round-robin";
 +				ti,cable-mode = "stp";
-+				POC0-supply = <&pwr0A>;
-+				POC1-supply = <&pwr1A>;
-+				POC2-supply = <&pwr2A>;
-+				POC3-supply = <&pwr3A>;
++
++				POC0-gpios = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					ti9x4_des0ep0: endpoint@0 {
@@ -17171,10 +16946,11 @@ index 0000000..07594447
 +				maxim,resetb-gpio = <1>;
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
-+				POC0-supply = <&pwr1A>;
-+				POC1-supply = <&pwr0A>;
-+				POC2-supply = <&pwr3A>;
-+				POC3-supply = <&pwr2A>;
++
++				POC0-gpios = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des0ep0: endpoint@0 {
@@ -17305,10 +17081,11 @@ index 0000000..07594447
 +				ti,lanes = <4>;
 +				ti,forwarding-mode = "round-robin";
 +				ti,cable-mode = "stp";
-+				POC0-supply = <&pwr0B>;
-+				POC1-supply = <&pwr1B>;
-+				POC2-supply = <&pwr2B>;
-+				POC3-supply = <&pwr3B>;
++
++				POC0-gpios = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					ti9x4_des1ep0: endpoint@0 {
@@ -17349,10 +17126,11 @@ index 0000000..07594447
 +				maxim,resetb-gpio = <1>;
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
-+				POC0-supply = <&pwr1B>;
-+				POC1-supply = <&pwr0B>;
-+				POC2-supply = <&pwr3B>;
-+				POC3-supply = <&pwr2B>;
++
++				POC0-gpios = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des1ep0: endpoint@0 {
@@ -18202,10 +17980,10 @@ index 0000000..07594447
 +//#include "ulcb-vb-cn12.dtsi"
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi
 new file mode 100644
-index 0000000..b0145a2
+index 0000000..92a3300
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi
-@@ -0,0 +1,1724 @@
+@@ -0,0 +1,1656 @@
 +/*
 + * Device Tree Source for the ULCB Videobox V2 board
 + *
@@ -18300,78 +18078,6 @@ index 0000000..b0145a2
 +		gpio = <&gpio6 28 0>;
 +		enable-active-high;
 +		regulator-always-on;
-+	};
-+
-+	pwr0A: regulator-pwr0A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1A: regulator-pwr1A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2A: regulator-pwr2A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3A: regulator-pwr3A {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3A";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr0B: regulator-pwr0B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1B: regulator-pwr1B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2B: regulator-pwr2B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3B: regulator-pwr3B {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3B";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
 +	};
 +
 +	/delete-node/sound;
@@ -18829,10 +18535,11 @@ index 0000000..b0145a2
 +				ti,lanes = <4>;
 +				ti,forwarding-mode = "round-robin";
 +				ti,cable-mode = "stp";
-+				POC0-supply = <&pwr0A>;
-+				POC1-supply = <&pwr1A>;
-+				POC2-supply = <&pwr2A>;
-+				POC3-supply = <&pwr3A>;
++
++				POC0-gpios = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					ti9x4_des0ep0: endpoint@0 {
@@ -18873,10 +18580,11 @@ index 0000000..b0145a2
 +				maxim,resetb-gpio = <1>;
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
-+				POC0-supply = <&pwr1A>;
-+				POC1-supply = <&pwr0A>;
-+				POC2-supply = <&pwr3A>;
-+				POC3-supply = <&pwr2A>;
++
++				POC0-gpios = <&gpio_exp_a_5c 9 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_a_5c 8 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_a_5c 11 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des0ep0: endpoint@0 {
@@ -19007,10 +18715,11 @@ index 0000000..b0145a2
 +				ti,lanes = <4>;
 +				ti,forwarding-mode = "round-robin";
 +				ti,cable-mode = "stp";
-+				POC0-supply = <&pwr0B>;
-+				POC1-supply = <&pwr1B>;
-+				POC2-supply = <&pwr2B>;
-+				POC3-supply = <&pwr3B>;
++
++				POC0-gpios = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					ti9x4_des1ep0: endpoint@0 {
@@ -19051,10 +18760,11 @@ index 0000000..b0145a2
 +				maxim,resetb-gpio = <1>;
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
-+				POC0-supply = <&pwr1B>;
-+				POC1-supply = <&pwr0B>;
-+				POC2-supply = <&pwr3B>;
-+				POC3-supply = <&pwr2B>;
++
++				POC0-gpios = <&gpio_exp_b_5c 9 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_b_5c 8 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_b_5c 11 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des1ep0: endpoint@0 {
@@ -19936,10 +19646,10 @@ index 0000000..b0145a2
 +//#include "ulcb-vb2-cn12.dtsi"
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
 new file mode 100644
-index 0000000..bc36e95
+index 0000000..47e2b2d
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
-@@ -0,0 +1,577 @@
+@@ -0,0 +1,543 @@
 +/*
 + * Device Tree Source for the ULCB Videobox Mini board
 + *
@@ -19953,42 +19663,6 @@ index 0000000..bc36e95
 +/ {
 +	aliases {
 +		serial1 = &scif1;
-+	};
-+
-+	pwr0: regulator-pwr0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR0";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr1: regulator-pwr1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR1";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr2: regulator-pwr2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR2";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	pwr3: regulator-pwr3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "PWR3";
-+		regulator-min-microvolt = <9000000>;
-+		regulator-max-microvolt = <9000000>;
-+		gpio = <&gpio_exp_6c 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
 +	};
 +
 +	lvds-encoder {
@@ -20211,10 +19885,11 @@ index 0000000..bc36e95
 +				maxim,resetb-gpio = <1>;
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
-+				POC0-supply = <&pwr0>;
-+				POC1-supply = <&pwr1>;
-+				POC2-supply = <&pwr2>;
-+				POC3-supply = <&pwr3>;
++
++				POC0-gpios = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_6c 1 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des0ep0: endpoint@0 {
@@ -20254,10 +19929,11 @@ index 0000000..bc36e95
 +				ti,lanes = <4>;
 +				ti,forwarding-mode = "round-robin";
 +				ti,cable-mode = "coax";
-+				POC0-supply = <&pwr0>;
-+				POC1-supply = <&pwr1>;
-+				POC2-supply = <&pwr2>;
-+				POC3-supply = <&pwr3>;
++
++				POC0-gpios = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_6c 1 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					ti9x4_des0ep0: endpoint@0 {

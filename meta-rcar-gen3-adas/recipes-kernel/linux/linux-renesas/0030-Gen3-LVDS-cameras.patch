@@ -18,7 +18,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  drivers/media/i2c/soc_camera/ar0132.h            |  213 ++++
  drivers/media/i2c/soc_camera/ar0220.c            |  528 ++++++++++
  drivers/media/i2c/soc_camera/ar0220.h            |  309 ++++++
- drivers/media/i2c/soc_camera/max9286.c           |  697 +++++++++++++
+ drivers/media/i2c/soc_camera/max9286.c           |  692 +++++++++++++
  drivers/media/i2c/soc_camera/max9286.h           |  244 +++++
  drivers/media/i2c/soc_camera/ov10635.c           |  759 ++++++++++++++
  drivers/media/i2c/soc_camera/ov10635.h           | 1139 ++++++++++++++++++++++
@@ -28,7 +28,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  drivers/media/i2c/soc_camera/ov490_ov10640.h     |  102 ++
  drivers/media/i2c/soc_camera/ov495_ov2775.c      |  639 ++++++++++++
  drivers/media/i2c/soc_camera/ov495_ov2775.h      |   23 +
- drivers/media/i2c/soc_camera/ti9x4.c             |  520 ++++++++++
+ drivers/media/i2c/soc_camera/ti9x4.c             |  518 ++++++++++
  drivers/media/i2c/soc_camera/ti9x4.h             |  156 +++
  drivers/media/platform/soc_camera/rcar_csi2.c    |  297 ++++--
  drivers/media/platform/soc_camera/rcar_vin.c     |  194 +++-
@@ -36,7 +36,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  drivers/media/platform/soc_camera/soc_mediabus.c |   16 +
  include/media/drv-intf/soc_mediabus.h            |    3 +
  include/media/soc_camera.h                       |    1 +
- 26 files changed, 8291 insertions(+), 109 deletions(-)
+ 26 files changed, 8284 insertions(+), 109 deletions(-)
  create mode 100644 drivers/media/i2c/soc_camera/ap0101_ar014x.c
  create mode 100644 drivers/media/i2c/soc_camera/ap0101_ar014x.h
  create mode 100644 drivers/media/i2c/soc_camera/ar0132.c
@@ -2396,10 +2396,10 @@ index 0000000..29987a6
 +};
 diff --git a/drivers/media/i2c/soc_camera/max9286.c b/drivers/media/i2c/soc_camera/max9286.c
 new file mode 100644
-index 0000000..4dd80f5
+index 0000000..c850196
 --- /dev/null
 +++ b/drivers/media/i2c/soc_camera/max9286.c
-@@ -0,0 +1,697 @@
+@@ -0,0 +1,692 @@
 +/*
 + * MAXIM max9286 GMSL driver
 + *
@@ -2416,7 +2416,6 @@ index 0000000..4dd80f5
 +#include <linux/module.h>
 +#include <linux/notifier.h>
 +#include <linux/of_gpio.h>
-+#include <linux/regulator/consumer.h>
 +#include <linux/videodev2.h>
 +
 +#include <media/v4l2-common.h>
@@ -2459,7 +2458,7 @@ index 0000000..4dd80f5
 +	struct i2c_client	*client;
 +	int			max9271_addr_map[4];
 +	int			ser_id;
-+	struct regulator	*poc_supply[4]; /* PoC power supply */
++	struct gpio_desc	*poc_gpio[4]; /* PoC power supply */
 +};
 +
 +static char fsync_mode_default[20] = "manual"; /* manual, automatic, semi-automatic, external */
@@ -2621,12 +2620,10 @@ index 0000000..4dd80f5
 +		}
 +
 +		if (timeout == priv->timeout / 2 && poc_trig) {
-+			if (!IS_ERR(priv->poc_supply[idx])) {
-+				if (regulator_disable(priv->poc_supply[idx]))
-+					dev_err(&client->dev, "fail to disable POC%d regulator\n", idx);
++			if (!IS_ERR(priv->poc_gpio[idx])) {
++				gpiod_direction_output(priv->poc_gpio[idx], 0); /* POC power off */
 +				mdelay(200);
-+				if (regulator_enable(priv->poc_supply[idx]))
-+					dev_err(&client->dev, "fail to enable POC%d regulator\n", idx);
++				gpiod_direction_output(priv->poc_gpio[idx], 1); /* POC power on */
 +				mdelay(priv->poc_delay);
 +			}
 +		}
@@ -2765,9 +2762,8 @@ index 0000000..4dd80f5
 +	max9286_initial_setup(client);
 +
 +	for (idx = 0; idx < priv->links; idx++) {
-+		if (!IS_ERR(priv->poc_supply[idx])) {
-+			if (regulator_enable(priv->poc_supply[idx]))
-+				dev_err(&client->dev, "fail to enable POC%d regulator\n", idx);
++		if (!IS_ERR(priv->poc_gpio[idx])) {
++			gpiod_direction_output(priv->poc_gpio[idx], 1); /* POC power on */
 +			mdelay(priv->poc_delay);
 +		}
 +
@@ -2875,8 +2871,8 @@ index 0000000..4dd80f5
 +	struct property *prop;
 +	int err, pwen, i;
 +	int sensor_delay, gpio0 = 1, gpio1 = 1;
-+
 +	u8 val = 0;
++	char poc_name[10];
 +
 +	if (of_property_read_u32(np, "maxim,links", &priv->links))
 +		priv->links = 4;
@@ -2892,6 +2888,11 @@ index 0000000..4dd80f5
 +	}
 +
 +	mdelay(250);
++
++	for (i = 0; i < 4; i++) {
++		sprintf(poc_name, "POC%d", i);
++		priv->poc_gpio[i] = devm_gpiod_get_optional(&client->dev, poc_name, 0);
++	}
 +
 +	reg8_read(client, 0x1e, &val);				/* read max9286 ID */
 +	if (val != MAX9286_ID) {
@@ -3010,7 +3011,6 @@ index 0000000..4dd80f5
 +{
 +	struct max9286_priv *priv;
 +	int err, i;
-+	char supply_name[10];
 +
 +	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
 +	if (!priv)
@@ -3025,11 +3025,6 @@ index 0000000..4dd80f5
 +	err = max9286_parse_dt(client);
 +	if (err)
 +		goto out;
-+
-+	for (i = 0; i < 4; i++) {
-+		sprintf(supply_name, "POC%d", i);
-+		priv->poc_supply[i] = devm_regulator_get_optional(&client->dev, supply_name);
-+	}
 +
 +	err = max9286_initialize(client);
 +	if (err < 0)
@@ -7374,11 +7369,11 @@ index 0000000..3f53689
 +};
 diff --git a/drivers/media/i2c/soc_camera/ti9x4.c b/drivers/media/i2c/soc_camera/ti9x4.c
 new file mode 100644
-index 0000000..aac892b
+index 0000000..a4c7b3f
 --- /dev/null
 +++ b/drivers/media/i2c/soc_camera/ti9x4.c
-@@ -0,0 +1,520 @@
-+/*
+@@ -0,0 +1,518 @@
++ /*
 + * TI DS90UB954/960/964 FPDLinkIII driver
 + *
 + * Copyright (C) 2017-2018 Cogent Embedded, Inc.
@@ -7394,7 +7389,6 @@ index 0000000..aac892b
 +#include <linux/module.h>
 +#include <linux/notifier.h>
 +#include <linux/of_gpio.h>
-+#include <linux/regulator/consumer.h>
 +#include <linux/videodev2.h>
 +
 +#include <media/v4l2-common.h>
@@ -7422,7 +7416,7 @@ index 0000000..aac892b
 +	int			ti9x3_addr_map[4];
 +	char			chip_id[6];
 +	int			ser_id;
-+	struct regulator	*poc_supply[4]; /* PoC power supply */
++	struct gpio_desc	*poc_gpio[4]; /* PoC power supply */
 +};
 +
 +static int ser_id;
@@ -7616,9 +7610,8 @@ index 0000000..aac892b
 +	ti9x4_initial_setup(client);
 +
 +	for (idx = 0; idx < priv->links; idx++) {
-+		if (!IS_ERR(priv->poc_supply[idx])) {
-+			if (regulator_enable(priv->poc_supply[idx]))
-+				dev_err(&client->dev, "fail to enable POC%d regulator\n", idx);
++		if (!IS_ERR(priv->poc_gpio[idx])) {
++			gpiod_direction_output(priv->poc_gpio[idx], 1); /* POC power on */
 +			mdelay(priv->poc_delay);
 +		}
 +
@@ -7709,6 +7702,7 @@ index 0000000..aac892b
 +	char forwarding_mode_default[20] = "round-robin"; /* round-robin, synchronized */
 +	struct property *csi_rate_prop, *dvp_order_prop;
 +	u8 val = 0;
++	char poc_name[10];
 +
 +	if (of_property_read_u32(np, "ti,links", &priv->links))
 +		priv->links = 4;
@@ -7723,6 +7717,11 @@ index 0000000..aac892b
 +			dev_err(&client->dev, "cannot request PWEN gpio %d: %d\n", pwen, err);
 +		else
 +			mdelay(250);
++	}
++
++	for (i = 0; i < 4; i++) {
++		sprintf(poc_name, "POC%d", i);
++		priv->poc_gpio[i] = devm_gpiod_get_optional(&client->dev, poc_name, 0);
 +	}
 +
 +	reg8_read(client, 0x00, &val);				/* read TI9x4 I2C address */
@@ -7813,7 +7812,6 @@ index 0000000..aac892b
 +{
 +	struct ti9x4_priv *priv;
 +	int err, i;
-+	char supply_name[10];
 +
 +	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
 +	if (!priv)
@@ -7827,11 +7825,6 @@ index 0000000..aac892b
 +	err = ti9x4_parse_dt(client);
 +	if (err)
 +		goto out;
-+
-+	for (i = 0; i < 4; i++) {
-+		sprintf(supply_name, "POC%d", i);
-+		priv->poc_supply[i] = devm_regulator_get_optional(&client->dev, supply_name);
-+	}
 +
 +	err = ti9x4_initialize(client);
 +	if (err < 0)
