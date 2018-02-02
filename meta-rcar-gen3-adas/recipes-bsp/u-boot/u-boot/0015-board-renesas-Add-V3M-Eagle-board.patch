@@ -390,8 +390,8 @@ index 0000000..c6ab5b7
 +#include "rcar-gen3-common.h"
 +
 +/* Cache Definitions */
-+#define CONFIG_SYS_DCACHE_OFF
-+#define CONFIG_SYS_ICACHE_OFF
++//#define CONFIG_SYS_DCACHE_OFF
++//#define CONFIG_SYS_ICACHE_OFF
 +
 +/* SCIF */
 +#define CONFIG_SCIF_CONSOLE
