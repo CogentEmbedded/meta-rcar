@@ -78,8 +78,8 @@ index 0000000..c39eb76
 +M:	Cogent Embedded, Inc. <source@cogentembedded.com>
 +S:	Maintained
 +F:	board/renesas/v3msk/
-+F:	include/configs/r8a7797_v3msk.h
-+F:	configs/r8a7797_v3msk_defconfig
++F:	include/configs/v3msk.h
++F:	configs/v3msk_defconfig
 diff --git a/board/renesas/v3msk/Makefile b/board/renesas/v3msk/Makefile
 new file mode 100644
 index 0000000..1f2ea42
@@ -100,7 +100,7 @@ new file mode 100644
 index 0000000..ffb0637
 --- /dev/null
 +++ b/board/renesas/v3msk/cpld.c
-@@ -0,0 +1,164 @@
+@@ -0,0 +1,170 @@
 +/*
 + * V3MSK board CPLD access support
 + *
@@ -144,6 +144,9 @@ index 0000000..ffb0637
 +#define PFC_PUEN2		0xe6060408
 +#define PUEN_CANFD1_TX		(1 << 29)
 +
++#define GP0_MSTP912		(1 << 12)
++#define GP1_MSTP911		(1 << 11)
++
 +#define MDIO_DELAY		10 /* microseconds */
 +
 +#define mdio_bb_active_mdio()	gpio_direction_output(MOSI, 0)
@@ -180,6 +183,9 @@ index 0000000..ffb0637
 +	/* PULL-UP on MISO line (should be pulled up after POR on V3M) */
 +	writel(readl(PFC_PUEN2) | PUEN_CANFD1_TX, PFC_PUEN2);
 +#endif
++	/* GPIO0 and GPIO1 */
++	mstp_clrbits_le32(SMSTPCR9, SMSTPCR9, GP0_MSTP912 | GP1_MSTP911);
++
 +	gpio_request(MDC, NULL);
 +	gpio_request(ENABLEZ, NULL);
 +	gpio_request(MOSI, NULL);
