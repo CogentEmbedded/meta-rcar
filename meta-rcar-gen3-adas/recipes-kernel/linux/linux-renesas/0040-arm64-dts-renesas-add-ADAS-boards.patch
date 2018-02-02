@@ -21,6 +21,7 @@ Eagle board on R8A7797 SoC
 Eagle Function board on R8A7797 SoC
 V3MSK board on R8A7797 SoC
 V3MSK.View board on R8A7797 SoC
+V3MZF board on R8A7797 SoC
 Videobox Mini board on R8A7795 ES1.x SoC
 Videobox Mini board on R8A7795 SoC
 Videobox Mini board on R8A7797 SoC
@@ -30,14 +31,14 @@ Condor board on R8A7798 SoC
 
 Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile               |   21 +
+ arch/arm64/boot/dts/renesas/Makefile               |   22 +
  arch/arm64/boot/dts/renesas/legacy/Makefile        |    8 +
- .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts    | 1710 ++++++++++++++++++
+ .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts    | 1624 ++++++++++++++++++
  .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts    |  441 +++++
- .../dts/renesas/legacy/r8a7795-h3ulcb-kf-v0.dts    | 1724 ++++++++++++++++++
- .../dts/renesas/legacy/r8a7795-h3ulcb-kf-v1.dts    |  465 +++++
- .../dts/renesas/legacy/r8a7796-m3ulcb-kf-v0.dts    | 1214 +++++++++++++
- .../dts/renesas/legacy/r8a7796-m3ulcb-kf-v1.dts    |  465 +++++
+ .../dts/renesas/legacy/r8a7795-h3ulcb-kf-v0.dts    | 1638 +++++++++++++++++++
+ .../dts/renesas/legacy/r8a7795-h3ulcb-kf-v1.dts    |  465 ++++++
+ .../dts/renesas/legacy/r8a7796-m3ulcb-kf-v0.dts    | 1171 +++++++++++++
+ .../dts/renesas/legacy/r8a7796-m3ulcb-kf-v1.dts    |  465 ++++++
  .../dts/renesas/legacy/r8a7797-v3msk-kf-v0.dts     |   82 +
  .../boot/dts/renesas/legacy/ulcb-kf-cmos.dtsi      |   75 +
  .../arm64/boot/dts/renesas/legacy/ulcb-kf-rpi.dtsi |   77 +
@@ -49,7 +50,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  .../boot/dts/renesas/r8a7795-es1-h3ulcb-vb2.dts    |   77 +
  .../boot/dts/renesas/r8a7795-es1-h3ulcb-vbm.dts    |   26 +
  .../boot/dts/renesas/r8a7795-es1-h3ulcb-view.dts   |  544 ++++++
- .../dts/renesas/r8a7795-es1-salvator-x-view.dts    |  550 ++++++
+ .../dts/renesas/r8a7795-es1-salvator-x-view.dts    |  550 +++++++
  .../boot/dts/renesas/r8a7795-h3ulcb-had-alfa.dts   |   22 +
  .../boot/dts/renesas/r8a7795-h3ulcb-had-beta.dts   |   23 +
  .../arm64/boot/dts/renesas/r8a7795-h3ulcb-had.dtsi |  215 +++
@@ -58,26 +59,27 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-vb2.dts |   68 +
  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb-vbm.dts |   26 +
  .../arm64/boot/dts/renesas/r8a7795-h3ulcb-view.dts |  544 ++++++
- .../boot/dts/renesas/r8a7795-salvator-x-view.dts   |  550 ++++++
+ .../boot/dts/renesas/r8a7795-salvator-x-view.dts   |  550 +++++++
  arch/arm64/boot/dts/renesas/r8a7796-m3ulcb-kf.dts  |   40 +
- .../arm64/boot/dts/renesas/r8a7796-m3ulcb-view.dts |  286 +++
+ .../arm64/boot/dts/renesas/r8a7796-m3ulcb-view.dts |  286 ++++
  .../boot/dts/renesas/r8a7796-salvator-x-view.dts   |  317 ++++
  .../boot/dts/renesas/r8a7797-eagle-function.dts    |   62 +
  arch/arm64/boot/dts/renesas/r8a7797-eagle.dts      |  575 +++++++
- arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts   |  575 +++++++
- arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts  |  548 ++++++
+ arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts   |  533 ++++++
+ arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts  |  548 +++++++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk-view.dts |  297 ++++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts      |  314 ++++
+ arch/arm64/boot/dts/renesas/r8a7797-v3mzf.dts      |  424 +++++
  arch/arm64/boot/dts/renesas/r8a7798-condor.dts     |  963 +++++++++++
- arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi      |  545 ++++++
+ arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi      |  498 ++++++
  arch/arm64/boot/dts/renesas/ulcb-kf-most.dtsi      |   30 +
  arch/arm64/boot/dts/renesas/ulcb-kf-sd3.dtsi       |   46 +
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           | 1538 +++++++++++++++++
- arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi      |  542 ++++++
- arch/arm64/boot/dts/renesas/ulcb-vb.dtsi           | 1770 +++++++++++++++++++
- arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi          | 1820 ++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           | 1492 +++++++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi      |  495 ++++++
+ arch/arm64/boot/dts/renesas/ulcb-vb.dtsi           | 1678 +++++++++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi          | 1724 ++++++++++++++++++++
  arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi          |  577 +++++++
- 47 files changed, 20253 insertions(+)
+ 48 files changed, 20093 insertions(+)
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/Makefile
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts
@@ -115,6 +117,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-view.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3mzf.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7798-condor.dts
  create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi
  create mode 100644 arch/arm64/boot/dts/renesas/ulcb-kf-most.dtsi
@@ -126,10 +129,10 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  create mode 100644 arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
 
 diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index f9c71df..3b5cff6 100644
+index f9c71df..6ca2c60 100644
 --- a/arch/arm64/boot/dts/renesas/Makefile
 +++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -6,5 +6,26 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+@@ -6,5 +6,27 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs.dtb
  
@@ -149,6 +152,7 @@ index f9c71df..3b5cff6 100644
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-view.dtb
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-kf.dtb
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-vbm.dtb
++dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3mzf.dtb
 +dtb-$(CONFIG_ARCH_R8A7798) += r8a7798-condor.dtb
 +
 +# ADAS legacy boards
@@ -172,10 +176,10 @@ index 0000000..7f25079
 +clean-files	:= *.dtb
 diff --git a/arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts b/arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts
 new file mode 100644
-index 0000000..fe07e22
+index 0000000..01aef82
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts
-@@ -0,0 +1,1710 @@
+@@ -0,0 +1,1624 @@
 +/*
 + * Device Tree Source for the H3ULCB Kingfisher V0 board on r8a7795 ES1.x
 + *
@@ -764,11 +768,8 @@ index 0000000..fe07e22
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
-+					};
-+					ov106xx_ti954_des0ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -788,11 +789,8 @@ index 0000000..fe07e22
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
-+					};
-+					ov106xx_ti954_des0ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -812,8 +810,8 @@ index 0000000..fe07e22
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -833,15 +831,15 @@ index 0000000..fe07e22
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,sensor_delay = <350>;
 +				ti,links = <4>;
@@ -850,60 +848,29 @@ index 0000000..fe07e22
 +				ti,cable-mode = "coax";
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_40_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@0 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&video_a_ext1 10 GPIO_ACTIVE_HIGH>; */
-+				ti,sensor_delay = <350>;
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "coax";
-+
-+				port@0 {
-+					ti954_des0ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in0>;
-+					};
-+					ti954_des0ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in1>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_40_ep>;
 +					};
@@ -973,11 +940,8 @@ index 0000000..fe07e22
 +					ov106xx_max9286_des1ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep0>;
 +					};
-+					ov106xx_ti964_des1ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep0>;
-+					};
-+					ov106xx_ti954_des1ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des1ep0>;
++					ov106xx_ti9x4_des1ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep0>;
 +					};
 +				};
 +			};
@@ -997,11 +961,8 @@ index 0000000..fe07e22
 +					ov106xx_max9286_des1ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep1>;
 +					};
-+					ov106xx_ti964_des1ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep1>;
-+					};
-+					ov106xx_ti954_des1ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des1ep1>;
++					ov106xx_ti9x4_des1ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep1>;
 +					};
 +				};
 +			};
@@ -1021,8 +982,8 @@ index 0000000..fe07e22
 +					ov106xx_max9286_des1ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep2>;
 +					};
-+					ov106xx_ti964_des1ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep2>;
++					ov106xx_ti9x4_des1ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep2>;
 +					};
 +				};
 +			};
@@ -1042,15 +1003,15 @@ index 0000000..fe07e22
 +					ov106xx_max9286_des1ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep3>;
 +					};
-+					ov106xx_ti964_des1ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep3>;
++					ov106xx_ti9x4_des1ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@1 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@1 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,sensor_delay = <350>;
 +				ti,links = <4>;
@@ -1059,60 +1020,29 @@ index 0000000..fe07e22
 +				ti,cable-mode = "coax";
 +
 +				port@0 {
-+					ti964_des1ep0: endpoint@0 {
++					ti9x4_des1ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in4>;
 +					};
-+					ti964_des1ep1: endpoint@1 {
++					ti9x4_des1ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in5>;
 +					};
-+					ti964_des1ep2: endpoint@2 {
++					ti9x4_des1ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in6>;
 +					};
-+					ti964_des1ep3: endpoint@3 {
++					ti9x4_des1ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in7>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi2ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_41_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@1 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&video_b_ext1 10 GPIO_ACTIVE_HIGH>; */
-+				ti,sensor_delay = <350>;
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "coax";
-+
-+				port@0 {
-+					ti954_des1ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in4>;
-+					};
-+					ti954_des1ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in5>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi2ep0: endpoint {
++					ti9x4_csi2ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_41_ep>;
 +					};
@@ -1474,11 +1404,8 @@ index 0000000..fe07e22
 +			vin0_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin0_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
-+			};
-+			vin0_ti954_des0ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep0>;
++			vin0_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -1508,11 +1435,8 @@ index 0000000..fe07e22
 +			vin1_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin1_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
-+			};
-+			vin1_ti954_des0ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep1>;
++			vin1_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -1542,8 +1466,8 @@ index 0000000..fe07e22
 +			vin2_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin2_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin2_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -1573,8 +1497,8 @@ index 0000000..fe07e22
 +			vin3_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin3_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin3_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
@@ -1604,11 +1528,8 @@ index 0000000..fe07e22
 +			vin4_max9286_des1ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep0>;
 +			};
-+			vin4_ti964_des1ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep0>;
-+			};
-+			vin4_ti954_des1ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep0>;
++			vin4_ti9x4_des1ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep0>;
 +			};
 +		};
 +	};
@@ -1638,11 +1559,8 @@ index 0000000..fe07e22
 +			vin5_max9286_des1ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep1>;
 +			};
-+			vin5_ti964_des1ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep1>;
-+			};
-+			vin5_ti954_des1ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep1>;
++			vin5_ti9x4_des1ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep1>;
 +			};
 +		};
 +	};
@@ -1672,8 +1590,8 @@ index 0000000..fe07e22
 +			vin6_max9286_des1ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep2>;
 +			};
-+			vin6_ti964_des1ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep2>;
++			vin6_ti9x4_des1ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep2>;
 +			};
 +		};
 +	};
@@ -1703,8 +1621,8 @@ index 0000000..fe07e22
 +			vin7_max9286_des1ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep3>;
 +			};
-+			vin7_ti964_des1ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep3>;
++			vin7_ti9x4_des1ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep3>;
 +			};
 +		};
 +	};
@@ -2335,10 +2253,10 @@ index 0000000..ac6a12b
 +};
 diff --git a/arch/arm64/boot/dts/renesas/legacy/r8a7795-h3ulcb-kf-v0.dts b/arch/arm64/boot/dts/renesas/legacy/r8a7795-h3ulcb-kf-v0.dts
 new file mode 100644
-index 0000000..c19bc58
+index 0000000..dd1aadc
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/legacy/r8a7795-h3ulcb-kf-v0.dts
-@@ -0,0 +1,1724 @@
+@@ -0,0 +1,1638 @@
 +/*
 + * Device Tree Source for the H3ULCB Kingfisher V0 board on r8a7795
 + *
@@ -2927,11 +2845,8 @@ index 0000000..c19bc58
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
-+					};
-+					ov106xx_ti954_des0ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -2951,11 +2866,8 @@ index 0000000..c19bc58
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
-+					};
-+					ov106xx_ti954_des0ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -2975,8 +2887,8 @@ index 0000000..c19bc58
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -2996,15 +2908,15 @@ index 0000000..c19bc58
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,sensor_delay = <350>;
 +				ti,links = <4>;
@@ -3013,60 +2925,29 @@ index 0000000..c19bc58
 +				ti,cable-mode = "coax";
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_40_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@0 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&video_a_ext1 10 GPIO_ACTIVE_HIGH>; */
-+				ti,sensor_delay = <350>;
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "coax";
-+
-+				port@0 {
-+					ti954_des0ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in0>;
-+					};
-+					ti954_des0ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in1>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_40_ep>;
 +					};
@@ -3136,11 +3017,8 @@ index 0000000..c19bc58
 +					ov106xx_max9286_des1ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep0>;
 +					};
-+					ov106xx_ti964_des1ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep0>;
-+					};
-+					ov106xx_ti954_des1ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des1ep0>;
++					ov106xx_ti9x4_des1ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep0>;
 +					};
 +				};
 +			};
@@ -3160,11 +3038,8 @@ index 0000000..c19bc58
 +					ov106xx_max9286_des1ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep1>;
 +					};
-+					ov106xx_ti964_des1ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep1>;
-+					};
-+					ov106xx_ti954_des1ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des1ep1>;
++					ov106xx_ti9x4_des1ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep1>;
 +					};
 +				};
 +			};
@@ -3184,8 +3059,8 @@ index 0000000..c19bc58
 +					ov106xx_max9286_des1ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep2>;
 +					};
-+					ov106xx_ti964_des1ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep2>;
++					ov106xx_ti9x4_des1ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep2>;
 +					};
 +				};
 +			};
@@ -3205,15 +3080,15 @@ index 0000000..c19bc58
 +					ov106xx_max9286_des1ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep3>;
 +					};
-+					ov106xx_ti964_des1ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep3>;
++					ov106xx_ti9x4_des1ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@1 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@1 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,sensor_delay = <350>;
 +				ti,links = <4>;
@@ -3222,60 +3097,29 @@ index 0000000..c19bc58
 +				ti,cable-mode = "coax";
 +
 +				port@0 {
-+					ti964_des1ep0: endpoint@0 {
++					ti9x4_des1ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in4>;
 +					};
-+					ti964_des1ep1: endpoint@1 {
++					ti9x4_des1ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in5>;
 +					};
-+					ti964_des1ep2: endpoint@2 {
++					ti9x4_des1ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in6>;
 +					};
-+					ti964_des1ep3: endpoint@3 {
++					ti9x4_des1ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in7>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi2ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_41_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@1 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&video_b_ext1 10 GPIO_ACTIVE_HIGH>; */
-+				ti,sensor_delay = <350>;
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "coax";
-+
-+				port@0 {
-+					ti954_des1ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in4>;
-+					};
-+					ti954_des1ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in5>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi2ep0: endpoint {
++					ti9x4_csi2ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_41_ep>;
 +					};
@@ -3644,11 +3488,8 @@ index 0000000..c19bc58
 +			vin0_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin0_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
-+			};
-+			vin0_ti954_des0ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep0>;
++			vin0_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -3678,11 +3519,8 @@ index 0000000..c19bc58
 +			vin1_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin1_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
-+			};
-+			vin1_ti954_des0ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep1>;
++			vin1_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -3712,8 +3550,8 @@ index 0000000..c19bc58
 +			vin2_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin2_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin2_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -3743,8 +3581,8 @@ index 0000000..c19bc58
 +			vin3_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin3_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin3_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
@@ -3774,11 +3612,8 @@ index 0000000..c19bc58
 +			vin4_max9286_des1ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep0>;
 +			};
-+			vin4_ti964_des1ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep0>;
-+			};
-+			vin4_ti954_des1ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep0>;
++			vin4_ti9x4_des1ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep0>;
 +			};
 +		};
 +	};
@@ -3808,11 +3643,8 @@ index 0000000..c19bc58
 +			vin5_max9286_des1ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep1>;
 +			};
-+			vin5_ti964_des1ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep1>;
-+			};
-+			vin5_ti954_des1ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep1>;
++			vin5_ti9x4_des1ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep1>;
 +			};
 +		};
 +	};
@@ -3842,8 +3674,8 @@ index 0000000..c19bc58
 +			vin6_max9286_des1ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep2>;
 +			};
-+			vin6_ti964_des1ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep2>;
++			vin6_ti9x4_des1ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep2>;
 +			};
 +		};
 +	};
@@ -3873,8 +3705,8 @@ index 0000000..c19bc58
 +			vin7_max9286_des1ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep3>;
 +			};
-+			vin7_ti964_des1ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep3>;
++			vin7_ti9x4_des1ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep3>;
 +			};
 +		};
 +	};
@@ -4536,10 +4368,10 @@ index 0000000..14b6f52
 +};
 diff --git a/arch/arm64/boot/dts/renesas/legacy/r8a7796-m3ulcb-kf-v0.dts b/arch/arm64/boot/dts/renesas/legacy/r8a7796-m3ulcb-kf-v0.dts
 new file mode 100644
-index 0000000..8e7de0f
+index 0000000..b17a42e
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/legacy/r8a7796-m3ulcb-kf-v0.dts
-@@ -0,0 +1,1214 @@
+@@ -0,0 +1,1171 @@
 +/*
 + * Device Tree Source for the M3ULCB Kingfisher V0 board on r8a7796
 + *
@@ -5128,11 +4960,8 @@ index 0000000..8e7de0f
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
-+					};
-+					ov106xx_ti954_des0ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -5152,11 +4981,8 @@ index 0000000..8e7de0f
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
-+					};
-+					ov106xx_ti954_des0ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -5176,8 +5002,8 @@ index 0000000..8e7de0f
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -5197,15 +5023,15 @@ index 0000000..8e7de0f
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,sensor_delay = <350>;
 +				ti,links = <4>;
@@ -5214,60 +5040,29 @@ index 0000000..8e7de0f
 +				ti,cable-mode = "coax";
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_40_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@0 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&video_a_ext1 10 GPIO_ACTIVE_HIGH>; */
-+				ti,sensor_delay = <350>;
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "coax";
-+
-+				port@0 {
-+					ti954_des0ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in0>;
-+					};
-+					ti954_des0ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in1>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_40_ep>;
 +					};
@@ -5499,11 +5294,8 @@ index 0000000..8e7de0f
 +			vin0_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin0_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
-+			};
-+			vin0_ti954_des0ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep0>;
++			vin0_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -5533,11 +5325,8 @@ index 0000000..8e7de0f
 +			vin1_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin1_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
-+			};
-+			vin1_ti954_des0ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep1>;
++			vin1_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -5567,8 +5356,8 @@ index 0000000..8e7de0f
 +			vin2_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin2_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin2_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -5598,8 +5387,8 @@ index 0000000..8e7de0f
 +			vin3_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin3_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin3_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
@@ -11023,10 +10812,10 @@ index 0000000..ce7a88e
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts
 new file mode 100644
-index 0000000..9158c84
+index 0000000..c61b613
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts
-@@ -0,0 +1,575 @@
+@@ -0,0 +1,533 @@
 +/*
 + * Device Tree Source for the V3MSK Kingfisher board on r8a7797
 + *
@@ -11132,11 +10921,8 @@ index 0000000..9158c84
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
-+					};
-+					ov106xx_ti954_des0ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -11156,11 +10942,8 @@ index 0000000..9158c84
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
-+					};
-+					ov106xx_ti954_des0ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -11180,8 +10963,8 @@ index 0000000..9158c84
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -11201,15 +10984,15 @@ index 0000000..9158c84
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,links = <4>;
 +				ti,lanes = <4>;
@@ -11217,59 +11000,29 @@ index 0000000..9158c84
 +				ti,cable-mode = "coax";
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
-+						csi-rate = <800>;
-+						remote-endpoint = <&csi2_40_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@0 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&video_a_ext1 10 GPIO_ACTIVE_HIGH>; */
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "coax";
-+
-+				port@0 {
-+					ti954_des0ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in0>;
-+					};
-+					ti954_des0ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in1>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <800>;
 +						remote-endpoint = <&csi2_40_ep>;
 +					};
@@ -11497,11 +11250,8 @@ index 0000000..9158c84
 +			vin0_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin0_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
-+			};
-+			vin0_ti954_des0ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep0>;
++			vin0_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -11531,11 +11281,8 @@ index 0000000..9158c84
 +			vin1_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin1_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
-+			};
-+			vin1_ti954_des0ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep1>;
++			vin1_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -11565,8 +11312,8 @@ index 0000000..9158c84
 +			vin2_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin2_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin2_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -11596,15 +11343,15 @@ index 0000000..9158c84
 +			vin3_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin3_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin3_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
 new file mode 100644
-index 0000000..1cb8e95
+index 0000000..d355adb
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
 @@ -0,0 +1,548 @@
@@ -11746,8 +11493,8 @@ index 0000000..1cb8e95
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -11767,8 +11514,8 @@ index 0000000..1cb8e95
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -11788,8 +11535,8 @@ index 0000000..1cb8e95
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -11809,8 +11556,8 @@ index 0000000..1cb8e95
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
@@ -11858,8 +11605,8 @@ index 0000000..1cb8e95
 +				};
 +			};
 +
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,links = <4>;
 +				ti,lanes = <4>;
@@ -11871,29 +11618,29 @@ index 0000000..1cb8e95
 +				POC3-supply = <&pwr3>;
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <700>;
 +						remote-endpoint = <&csi2_40_ep>;
 +					};
@@ -12057,8 +11804,8 @@ index 0000000..1cb8e95
 +			vin0_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin0_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
++			vin0_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -12088,8 +11835,8 @@ index 0000000..1cb8e95
 +			vin1_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin1_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
++			vin1_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -12119,8 +11866,8 @@ index 0000000..1cb8e95
 +			vin2_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin2_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin2_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -12150,8 +11897,8 @@ index 0000000..1cb8e95
 +			vin3_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin3_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin3_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
@@ -12777,6 +12524,436 @@ index 0000000..91d10c5
 +	cap-mmc-highspeed;
 +	bus-width = <8>;
 +	non-removable;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3mzf.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3mzf.dts
+new file mode 100644
+index 0000000..7926d2e
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-v3mzf.dts
+@@ -0,0 +1,424 @@
++/*
++ * Device Tree Source for the V3MZF board
++ *
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7797.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	model = "Renesas V3MZF board based on r8a7797";
++	compatible = "renesas,v3mzf", "renesas,r8a7797";
++
++	aliases {
++		serial0 = &scif0;
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		/* device specific region for Lossy Decompression */
++		lossy_decompress: linux,lossy_decompress {
++			no-map;
++			reg = <0x00000000 0x6c000000 0x0 0x03000000>;
++		};
++
++		/* global autoconfigured region for contiguous allocations */
++		linux,cma {
++			compatible = "shared-dma-pool";
++			reusable;
++			reg = <0x00000000 0x6f000000 0x0 0x11000000>;
++			linux,cma-default;
++		};
++	};
++
++	mmngr {
++		compatible = "renesas,mmngr";
++		memory-region = <&lossy_decompress>;
++	};
++
++	mmngrbuf {
++		compatible = "renesas,mmngrbuf";
++	};
++
++	vspm_if {
++		compatible = "renesas,vspm_if";
++	};
++
++	lvds-encoder {
++		compatible = "thine,thc63lvdm83d";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds_enc_in: endpoint {
++					remote-endpoint = <&du_out_lvds0>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				lvds_enc_out: endpoint {
++					remote-endpoint = <&lvds_in>;
++				};
++			};
++		};
++	};
++
++	lvds {
++		compatible = "lvds-connector";
++
++		width-mm = <210>;
++		height-mm = <158>;
++
++		panel-timing {
++			clock-frequency = <65000000>;
++			hactive = <1280>;
++			vactive = <800>;
++			hsync-len = <40>;
++			hfront-porch = <80>;
++			hback-porch = <40>;
++			vfront-porch = <14>;
++			vback-porch = <14>;
++			vsync-len = <4>;
++		};
++
++		port {
++			lvds_in: endpoint {
++				remote-endpoint = <&lvds_enc_out>;
++			};
++		};
++	};
++
++	dclkin_p0: clock-out0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <148500000>;
++	};
++
++	msiof_ref_clk: msiof-ref-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <66666666>;
++	};
++};
++
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++	status = "okay";
++	phy-int-gpio = <&gpio1 17 GPIO_ACTIVE_LOW>;
++
++	phy0: ethernet-phy@0 {
++		rxc-skew-ps = <1500>;
++		rxdv-skew-ps = <420>; /* default */
++		rxd0-skew-ps = <420>; /* default */
++		rxd1-skew-ps = <420>; /* default */
++		rxd2-skew-ps = <420>; /* default */
++		rxd3-skew-ps = <420>; /* default */
++		txc-skew-ps = <900>; /* default */
++		txen-skew-ps = <420>; /* default */
++		txd0-skew-ps = <420>; /* default */
++		txd1-skew-ps = <420>; /* default */
++		txd2-skew-ps = <420>; /* default */
++		txd3-skew-ps = <420>; /* default */
++		reg = <0>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
++		max-speed = <1000>;
++	};
++};
++
++&canfd {
++	pinctrl-0 = <&canfd0_pins &canfd1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	channel0 {
++		status = "okay";
++	};
++
++	channel1 {
++		status = "okay";
++	};
++};
++
++&csi2_40 {
++	status = "okay";
++
++	virtual,channel {
++		csi2_vc0 {
++			data,type = "raw8";
++			receive,vc = <0>;
++		};
++	};
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		csi2_40_ep: endpoint {
++			clock-lanes = <0>;
++			data-lanes = <1 2 3 4>;
++			csi-rate = <300>;
++		};
++	};
++};
++
++&du {
++	status = "okay";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&lvds_in>;
++			};
++		};
++	};
++};
++
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
++&gpio1 {
++	pdb_ser_enable {
++		gpio-hog;
++		gpios = <26 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "PDB_SER_Enable";
++	};
++
++	lvds_sw_sel {
++		gpio-hog;
++		gpios = <27 GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "LVDS_SW_SEL";
++	};
++};
++
++&gpio2 {
++	can0_inh_v3m {
++		gpio-hog;
++		gpios = <14 GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "CAN0_INH_V3M";
++	};
++
++	can1_inh_v3m {
++		gpio-hog;
++		gpios = <15 GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "CAN1_INH_V3M";
++	};
++};
++
++&gpio3 {
++	pdb_des_enable {
++		gpio-hog;
++		gpios = <0 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "PDB_DES_Enable";
++	};
++};
++
++&i2c0 {
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++};
++
++&i2c3 {
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	ov106xx@0 {
++		compatible = "ovti,ov106xx";
++		reg = <0x60>;
++
++		port@0 {
++			ov106xx_in0: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&vin0ep0>;
++			};
++		};
++		port@1 {
++			ov106xx_ti9x4_des0ep0: endpoint@0 {
++				remote-endpoint = <&ti9x4_des0ep0>;
++			};
++		};
++	};
++
++	ti9x4@30 {
++		compatible = "ti,ti9x4";
++		reg = <0x30>;
++		ti,links = <1>;
++		ti,lanes = <4>;
++		ti,forwarding-mode = "round-robin";
++		ti,dvp_bus = <0>;
++		ti,ser_id = <0x30>;
++
++		port@0 {
++			ti9x4_des0ep0: endpoint@0 {
++				ti9x3-addr = <0x0c>;
++				dvp-order = <0>;
++				remote-endpoint = <&ov106xx_in0>;
++			};
++		};
++		port@1 {
++			ti9x4_csi0ep0: endpoint {
++				csi-rate = <800>;
++				remote-endpoint = <&csi2_40_ep>;
++			};
++		};
++	};
++};
++
++&msiof2 {
++	pinctrl-0 = <&msiof2_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio2 4 0>;
++
++	status = "okay";
++	spidev@0 {
++		compatible = "renesas,sh-msiof";
++		reg = <0>;
++		spi-max-frequency = <66666666>;
++	};
++};
++
++&msiof3 {
++	pinctrl-0 = <&msiof3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	slave;
++};
++
++&pfc {
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
++	avb_pins: avb {
++		groups = "avb0_mdc";
++		function = "avb0";
++	};
++
++	canfd0_pins: canfd0 {
++		groups = "canfd0_data_a";
++		function = "canfd0";
++	};
++
++	canfd1_pins: canfd1 {
++		groups = "canfd1_data";
++		function = "canfd1";
++	};
++
++	i2c0_pins: i2c0 {
++		groups = "i2c0";
++		function = "i2c0";
++	};
++
++	i2c3_pins: i2c3 {
++		groups = "i2c3";
++		function = "i2c3";
++	};
++
++	msiof2_pins: msiof2 {
++		groups = "msiof2_clk", "msiof2_txd", "msiof2_rxd";
++		function = "msiof2";
++	};
++
++	msiof3_pins: msiof3 {
++		groups = "msiof3_clk", "msiof3_txd", "msiof3_rxd", "msiof3_sync";
++		function = "msiof3";
++	};
++
++	scif0_pins: scif0 {
++		groups = "scif0_data";
++		function = "scif0";
++	};
++
++	scif_clk_pins: scif_clk {
++		groups = "scif_clk_b";
++		function = "scif_clk";
++	};
++};
++
++&scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
++};
++
++&vin0 {
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			vin0ep0: endpoint {
++				csi,select = "csi40";
++				virtual,channel = <0>;
++				data-lanes = <1 2 3 4>;
++				remote-endpoint = <&ov106xx_in0>;
++			};
++		};
++		port@1 {
++			csi0ep0: endpoint {
++				remote-endpoint = <&csi2_40_ep>;
++			};
++		};
++		port@2 {
++			vin0_ti9x4_des0ep0: endpoint@0 {
++				remote-endpoint = <&ti9x4_des0ep0>;
++			};
++		};
++	};
++};
++
++&wdt0 {
 +	status = "okay";
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7798-condor.dts b/arch/arm64/boot/dts/renesas/r8a7798-condor.dts
@@ -13750,10 +13927,10 @@ index 0000000..cdd9844
 +};
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi
 new file mode 100644
-index 0000000..b469ca6
+index 0000000..095a503
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi
-@@ -0,0 +1,545 @@
+@@ -0,0 +1,498 @@
 +/*
 + * Device Tree Source for the H3ULCB Kingfisher board:
 + *  this adding conflicting resource on VIN4/VIN5/VIN6/VIN7 for CN11
@@ -13827,11 +14004,8 @@ index 0000000..b469ca6
 +				ov106xx_max9286_des1ep0: endpoint@0 {
 +					remote-endpoint = <&max9286_des1ep0>;
 +				};
-+				ov106xx_ti964_des1ep0: endpoint@1 {
-+					remote-endpoint = <&ti964_des1ep0>;
-+				};
-+				ov106xx_ti954_des1ep0: endpoint@2 {
-+					remote-endpoint = <&ti954_des1ep0>;
++				ov106xx_ti9x4_des1ep0: endpoint@1 {
++					remote-endpoint = <&ti9x4_des1ep0>;
 +				};
 +			};
 +		};
@@ -13851,11 +14025,8 @@ index 0000000..b469ca6
 +				ov106xx_max9286_des1ep1: endpoint@0 {
 +					remote-endpoint = <&max9286_des1ep1>;
 +				};
-+				ov106xx_ti964_des1ep1: endpoint@1 {
-+					remote-endpoint = <&ti964_des1ep1>;
-+				};
-+				ov106xx_ti954_des1ep1: endpoint@2 {
-+					remote-endpoint = <&ti954_des1ep1>;
++				ov106xx_ti9x4_des1ep1: endpoint@1 {
++					remote-endpoint = <&ti9x4_des1ep1>;
 +				};
 +			};
 +		};
@@ -13874,8 +14045,8 @@ index 0000000..b469ca6
 +				ov106xx_max9286_des1ep2: endpoint@0 {
 +					remote-endpoint = <&max9286_des1ep2>;
 +				};
-+				ov106xx_ti964_des1ep2: endpoint@1 {
-+					remote-endpoint = <&ti964_des1ep2>;
++				ov106xx_ti9x4_des1ep2: endpoint@1 {
++					remote-endpoint = <&ti9x4_des1ep2>;
 +				};
 +			};
 +		};
@@ -13894,15 +14065,15 @@ index 0000000..b469ca6
 +				ov106xx_max9286_des1ep3: endpoint@0 {
 +					remote-endpoint = <&max9286_des1ep3>;
 +				};
-+				ov106xx_ti964_des1ep3: endpoint@1 {
-+					remote-endpoint = <&ti964_des1ep3>;
++				ov106xx_ti9x4_des1ep3: endpoint@1 {
++					remote-endpoint = <&ti9x4_des1ep3>;
 +				};
 +			};
 +		};
 +
-+		/* DS90UB964 @ 0x3a */
-+		ti964-ti9x3@1 {
-+			compatible = "ti,ti964-ti9x3";
++		/* DS90UB9x4 @ 0x3a */
++		ti9x4@1 {
++			compatible = "ti,ti9x4";
 +			reg = <0x3a>;
 +			ti,sensor_delay = <350>;
 +			ti,links = <4>;
@@ -13915,64 +14086,29 @@ index 0000000..b469ca6
 +			POC3-supply = <&pwr3B>;
 +
 +			port@0 {
-+				ti964_des1ep0: endpoint@0 {
++				ti9x4_des1ep0: endpoint@0 {
 +					ti9x3-addr = <0x0c>;
 +					dvp-order = <0>;
 +					remote-endpoint = <&ov106xx_in4>;
 +				};
-+				ti964_des1ep1: endpoint@1 {
++				ti9x4_des1ep1: endpoint@1 {
 +					ti9x3-addr = <0x0d>;
 +					dvp-order = <0>;
 +					remote-endpoint = <&ov106xx_in5>;
 +				};
-+				ti964_des1ep2: endpoint@2 {
++				ti9x4_des1ep2: endpoint@2 {
 +					ti9x3-addr = <0x0e>;
 +					dvp-order = <0>;
 +					remote-endpoint = <&ov106xx_in6>;
 +				};
-+				ti964_des1ep3: endpoint@3 {
++				ti9x4_des1ep3: endpoint@3 {
 +					ti9x3-addr = <0x0f>;
 +					dvp-order = <0>;
 +					remote-endpoint = <&ov106xx_in7>;
 +				};
 +			};
 +			port@1 {
-+				ti964_csi2ep0: endpoint {
-+					csi-rate = <1450>;
-+					remote-endpoint = <&csi2_41_ep>;
-+				};
-+			};
-+		};
-+
-+		/* DS90UB954 @ 0x38 */
-+		ti954-ti9x3@1 {
-+			compatible = "ti,ti954-ti9x3";
-+			reg = <0x38>;
-+			/* gpios = <&video_b_ext1 10 GPIO_ACTIVE_HIGH>; */
-+			ti,sensor_delay = <350>;
-+			ti,links = <2>;
-+			ti,lanes = <4>;
-+			ti,forwarding-mode = "round-robin";
-+			ti,cable-mode = "coax";
-+			POC0-supply = <&pwr0B>;
-+			POC1-supply = <&pwr1B>;
-+			POC2-supply = <&pwr2B>;
-+			POC3-supply = <&pwr3B>;
-+
-+			port@0 {
-+				ti954_des1ep0: endpoint@0 {
-+					ti9x3-addr = <0x0c>;
-+					dvp-order = <0>;
-+					remote-endpoint = <&ov106xx_in4>;
-+				};
-+				ti954_des1ep1: endpoint@1 {
-+					ti9x3-addr = <0x0d>;
-+					dvp-order = <0>;
-+					remote-endpoint = <&ov106xx_in5>;
-+				};
-+			};
-+			port@1 {
-+				ti954_csi2ep0: endpoint {
++				ti9x4_csi2ep0: endpoint {
 +					csi-rate = <1450>;
 +					remote-endpoint = <&csi2_41_ep>;
 +				};
@@ -14162,11 +14298,8 @@ index 0000000..b469ca6
 +			vin4_max9286_des1ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep0>;
 +			};
-+			vin4_ti964_des1ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep0>;
-+			};
-+			vin4_ti954_des1ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep0>;
++			vin4_ti9x4_des1ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep0>;
 +			};
 +		};
 +	};
@@ -14194,11 +14327,8 @@ index 0000000..b469ca6
 +			vin5_max9286_des1ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep1>;
 +			};
-+			vin5_ti964_des1ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep1>;
-+			};
-+			vin5_ti954_des1ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep1>;
++			vin5_ti9x4_des1ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep1>;
 +			};
 +		};
 +	};
@@ -14228,8 +14358,8 @@ index 0000000..b469ca6
 +			vin6_max9286_des1ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep2>;
 +			};
-+			vin6_ti964_des1ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep2>;
++			vin6_ti9x4_des1ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep2>;
 +			};
 +		};
 +	};
@@ -14259,8 +14389,8 @@ index 0000000..b469ca6
 +			vin7_max9286_des1ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep3>;
 +			};
-+			vin7_ti964_des1ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep3>;
++			vin7_ti9x4_des1ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep3>;
 +			};
 +		};
 +	};
@@ -14389,10 +14519,10 @@ index 0000000..b854216
 +};
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
 new file mode 100644
-index 0000000..56194b4
+index 0000000..a33a2a0
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -0,0 +1,1538 @@
+@@ -0,0 +1,1492 @@
 +/*
 + * Device Tree Source for the ULCB Kingfisher board
 + *
@@ -15208,11 +15338,8 @@ index 0000000..56194b4
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
-+					};
-+					ov106xx_ti954_des0ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -15232,11 +15359,8 @@ index 0000000..56194b4
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
-+					};
-+					ov106xx_ti954_des0ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -15256,8 +15380,8 @@ index 0000000..56194b4
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -15277,15 +15401,15 @@ index 0000000..56194b4
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,links = <4>;
 +				ti,lanes = <4>;
@@ -15297,63 +15421,29 @@ index 0000000..56194b4
 +				POC3-supply = <&pwr3A>;
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_40_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@0 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&video_a_ext1 10 GPIO_ACTIVE_HIGH>; */
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "coax";
-+				POC0-supply = <&pwr0A>;
-+				POC1-supply = <&pwr1A>;
-+				POC2-supply = <&pwr2A>;
-+				POC3-supply = <&pwr3A>;
-+
-+				port@0 {
-+					ti954_des0ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in0>;
-+					};
-+					ti954_des0ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in1>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_40_ep>;
 +					};
@@ -15603,11 +15693,8 @@ index 0000000..56194b4
 +			vin0_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin0_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
-+			};
-+			vin0_ti954_des0ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep0>;
++			vin0_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -15637,11 +15724,8 @@ index 0000000..56194b4
 +			vin1_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin1_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
-+			};
-+			vin1_ti954_des0ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep1>;
++			vin1_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -15671,8 +15755,8 @@ index 0000000..56194b4
 +			vin2_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin2_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin2_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -15702,8 +15786,8 @@ index 0000000..56194b4
 +			vin3_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin3_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin3_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
@@ -15933,10 +16017,10 @@ index 0000000..56194b4
 +
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi
 new file mode 100644
-index 0000000..df27324
+index 0000000..778a477
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi
-@@ -0,0 +1,542 @@
+@@ -0,0 +1,495 @@
 +/*
 + * Device Tree Source for the H3ULCB Videobox board:
 + *  this adding conflicting resource on VIN4/VIN5/VIN6/VIN7 for CN12
@@ -16009,11 +16093,8 @@ index 0000000..df27324
 +				ov106xx_max9286_des2ep0: endpoint@0 {
 +					remote-endpoint = <&max9286_des2ep0>;
 +				};
-+				ov106xx_ti964_des2ep0: endpoint@1 {
-+					remote-endpoint = <&ti964_des2ep0>;
-+				};
-+				ov106xx_ti954_des2ep0: endpoint@2 {
-+					remote-endpoint = <&ti954_des2ep0>;
++				ov106xx_ti9x4_des2ep0: endpoint@1 {
++					remote-endpoint = <&ti9x4_des2ep0>;
 +				};
 +			};
 +		};
@@ -16033,11 +16114,8 @@ index 0000000..df27324
 +				ov106xx_max9286_des2ep1: endpoint@0 {
 +					remote-endpoint = <&max9286_des2ep1>;
 +				};
-+				ov106xx_ti964_des2ep1: endpoint@1 {
-+					remote-endpoint = <&ti964_des2ep1>;
-+				};
-+				ov106xx_ti954_des2ep1: endpoint@2 {
-+					remote-endpoint = <&ti954_des2ep1>;
++				ov106xx_ti9x4_des2ep1: endpoint@1 {
++					remote-endpoint = <&ti9x4_des2ep1>;
 +				};
 +			};
 +		};
@@ -16057,8 +16135,8 @@ index 0000000..df27324
 +				ov106xx_max9286_des2ep2: endpoint@0 {
 +					remote-endpoint = <&max9286_des2ep2>;
 +				};
-+				ov106xx_ti964_des2ep2: endpoint@1 {
-+					remote-endpoint = <&ti964_des2ep2>;
++				ov106xx_ti9x4_des2ep2: endpoint@1 {
++					remote-endpoint = <&ti9x4_des2ep2>;
 +				};
 +			};
 +		};
@@ -16078,15 +16156,15 @@ index 0000000..df27324
 +				ov106xx_max9286_des2ep3: endpoint@0 {
 +					remote-endpoint = <&max9286_des2ep3>;
 +				};
-+				ov106xx_ti964_des2ep3: endpoint@1 {
-+					remote-endpoint = <&ti964_des2ep3>;
++				ov106xx_ti9x4_des2ep3: endpoint@1 {
++					remote-endpoint = <&ti9x4_des2ep3>;
 +				};
 +			};
 +		};
 +
-+		/* DS90UB964 @ 0x3a */
-+		ti964-ti9x3@2 {
-+			compatible = "ti,ti964-ti9x3";
++		/* DS90UB9x4 @ 0x3a */
++		ti9x4@2 {
++			compatible = "ti,ti9x4";
 +			reg = <0x3a>;
 +			ti,sensor_delay = <350>;
 +			ti,links = <4>;
@@ -16099,64 +16177,29 @@ index 0000000..df27324
 +			POC3-supply = <&pwr3C>;
 +
 +			port@0 {
-+				ti964_des2ep0: endpoint@0 {
++				ti9x4_des2ep0: endpoint@0 {
 +					ti9x3-addr = <0x0c>;
 +					dvp-order = <0>;
 +					remote-endpoint = <&ov106xx_in8>;
 +				};
-+				ti964_des2ep1: endpoint@1 {
++				ti9x4_des2ep1: endpoint@1 {
 +					ti9x3-addr = <0x0d>;
 +					dvp-order = <0>;
 +					remote-endpoint = <&ov106xx_in9>;
 +				};
-+				ti964_des2ep2: endpoint@2 {
++				ti9x4_des2ep2: endpoint@2 {
 +					ti9x3-addr = <0x0e>;
 +					dvp-order = <0>;
 +					remote-endpoint = <&ov106xx_in10>;
 +				};
-+				ti964_des2ep3: endpoint@3 {
++				ti9x4_des2ep3: endpoint@3 {
 +					ti9x3-addr = <0x0f>;
 +					dvp-order = <0>;
 +					remote-endpoint = <&ov106xx_in11>;
 +				};
 +			};
 +			port@1 {
-+				ti964_csi1ep0: endpoint {
-+					csi-rate = <1450>;
-+					remote-endpoint = <&csi2_20_ep>;
-+				};
-+			};
-+		};
-+
-+		/* DS90UB954 @ 0x38 */
-+		ti954-ti9x3@2 {
-+			compatible = "ti,ti954-ti9x3";
-+			reg = <0x38>;
-+			/* gpios = <&gpio_exp_c_5c 10 GPIO_ACTIVE_HIGH>; */
-+			ti,sensor_delay = <350>;
-+			ti,links = <2>;
-+			ti,lanes = <2>;
-+			ti,forwarding-mode = "round-robin";
-+			ti,cable-mode = "coax";
-+			POC0-supply = <&pwr0C>;
-+			POC1-supply = <&pwr1C>;
-+			POC2-supply = <&pwr2C>;
-+			POC3-supply = <&pwr3C>;
-+
-+			port@0 {
-+				ti954_des2ep0: endpoint@0 {
-+					ti9x3-addr = <0x0c>;
-+					dvp-order = <0>;
-+					remote-endpoint = <&ov106xx_in8>;
-+				};
-+				ti954_des2ep1: endpoint@1 {
-+					ti9x3-addr = <0x0d>;
-+					dvp-order = <0>;
-+					remote-endpoint = <&ov106xx_in9>;
-+				};
-+			};
-+			port@1 {
-+				ti954_csi1ep0: endpoint {
++				ti9x4_csi1ep0: endpoint {
 +					csi-rate = <1450>;
 +					remote-endpoint = <&csi2_20_ep>;
 +				};
@@ -16346,11 +16389,8 @@ index 0000000..df27324
 +			vin4_max9286_des2ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des2ep0>;
 +			};
-+			vin4_ti964_des2ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des2ep0>;
-+			};
-+			vin4_ti954_des2ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des2ep0>;
++			vin4_ti9x4_des2ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des2ep0>;
 +			};
 +		};
 +	};
@@ -16378,11 +16418,8 @@ index 0000000..df27324
 +			vin5_max9286_des2ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des2ep1>;
 +			};
-+			vin5_ti964_des2ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des2ep1>;
-+			};
-+			vin5_ti954_des2ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des2ep1>;
++			vin5_ti9x4_des2ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des2ep1>;
 +			};
 +		};
 +	};
@@ -16410,8 +16447,8 @@ index 0000000..df27324
 +			vin6_max9286_des2ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des2ep2>;
 +			};
-+			vin6_ti964_des2ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des2ep2>;
++			vin6_ti9x4_des2ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des2ep2>;
 +			};
 +		};
 +	};
@@ -16439,8 +16476,8 @@ index 0000000..df27324
 +			vin7_max9286_des2ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des2ep3>;
 +			};
-+			vin7_ti964_des2ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des2ep3>;
++			vin7_ti9x4_des2ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des2ep3>;
 +			};
 +		};
 +	};
@@ -16481,10 +16518,10 @@ index 0000000..df27324
 +};
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vb.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vb.dtsi
 new file mode 100644
-index 0000000..ab52fff
+index 0000000..07594447
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vb.dtsi
-@@ -0,0 +1,1770 @@
+@@ -0,0 +1,1678 @@
 +/*
 + * Device Tree Source for the ULCB Videobox board
 + *
@@ -17013,11 +17050,8 @@ index 0000000..ab52fff
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
-+					};
-+					ov106xx_ti954_des0ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -17037,11 +17071,8 @@ index 0000000..ab52fff
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
-+					};
-+					ov106xx_ti954_des0ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -17061,8 +17092,8 @@ index 0000000..ab52fff
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -17082,15 +17113,15 @@ index 0000000..ab52fff
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,links = <4>;
 +				ti,lanes = <4>;
@@ -17102,63 +17133,29 @@ index 0000000..ab52fff
 +				POC3-supply = <&pwr3A>;
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_40_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@0 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>; */
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "stp";
-+				POC0-supply = <&pwr0A>;
-+				POC1-supply = <&pwr1A>;
-+				POC2-supply = <&pwr2A>;
-+				POC3-supply = <&pwr3A>;
-+
-+				port@0 {
-+					ti954_des0ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in0>;
-+					};
-+					ti954_des0ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in1>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_40_ep>;
 +					};
@@ -17231,11 +17228,8 @@ index 0000000..ab52fff
 +					ov106xx_max9286_des1ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep0>;
 +					};
-+					ov106xx_ti964_des1ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep0>;
-+					};
-+					ov106xx_ti954_des1ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des1ep0>;
++					ov106xx_ti9x4_des1ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep0>;
 +					};
 +				};
 +			};
@@ -17255,11 +17249,8 @@ index 0000000..ab52fff
 +					ov106xx_max9286_des1ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep1>;
 +					};
-+					ov106xx_ti964_des1ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep1>;
-+					};
-+					ov106xx_ti954_des1ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des1ep1>;
++					ov106xx_ti9x4_des1ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep1>;
 +					};
 +				};
 +			};
@@ -17279,8 +17270,8 @@ index 0000000..ab52fff
 +					ov106xx_max9286_des1ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep2>;
 +					};
-+					ov106xx_ti964_des1ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep2>;
++					ov106xx_ti9x4_des1ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep2>;
 +					};
 +				};
 +			};
@@ -17300,15 +17291,15 @@ index 0000000..ab52fff
 +					ov106xx_max9286_des1ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep3>;
 +					};
-+					ov106xx_ti964_des1ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep3>;
++					ov106xx_ti9x4_des1ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@1 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@1 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,links = <4>;
 +				ti,lanes = <4>;
@@ -17320,63 +17311,29 @@ index 0000000..ab52fff
 +				POC3-supply = <&pwr3B>;
 +
 +				port@0 {
-+					ti964_des1ep0: endpoint@0 {
++					ti9x4_des1ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in4>;
 +					};
-+					ti964_des1ep1: endpoint@1 {
++					ti9x4_des1ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in5>;
 +					};
-+					ti964_des1ep2: endpoint@2 {
++					ti9x4_des1ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in6>;
 +					};
-+					ti964_des1ep3: endpoint@3 {
++					ti9x4_des1ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in7>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi2ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_41_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@1 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>; */
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "stp";
-+				POC0-supply = <&pwr0B>;
-+				POC1-supply = <&pwr1B>;
-+				POC2-supply = <&pwr2B>;
-+				POC3-supply = <&pwr3B>;
-+
-+				port@0 {
-+					ti954_des1ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in4>;
-+					};
-+					ti954_des1ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in5>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi2ep0: endpoint {
++					ti9x4_csi2ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_41_ep>;
 +					};
@@ -17866,11 +17823,8 @@ index 0000000..ab52fff
 +			vin0_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin0_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
-+			};
-+			vin0_ti954_des0ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep0>;
++			vin0_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -17900,11 +17854,8 @@ index 0000000..ab52fff
 +			vin1_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin1_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
-+			};
-+			vin1_ti954_des0ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep1>;
++			vin1_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -17934,8 +17885,8 @@ index 0000000..ab52fff
 +			vin2_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin2_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin2_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -17965,8 +17916,8 @@ index 0000000..ab52fff
 +			vin3_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin3_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin3_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
@@ -17996,11 +17947,8 @@ index 0000000..ab52fff
 +			vin4_max9286_des1ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep0>;
 +			};
-+			vin4_ti964_des1ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep0>;
-+			};
-+			vin4_ti954_des1ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep0>;
++			vin4_ti9x4_des1ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep0>;
 +			};
 +		};
 +	};
@@ -18030,11 +17978,8 @@ index 0000000..ab52fff
 +			vin5_max9286_des1ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep1>;
 +			};
-+			vin5_ti964_des1ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep1>;
-+			};
-+			vin5_ti954_des1ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep1>;
++			vin5_ti9x4_des1ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep1>;
 +			};
 +		};
 +	};
@@ -18064,8 +18009,8 @@ index 0000000..ab52fff
 +			vin6_max9286_des1ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep2>;
 +			};
-+			vin6_ti964_des1ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep2>;
++			vin6_ti9x4_des1ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep2>;
 +			};
 +		};
 +	};
@@ -18095,8 +18040,8 @@ index 0000000..ab52fff
 +			vin7_max9286_des1ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep3>;
 +			};
-+			vin7_ti964_des1ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep3>;
++			vin7_ti9x4_des1ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep3>;
 +			};
 +		};
 +	};
@@ -18257,10 +18202,10 @@ index 0000000..ab52fff
 +//#include "ulcb-vb-cn12.dtsi"
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi
 new file mode 100644
-index 0000000..72045a7
+index 0000000..b0145a2
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi
-@@ -0,0 +1,1820 @@
+@@ -0,0 +1,1724 @@
 +/*
 + * Device Tree Source for the ULCB Videobox V2 board
 + *
@@ -18807,11 +18752,8 @@ index 0000000..72045a7
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
-+					};
-+					ov106xx_ti954_des0ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -18831,11 +18773,8 @@ index 0000000..72045a7
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
-+					};
-+					ov106xx_ti954_des0ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -18855,8 +18794,8 @@ index 0000000..72045a7
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -18876,15 +18815,15 @@ index 0000000..72045a7
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,links = <4>;
 +				ti,lanes = <4>;
@@ -18896,63 +18835,29 @@ index 0000000..72045a7
 +				POC3-supply = <&pwr3A>;
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_40_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@0 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&gpio_exp_a_5c 10 GPIO_ACTIVE_HIGH>; */
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "stp";
-+				POC0-supply = <&pwr0A>;
-+				POC1-supply = <&pwr1A>;
-+				POC2-supply = <&pwr2A>;
-+				POC3-supply = <&pwr3A>;
-+
-+				port@0 {
-+					ti954_des0ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in0>;
-+					};
-+					ti954_des0ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in1>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_40_ep>;
 +					};
@@ -19025,11 +18930,8 @@ index 0000000..72045a7
 +					ov106xx_max9286_des1ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep0>;
 +					};
-+					ov106xx_ti964_des1ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep0>;
-+					};
-+					ov106xx_ti954_des1ep0: endpoint@2 {
-+						remote-endpoint = <&ti954_des1ep0>;
++					ov106xx_ti9x4_des1ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep0>;
 +					};
 +				};
 +			};
@@ -19049,11 +18951,8 @@ index 0000000..72045a7
 +					ov106xx_max9286_des1ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep1>;
 +					};
-+					ov106xx_ti964_des1ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep1>;
-+					};
-+					ov106xx_ti954_des1ep1: endpoint@2 {
-+						remote-endpoint = <&ti954_des1ep1>;
++					ov106xx_ti9x4_des1ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep1>;
 +					};
 +				};
 +			};
@@ -19073,8 +18972,8 @@ index 0000000..72045a7
 +					ov106xx_max9286_des1ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep2>;
 +					};
-+					ov106xx_ti964_des1ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep2>;
++					ov106xx_ti9x4_des1ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep2>;
 +					};
 +				};
 +			};
@@ -19094,15 +18993,15 @@ index 0000000..72045a7
 +					ov106xx_max9286_des1ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des1ep3>;
 +					};
-+					ov106xx_ti964_des1ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des1ep3>;
++					ov106xx_ti9x4_des1ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des1ep3>;
 +					};
 +				};
 +			};
 +
-+			/* DS90UB964 @ 0x3a */
-+			ti964-ti9x3@1 {
-+				compatible = "ti,ti964-ti9x3";
++			/* DS90UB9x4 @ 0x3a */
++			ti9x4@1 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,links = <4>;
 +				ti,lanes = <4>;
@@ -19114,63 +19013,29 @@ index 0000000..72045a7
 +				POC3-supply = <&pwr3B>;
 +
 +				port@0 {
-+					ti964_des1ep0: endpoint@0 {
++					ti9x4_des1ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in4>;
 +					};
-+					ti964_des1ep1: endpoint@1 {
++					ti9x4_des1ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in5>;
 +					};
-+					ti964_des1ep2: endpoint@2 {
++					ti9x4_des1ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in6>;
 +					};
-+					ti964_des1ep3: endpoint@3 {
++					ti9x4_des1ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in7>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi2ep0: endpoint {
-+						csi-rate = <1450>;
-+						remote-endpoint = <&csi2_41_ep>;
-+					};
-+				};
-+			};
-+
-+			/* DS90UB954 @ 0x38 */
-+			ti954-ti9x3@1 {
-+				compatible = "ti,ti954-ti9x3";
-+				reg = <0x38>;
-+				/* gpios = <&gpio_exp_b_5c 10 GPIO_ACTIVE_HIGH>; */
-+				ti,links = <2>;
-+				ti,lanes = <4>;
-+				ti,forwarding-mode = "round-robin";
-+				ti,cable-mode = "stp";
-+				POC0-supply = <&pwr0B>;
-+				POC1-supply = <&pwr1B>;
-+				POC2-supply = <&pwr2B>;
-+				POC3-supply = <&pwr3B>;
-+
-+				port@0 {
-+					ti954_des1ep0: endpoint@0 {
-+						ti9x3-addr = <0x0c>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in4>;
-+					};
-+					ti954_des1ep1: endpoint@1 {
-+						ti9x3-addr = <0x0d>;
-+						dvp-order = <0>;
-+						remote-endpoint = <&ov106xx_in5>;
-+					};
-+				};
-+				port@1 {
-+					ti954_csi2ep0: endpoint {
++					ti9x4_csi2ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_41_ep>;
 +					};
@@ -19680,11 +19545,8 @@ index 0000000..72045a7
 +			vin0_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin0_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
-+			};
-+			vin0_ti954_des0ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep0>;
++			vin0_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -19714,11 +19576,8 @@ index 0000000..72045a7
 +			vin1_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin1_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
-+			};
-+			vin1_ti954_des0ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des0ep1>;
++			vin1_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -19748,8 +19607,8 @@ index 0000000..72045a7
 +			vin2_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin2_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin2_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -19779,8 +19638,8 @@ index 0000000..72045a7
 +			vin3_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin3_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin3_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
@@ -19810,11 +19669,8 @@ index 0000000..72045a7
 +			vin4_max9286_des1ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep0>;
 +			};
-+			vin4_ti964_des1ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep0>;
-+			};
-+			vin4_ti954_des1ep0: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep0>;
++			vin4_ti9x4_des1ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep0>;
 +			};
 +		};
 +	};
@@ -19844,11 +19700,8 @@ index 0000000..72045a7
 +			vin5_max9286_des1ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep1>;
 +			};
-+			vin5_ti964_des1ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep1>;
-+			};
-+			vin5_ti954_des1ep1: endpoint@2 {
-+				remote-endpoint = <&ti954_des1ep1>;
++			vin5_ti9x4_des1ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep1>;
 +			};
 +		};
 +	};
@@ -19878,8 +19731,8 @@ index 0000000..72045a7
 +			vin6_max9286_des1ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep2>;
 +			};
-+			vin6_ti964_des1ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep2>;
++			vin6_ti9x4_des1ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep2>;
 +			};
 +		};
 +	};
@@ -19909,8 +19762,8 @@ index 0000000..72045a7
 +			vin7_max9286_des1ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des1ep3>;
 +			};
-+			vin7_ti964_des1ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des1ep3>;
++			vin7_ti9x4_des1ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des1ep3>;
 +			};
 +		};
 +	};
@@ -20083,7 +19936,7 @@ index 0000000..72045a7
 +//#include "ulcb-vb2-cn12.dtsi"
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
 new file mode 100644
-index 0000000..2be4a7c
+index 0000000..bc36e95
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
 @@ -0,0 +1,577 @@
@@ -20281,8 +20134,8 @@ index 0000000..2be4a7c
 +					ov106xx_max9286_des0ep0: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep0>;
 +					};
-+					ov106xx_ti964_des0ep0: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep0>;
++					ov106xx_ti9x4_des0ep0: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep0>;
 +					};
 +				};
 +			};
@@ -20302,8 +20155,8 @@ index 0000000..2be4a7c
 +					ov106xx_max9286_des0ep1: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep1>;
 +					};
-+					ov106xx_ti964_des0ep1: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep1>;
++					ov106xx_ti9x4_des0ep1: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep1>;
 +					};
 +				};
 +			};
@@ -20323,8 +20176,8 @@ index 0000000..2be4a7c
 +					ov106xx_max9286_des0ep2: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep2>;
 +					};
-+					ov106xx_ti964_des0ep2: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep2>;
++					ov106xx_ti9x4_des0ep2: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep2>;
 +					};
 +				};
 +			};
@@ -20344,8 +20197,8 @@ index 0000000..2be4a7c
 +					ov106xx_max9286_des0ep3: endpoint@0 {
 +						remote-endpoint = <&max9286_des0ep3>;
 +					};
-+					ov106xx_ti964_des0ep3: endpoint@1 {
-+						remote-endpoint = <&ti964_des0ep3>;
++					ov106xx_ti9x4_des0ep3: endpoint@1 {
++						remote-endpoint = <&ti9x4_des0ep3>;
 +					};
 +				};
 +			};
@@ -20393,8 +20246,8 @@ index 0000000..2be4a7c
 +				};
 +			};
 +
-+			ti964-ti9x3@0 {
-+				compatible = "ti,ti964-ti9x3";
++			ti9x4@0 {
++				compatible = "ti,ti9x4";
 +				reg = <0x3a>;
 +				ti,sensor_delay = <350>;
 +				ti,links = <4>;
@@ -20407,29 +20260,29 @@ index 0000000..2be4a7c
 +				POC3-supply = <&pwr3>;
 +
 +				port@0 {
-+					ti964_des0ep0: endpoint@0 {
++					ti9x4_des0ep0: endpoint@0 {
 +						ti9x3-addr = <0x0c>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in0>;
 +					};
-+					ti964_des0ep1: endpoint@1 {
++					ti9x4_des0ep1: endpoint@1 {
 +						ti9x3-addr = <0x0d>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in1>;
 +					};
-+					ti964_des0ep2: endpoint@2 {
++					ti9x4_des0ep2: endpoint@2 {
 +						ti9x3-addr = <0x0e>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in2>;
 +					};
-+					ti964_des0ep3: endpoint@3 {
++					ti9x4_des0ep3: endpoint@3 {
 +						ti9x3-addr = <0x0f>;
 +						dvp-order = <0>;
 +						remote-endpoint = <&ov106xx_in3>;
 +					};
 +				};
 +				port@1 {
-+					ti964_csi0ep0: endpoint {
++					ti9x4_csi0ep0: endpoint {
 +						csi-rate = <1450>;
 +						remote-endpoint = <&csi2_41_ep>;
 +					};
@@ -20564,8 +20417,8 @@ index 0000000..2be4a7c
 +			vin4_max9286_des0ep0: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep0>;
 +			};
-+			vin4_ti964_des0ep0: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep0>;
++			vin4_ti9x4_des0ep0: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep0>;
 +			};
 +		};
 +	};
@@ -20595,8 +20448,8 @@ index 0000000..2be4a7c
 +			vin5_max9286_des0ep1: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep1>;
 +			};
-+			vin5_ti964_des0ep1: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep1>;
++			vin5_ti9x4_des0ep1: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep1>;
 +			};
 +		};
 +	};
@@ -20626,8 +20479,8 @@ index 0000000..2be4a7c
 +			vin6_max9286_des0ep2: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep2>;
 +			};
-+			vin6_ti964_des0ep2: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep2>;
++			vin6_ti9x4_des0ep2: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep2>;
 +			};
 +		};
 +	};
@@ -20657,8 +20510,8 @@ index 0000000..2be4a7c
 +			vin7_max9286_des0ep3: endpoint@0 {
 +				remote-endpoint = <&max9286_des0ep3>;
 +			};
-+			vin7_ti964_des0ep3: endpoint@1 {
-+				remote-endpoint = <&ti964_des0ep3>;
++			vin7_ti9x4_des0ep3: endpoint@1 {
++				remote-endpoint = <&ti9x4_des0ep3>;
 +			};
 +		};
 +	};
