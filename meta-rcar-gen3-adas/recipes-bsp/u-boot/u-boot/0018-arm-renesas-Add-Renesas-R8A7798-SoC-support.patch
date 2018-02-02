@@ -19,11 +19,12 @@ Signed-off-by: Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>
  arch/arm/include/asm/arch-rcar_gen3/r8a7798.h      |   34 +
  arch/arm/include/asm/arch-rcar_gen3/rcar_gen3.h    |    2 +
  drivers/mtd/spi/sf_probe.c                         |    2 +-
+ drivers/net/Kconfig                                |    2 +-
  drivers/net/sh_eth.c                               |   11 +-
  drivers/net/sh_eth.h                               |    7 +-
  drivers/serial/serial_sh.h                         |    2 +-
  include/configs/rcar-gen3-common.h                 |    6 +
- 15 files changed, 3714 insertions(+), 6 deletions(-)
+ 16 files changed, 3715 insertions(+), 7 deletions(-)
  create mode 100644 arch/arm/cpu/armv8/rcar_gen3/cpu_info-r8a7798.c
  create mode 100644 arch/arm/cpu/armv8/rcar_gen3/pfc-r8a7798.c
  create mode 100644 arch/arm/include/asm/arch-rcar_gen3/r8a7798-gpio.h
@@ -3827,6 +3828,19 @@ index 4b9a61b..95129ce 100644
  	if (((flash->dual_flash == SF_SINGLE_FLASH) &&
  	     (flash->size > SPI_FLASH_16MB_BOUN)) ||
  	     ((flash->dual_flash > SF_SINGLE_FLASH) &&
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index 1a26543..b19ece1 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -2,7 +2,7 @@ menu "Network Device Support"
+ 
+ config RAVB_1000BASE
+ 	bool "Renesas Ethernet AVB support 1000Base"
+-	default y if R8A7795 || R8A7796X || R8A7797
++	default y if R8A7795 || R8A7796X || R8A7797 || R8A7798
+ 	depends on RCAR_GEN3
+ 
+ endmenu
 diff --git a/drivers/net/sh_eth.c b/drivers/net/sh_eth.c
 index 4bf493e..8226591 100644
 --- a/drivers/net/sh_eth.c
