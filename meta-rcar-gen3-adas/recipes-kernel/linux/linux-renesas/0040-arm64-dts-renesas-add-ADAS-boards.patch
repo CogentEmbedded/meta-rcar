@@ -17983,7 +17983,7 @@ new file mode 100644
 index 0000000..92a3300
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi
-@@ -0,0 +1,1656 @@
+@@ -0,0 +1,1660 @@
 +/*
 + * Device Tree Source for the ULCB Videobox V2 board
 + *
