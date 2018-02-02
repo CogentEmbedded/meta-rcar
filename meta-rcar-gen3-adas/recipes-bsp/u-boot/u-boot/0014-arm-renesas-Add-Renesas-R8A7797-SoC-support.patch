@@ -19,9 +19,10 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  arch/arm/include/asm/arch-rcar_gen3/r8a7797.h      |   33 +
  arch/arm/include/asm/arch-rcar_gen3/rcar-base.h    |    5 +
  arch/arm/include/asm/arch-rcar_gen3/rcar_gen3.h    |    2 +
+ drivers/net/Kconfig                                |    2 +-
  drivers/serial/serial_sh.h                         |    3 +-
- include/configs/rcar-gen3-common.h                 |   12 +
- 14 files changed, 3360 insertions(+), 1 deletion(-)
+ include/configs/rcar-gen3-common.h                 |   10 +
+ 15 files changed, 3359 insertions(+), 2 deletions(-)
  create mode 100644 arch/arm/cpu/armv8/rcar_gen3/cpu_info-r8a7797.c
  create mode 100644 arch/arm/cpu/armv8/rcar_gen3/pfc-r8a7797.c
  create mode 100644 arch/arm/include/asm/arch-rcar_gen3/r8a7797-gpio.h
@@ -3464,7 +3465,7 @@ index 0000000..09e83ba
 +
 +#endif /* __ASM_ARCH_R8A7797_H */
 diff --git a/arch/arm/include/asm/arch-rcar_gen3/rcar-base.h b/arch/arm/include/asm/arch-rcar_gen3/rcar-base.h
-index 18c1a74..fa24fc4 100644
+index 4e07576..f0813a8 100644
 --- a/arch/arm/include/asm/arch-rcar_gen3/rcar-base.h
 +++ b/arch/arm/include/asm/arch-rcar_gen3/rcar-base.h
 @@ -70,6 +70,11 @@
@@ -3492,6 +3493,19 @@ index b412fad..c2ba0fb 100644
   #else
   #error "SOC Name not defined"
   #endif
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index b1b796d..1a26543 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -2,7 +2,7 @@ menu "Network Device Support"
+ 
+ config RAVB_1000BASE
+ 	bool "Renesas Ethernet AVB support 1000Base"
+-	default y if R8A7795 || R8A7796X
++	default y if R8A7795 || R8A7796X || R8A7797
+ 	depends on RCAR_GEN3
+ 
+ endmenu
 diff --git a/drivers/serial/serial_sh.h b/drivers/serial/serial_sh.h
 index fe71e9a..478824e 100644
 --- a/drivers/serial/serial_sh.h
@@ -3507,10 +3521,10 @@ index fe71e9a..478824e 100644
  # define SCSCR_INIT(port)	(port->clk_mode == EXT_CLK ? 0x32 : 0x30)
  				/* TIE=0,RIE=0,TE=1,RE=1,REIE=0, */
 diff --git a/include/configs/rcar-gen3-common.h b/include/configs/rcar-gen3-common.h
-index 0a959f7..ec20aba 100644
+index 0a959f7..dc5560d 100644
 --- a/include/configs/rcar-gen3-common.h
 +++ b/include/configs/rcar-gen3-common.h
-@@ -124,6 +128,16 @@
+@@ -124,6 +124,16 @@
  #define PHYS_SDRAM_1_SIZE		((unsigned long)(0x80000000 - DRAM_RSV_SIZE))
  #define CONFIG_SYS_SDRAM_BASE		PHYS_SDRAM_1
  #define CONFIG_SYS_SDRAM_SIZE		PHYS_SDRAM_1_SIZE
