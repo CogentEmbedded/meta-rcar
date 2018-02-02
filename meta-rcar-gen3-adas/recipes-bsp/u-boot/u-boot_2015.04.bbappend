@@ -20,6 +20,7 @@ SRC_URI_append = " \
     file://0017-board-renesas-Add-V3MSK-board.patch \
     file://0018-arm-renesas-Add-Renesas-R8A7798-SoC-support.patch \
     file://0019-board-renesas-Add-Condor-board.patch \
+    file://0020-board-renesas-Add-V3MZF-board.patch \
     file://0021-ARM-rcar_gen3-Add-RPC-flash-definitions.patch \
     file://0022-mtd-Add-RPC-HyperFlash-support.patch \
     file://0023-board-renesas-salvator-x-Enable-RPC-clock.patch \

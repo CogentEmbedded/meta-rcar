@@ -1,0 +1,474 @@
+From 0d3af8c73ded0f32c988b4cdc6fa8eb0d75d719a Mon Sep 17 00:00:00 2001
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Date: Fri, 2 Feb 2018 19:28:08 +0300
+Subject: [PATCH] board: renesas: Add V3M ZF board
+
+V3M ZF B0 is a board based on R-Car V3M SoC (R8A7797)
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+ arch/arm/cpu/armv8/Kconfig      |   4 +
+ board/renesas/v3mzf/Kconfig     |  15 +++
+ board/renesas/v3mzf/MAINTAINERS |   6 ++
+ board/renesas/v3mzf/Makefile    |   9 ++
+ board/renesas/v3mzf/v3mzf.c     | 214 ++++++++++++++++++++++++++++++++++++++++
+ configs/v3mzf_defconfig         |   9 ++
+ include/configs/v3mzf.h         | 137 +++++++++++++++++++++++++
+ 7 files changed, 394 insertions(+)
+ create mode 100644 board/renesas/v3mzf/Kconfig
+ create mode 100644 board/renesas/v3mzf/MAINTAINERS
+ create mode 100644 board/renesas/v3mzf/Makefile
+ create mode 100644 board/renesas/v3mzf/v3mzf.c
+ create mode 100644 configs/v3mzf_defconfig
+ create mode 100644 include/configs/v3mzf.h
+
+diff --git a/arch/arm/cpu/armv8/Kconfig b/arch/arm/cpu/armv8/Kconfig
+index 0edd5db..a2706a6 100644
+--- a/arch/arm/cpu/armv8/Kconfig
++++ b/arch/arm/cpu/armv8/Kconfig
+@@ -22,6 +22,9 @@ config TARGET_EAGLE
+ config TARGET_V3MSK
+         bool "V3MSK board"
+ 
++config TARGET_V3MZF
++        bool "V3MZF board"
++
+ config TARGET_CONDOR
+         bool "CONDOR board"
+ 
+@@ -60,5 +63,6 @@ source "board/renesas/ulcb/Kconfig"
+ source "board/renesas/eagle/Kconfig"
+ source "board/renesas/v3msk/Kconfig"
+ source "board/renesas/condor/Kconfig"
++source "board/renesas/v3mzf/Kconfig"
+ 
+ endif
+diff --git a/board/renesas/v3mzf/Kconfig b/board/renesas/v3mzf/Kconfig
+new file mode 100644
+index 0000000..11c7922
+--- /dev/null
++++ b/board/renesas/v3mzf/Kconfig
+@@ -0,0 +1,15 @@
++if TARGET_V3MZF
++
++config SYS_SOC
++	default "rcar_gen3"
++
++config SYS_BOARD
++	default "v3mzf"
++
++config SYS_VENDOR
++	default "renesas"
++
++config SYS_CONFIG_NAME
++	default "v3mzf" if R8A7797
++
++endif
+diff --git a/board/renesas/v3mzf/MAINTAINERS b/board/renesas/v3mzf/MAINTAINERS
+new file mode 100644
+index 0000000..140af42
+--- /dev/null
++++ b/board/renesas/v3mzf/MAINTAINERS
+@@ -0,0 +1,6 @@
++V3MZF BOARD
++M:	Cogent Embedded, Inc. <source@cogentembedded.com>
++S:	Maintained
++F:	board/renesas/v3mzf/
++F:	include/configs/v3mzf.h
++F:	configs/v3mzf_defconfig
+diff --git a/board/renesas/v3mzf/Makefile b/board/renesas/v3mzf/Makefile
+new file mode 100644
+index 0000000..ed31453
+--- /dev/null
++++ b/board/renesas/v3mzf/Makefile
+@@ -0,0 +1,9 @@
++#
++# board/renesas/v3mzf/Makefile
++#
++# Copyright (C) 2018 Cogent Embedded, Inc.
++#
++# SPDX-License-Identifier: GPL-2.0+
++#
++
++obj-y	:= v3mzf.o ../rcar-gen3-common/common.o
+diff --git a/board/renesas/v3mzf/v3mzf.c b/board/renesas/v3mzf/v3mzf.c
+new file mode 100644
+index 0000000..fa1e299
+--- /dev/null
++++ b/board/renesas/v3mzf/v3mzf.c
+@@ -0,0 +1,214 @@
++/*
++ * board/renesas/v3mzf/v3mzf.c
++ *     This is V3MZF board support.
++ *
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0+
++ */
++
++#include <common.h>
++#include <malloc.h>
++#include <netdev.h>
++#include <dm.h>
++#include <dm/platform_data/serial_sh.h>
++#include <asm/processor.h>
++#include <asm/mach-types.h>
++#include <asm/io.h>
++#include <asm/errno.h>
++#include <asm/arch/sys_proto.h>
++#include <asm/gpio.h>
++#include <asm/arch/prr_depend.h>
++#include <asm/arch/gpio.h>
++#include <asm/arch/rcar_gen3.h>
++#include <asm/arch/rcar-mstp.h>
++#include <asm/arch/sh_sdhi.h>
++#include <i2c.h>
++#include <mmc.h>
++
++DECLARE_GLOBAL_DATA_PTR;
++
++#define SCIF0_MSTP207	(1 << 7)
++#define ETHERAVB_MSTP812	(1 << 12)
++#define RPC_MSTP917	(1 << 17)
++#define SD0_MSTP314	(1 << 14)
++
++#define SD0CKCR		0xE6150074
++
++void s_init(void)
++{
++	struct rcar_rwdt *rwdt = (struct rcar_rwdt *)RWDT_BASE;
++	struct rcar_swdt *swdt = (struct rcar_swdt *)SWDT_BASE;
++
++	/* Watchdog init */
++	writel(0xA5A5A500, &rwdt->rwtcsra);
++	writel(0xA5A5A500, &swdt->swtcsra);
++}
++
++int board_early_init_f(void)
++{
++	int freq;
++
++	rcar_prr_init();
++
++	writel(0xa5a5ffff, 0xe6150900);
++	writel(0x5a5a0000, 0xe6150904);
++	mstp_clrbits_le32(MSTPSR1, SMSTPCR1, 0x02000000);
++	/* SCIF0 */
++	mstp_clrbits_le32(MSTPSR2, SMSTPCR2, SCIF0_MSTP207);
++	/* SDHI2/MMC */
++	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, SD0_MSTP314);
++	/* EHTERAVB */
++	mstp_clrbits_le32(MSTPSR8, SMSTPCR8, ETHERAVB_MSTP812);
++	/* QSPI/RPC */
++	mstp_clrbits_le32(MSTPSR9, SMSTPCR9, RPC_MSTP917);
++
++	freq = rcar_get_sdhi_config_clk();
++	writel(freq, SD0CKCR);
++
++	return 0;
++}
++
++int board_init(void)
++{
++	/* adress of boot parameters */
++	gd->bd->bi_boot_params = CONFIG_SYS_TEXT_BASE + 0x50000;
++
++	/* Init PFC controller */
++	pinmux_init();
++#ifdef CONFIG_RAVB
++	/* GPSR1 */
++	gpio_request(GPIO_GFN_AVB0_AVTP_CAPTURE, NULL);
++	gpio_request(GPIO_FN_AVB0_AVTP_MATCH, NULL);
++	gpio_request(GPIO_FN_AVB0_LINK, NULL);
++	gpio_request(GPIO_FN_AVB0_PHY_INT, NULL);
++	/* gpio_request(GPIO_FN_AVB0_MAGIC, NULL); */
++	gpio_request(GPIO_FN_AVB0_MDC, NULL);
++	gpio_request(GPIO_FN_AVB0_MDIO, NULL);
++	gpio_request(GPIO_FN_AVB0_TXCREFCLK, NULL);
++	gpio_request(GPIO_FN_AVB0_TD3, NULL);
++	gpio_request(GPIO_FN_AVB0_TD2, NULL);
++	gpio_request(GPIO_FN_AVB0_TD1, NULL);
++	gpio_request(GPIO_FN_AVB0_TD0, NULL);
++	gpio_request(GPIO_FN_AVB0_TXC, NULL);
++	gpio_request(GPIO_FN_AVB0_TX_CTL, NULL);
++	gpio_request(GPIO_FN_AVB0_RD3, NULL);
++	gpio_request(GPIO_FN_AVB0_RD2, NULL);
++	gpio_request(GPIO_FN_AVB0_RD1, NULL);
++	gpio_request(GPIO_FN_AVB0_RD0, NULL);
++	gpio_request(GPIO_FN_AVB0_RXC, NULL);
++	gpio_request(GPIO_FN_AVB0_RX_CTL, NULL);
++	/* IPSR7 */
++	gpio_request(GPIO_IFN_AVB0_AVTP_CAPTURE, NULL);
++	/* IPSR3 */
++	gpio_request(GPIO_FN_AVB0_AVTP_PPS, NULL);
++
++	/* AVB_PHY_RST */
++	gpio_request(GPIO_GP_1_16, NULL);
++	gpio_direction_output(GPIO_GP_1_16, 0);
++	mdelay(20);
++	gpio_set_value(GPIO_GP_1_16, 1);
++	udelay(1);
++#endif
++	/* QSPI/RPC */
++	gpio_request(GPIO_FN_QSPI0_SPCLK, NULL);
++	gpio_request(GPIO_FN_QSPI0_MOSI_IO0, NULL);
++	gpio_request(GPIO_FN_QSPI0_MISO_IO1, NULL);
++	gpio_request(GPIO_FN_QSPI0_IO2, NULL);
++	gpio_request(GPIO_FN_QSPI0_IO3, NULL);
++	gpio_request(GPIO_FN_QSPI0_SSL, NULL);
++	gpio_request(GPIO_FN_QSPI1_SPCLK, NULL);
++	gpio_request(GPIO_FN_QSPI1_MOSI_IO0, NULL);
++	gpio_request(GPIO_FN_QSPI1_MISO_IO1, NULL);
++	gpio_request(GPIO_FN_QSPI1_IO2, NULL);
++	gpio_request(GPIO_FN_QSPI1_IO3, NULL);
++	gpio_request(GPIO_FN_QSPI1_SSL, NULL);
++	gpio_request(GPIO_FN_RPC_RESET_N, NULL);
++	gpio_request(GPIO_FN_RPC_WP_N, NULL);
++	gpio_request(GPIO_FN_RPC_INT_N, NULL);
++
++	return 0;
++}
++
++#define MAHR 0xE68005C0
++#define MALR 0xE68005C8
++int board_eth_init(bd_t *bis)
++{
++	int ret = -ENODEV;
++	u32 val;
++	unsigned char enetaddr[6];
++
++	if (!eth_getenv_enetaddr("ethaddr", enetaddr))
++		return ret;
++
++	/* Set Mac address */
++	val = enetaddr[0] << 24 | enetaddr[1] << 16 |
++	    enetaddr[2] << 8 | enetaddr[3];
++	writel(val, MAHR);
++
++	val = enetaddr[4] << 8 | enetaddr[5];
++	writel(val, MALR);
++#ifdef CONFIG_RAVB
++	ret = ravb_initialize(bis);
++#endif
++	return ret;
++}
++
++/* V3MZF has KSZ9031RNX */
++int board_phy_config(struct phy_device *phydev)
++{
++	return 0;
++}
++
++int board_mmc_init(bd_t *bis)
++{
++	int ret = -ENODEV;
++#ifdef CONFIG_SH_SDHI
++	/* SDHI2/eMMC */
++	gpio_request(GPIO_FN_MMC_D0, NULL);
++	gpio_request(GPIO_FN_MMC_D1, NULL);
++	gpio_request(GPIO_FN_MMC_D2, NULL);
++	gpio_request(GPIO_FN_MMC_D3, NULL);
++	gpio_request(GPIO_FN_MMC_D4, NULL);
++	gpio_request(GPIO_FN_MMC_D5, NULL);
++	gpio_request(GPIO_FN_MMC_D6, NULL);
++	gpio_request(GPIO_FN_MMC_D7, NULL);
++	gpio_request(GPIO_FN_MMC_CLK, NULL);
++	gpio_request(GPIO_FN_MMC_CMD, NULL);
++	gpio_request(GPIO_FN_MMC_CD, NULL);
++	gpio_request(GPIO_FN_MMC_WP, NULL);
++
++	ret = sh_sdhi_init(CONFIG_SYS_SH_SDHI2_BASE, 0,
++			   SH_SDHI_QUIRK_64BIT_BUF);
++#endif
++	return ret;
++}
++
++int dram_init(void)
++{
++	gd->ram_size = PHYS_SDRAM_1_SIZE;
++
++	return 0;
++}
++
++void dram_init_banksize(void)
++{
++	gd->bd->bi_dram[0].start = PHYS_SDRAM_1;
++	gd->bd->bi_dram[0].size = PHYS_SDRAM_1_SIZE;
++}
++
++const struct rcar_sysinfo sysinfo = {
++	CONFIG_RCAR_BOARD_STRING
++};
++
++void reset_cpu(ulong addr)
++{
++}
++
++#if defined(CONFIG_DISPLAY_BOARDINFO)
++int checkboard(void)
++{
++	printf("Board: %s\n", sysinfo.board_string);
++	return 0;
++}
++#endif
+diff --git a/configs/v3mzf_defconfig b/configs/v3mzf_defconfig
+new file mode 100644
+index 0000000..49f02e7
+--- /dev/null
++++ b/configs/v3mzf_defconfig
+@@ -0,0 +1,9 @@
++CONFIG_ARM=y
++CONFIG_RCAR_GEN3=y
++CONFIG_DM_SERIAL=y
++CONFIG_TARGET_V3MZF=y
++CONFIG_R8A7797=y
++CONFIG_SPL=y
++CONFIG_SH_SDHI=y
++CONFIG_SPI_FLASH=y
++CONFIG_SPI_FLASH_SPANSION=y
+diff --git a/include/configs/v3mzf.h b/include/configs/v3mzf.h
+new file mode 100644
+index 0000000..8ce53aa
+--- /dev/null
++++ b/include/configs/v3mzf.h
+@@ -0,0 +1,137 @@
++/*
++ * include/configs/v3mzf.h
++ *     This file is V3MZF board configuration.
++ *     CPU r8a7797.
++ *
++ * Copyright (C) 2017 Cogent Embedded, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0+
++ */
++
++#ifndef __V3MZF_H
++#define __V3MZF_H
++
++#undef DEBUG
++#define CONFIG_RCAR_BOARD_STRING "V3MZF"
++#define CONFIG_RCAR_TARGET_STRING "r8a7797"
++
++#include "rcar-gen3-common.h"
++
++/* Cache Definitions */
++//#define CONFIG_SYS_DCACHE_OFF
++//#define CONFIG_SYS_ICACHE_OFF
++
++/* SCIF */
++#define CONFIG_SCIF_CONSOLE
++#define CONFIG_CONS_SCIF0
++#define CONFIG_SH_SCIF_CLK_FREQ	CONFIG_S3D4_CLK_FREQ
++
++/* [A] Hyper Flash */
++/* use to RPC(SPI Multi I/O Bus Controller) */
++
++	/* underconstruction */
++
++#define CONFIG_SYS_NO_FLASH
++#if defined(CONFIG_SYS_NO_FLASH)
++#define CONFIG_SPI
++#define CONFIG_RCAR_GEN3_QSPI
++#define CONFIG_SH_QSPI_BASE	0xEE200000
++#define CONFIG_CMD_SF
++#define CONFIG_CMD_SPI
++#define CONFIG_SPI_FLASH
++#define CONFIG_SPI_FLASH_SPANSION
++#else
++#undef CONFIG_CMD_SF
++#undef CONFIG_CMD_SPI
++#undef CONFIG_SPI_FLASH
++#undef CONFIG_SPI_FLASH_SPANSION
++#endif
++
++/* Ethernet RAVB */
++#define CONFIG_RAVB
++#define CONFIG_RAVB_PHY_ADDR	0x0
++#define CONFIG_RAVB_PHY_MODE	PHY_INTERFACE_MODE_RGMII_ID
++#define CONFIG_NET_MULTI
++#define CONFIG_PHYLIB
++#define CONFIG_PHY_MICREL
++#define CONFIG_BITBANGMII
++#define CONFIG_BITBANGMII_MULTI
++#define CONFIG_SH_ETHER_BITBANG
++
++/* Board Clock */
++/* XTAL_CLK : 33.33MHz */
++#define RCAR_XTAL_CLK		33333333u
++#define CONFIG_SYS_CLK_FREQ	RCAR_XTAL_CLK
++/* ch0to2 CPclk, ch3to11 S3D2_PEREclk, ch12to14 S3D2_RTclk */
++/* CPclk 16.66MHz, S3D2 133.33MHz , S3D4 66.66MHz          */
++#define CONFIG_CP_CLK_FREQ	(CONFIG_SYS_CLK_FREQ / 2)
++#define CONFIG_PLL1_CLK_FREQ	(CONFIG_SYS_CLK_FREQ * 192 / 2)
++#define CONFIG_S3D2_CLK_FREQ	(266666666u/2)
++#define CONFIG_S3D4_CLK_FREQ	(266666666u/4)
++
++/* Generic Timer Definitions (use in assembler source) */
++#define COUNTER_FREQUENCY	0xFE502A /* 16.66MHz from CPclk */
++
++/* Generic Interrupt Controller Definitions */
++#define GICD_BASE	(0xF1010000)
++#define GICC_BASE	(0xF1020000)
++#define CONFIG_GICV2
++
++/* USB */
++#undef CONFIG_CMD_USB
++
++/* SDHI */
++#define CONFIG_MMC
++#define CONFIG_CMD_MMC
++#define CONFIG_GENERIC_MMC
++#define CONFIG_SH_SDHI_FREQ	200000000
++#define CONFIG_SH_SDHI_MMC
++
++/* ENV setting */
++#define CONFIG_ENV_OVERWRITE
++#define CONFIG_ENV_SECT_SIZE	(256 * 1024)
++#define CONFIG_ENV_SIZE		(CONFIG_ENV_SECT_SIZE)
++#define CONFIG_ENV_SIZE_REDUND	(CONFIG_ENV_SIZE)
++
++//#define CONFIG_ENV_IS_IN_MMC
++#define CONFIG_ENV_IS_IN_SPI_FLASH
++
++#if defined(CONFIG_ENV_IS_IN_MMC)
++/* Environment in eMMC, at the end of 2nd "boot sector" */
++#define CONFIG_ENV_OFFSET	(-CONFIG_ENV_SIZE)
++#define CONFIG_SYS_MMC_ENV_DEV	0
++#define CONFIG_SYS_MMC_ENV_PART	2
++#elif defined(CONFIG_ENV_IS_IN_SPI_FLASH)
++/* Environment in QSPI */
++#define CONFIG_ENV_ADDR		0x700000
++#define CONFIG_ENV_OFFSET	(CONFIG_ENV_ADDR)
++#else
++#define CONFIG_ENV_IS_NOWHERE
++#endif
++
++/* Module clock supply/stop status bits */
++/* MFIS */
++#define CONFIG_SMSTP2_ENA	0x00002000
++/* serial(SCIF0) */
++#define CONFIG_SMSTP3_ENA	0x00000400
++/* INTC-AP, INTC-EX */
++#define CONFIG_SMSTP4_ENA	0x00000180
++
++#define CONFIG_EXTRA_ENV_SETTINGS \
++	"fdt_high=0xffffffffffffffff\0" \
++	"initrd_high=0xffffffffffffffff\0" \
++	"ethact=ravb\0" \
++	"ethaddr=2E:11:22:33:44:55\0"
++
++#define CONFIG_BOOTARGS \
++	"root=/dev/nfs rw ip=dhcp"
++
++#define CONFIG_BOOTCOMMAND \
++	"bootp 0x48080000 Image; tftp 0x48000000 r8a7797-v3mzf.dtb; " \
++	"booti 0x48080000 - 0x48000000"
++
++#define CONFIG_CMD_MEMTEST
++#define CONFIG_SYS_MEMTEST_START	0x40000000
++#define CONFIG_SYS_MEMTEST_END		0x80000000
++
++#endif /* __V3MZF_H */
+-- 
+1.9.1
+
