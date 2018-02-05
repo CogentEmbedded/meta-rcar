@@ -11522,10 +11522,10 @@ index 0000000..226b659
 +				maxim,fsync-mode = "automatic";
 +				maxim,timeout = <100>;
 +
-+				POC0-gpios = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
-+				POC1-gpios = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
-+				POC2-gpios = <&gpio_exp_6c 11 GPIO_ACTIVE_HIGH>;
-+				POC3-gpios = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
++				POC0-gpios = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
++				POC1-gpios = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
++				POC2-gpios = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_6c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des0ep0: endpoint@0 {
@@ -19889,7 +19889,7 @@ index 0000000..47e2b2d
 +				POC0-gpios = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
 +				POC1-gpios = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
 +				POC2-gpios = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
-+				POC3-gpios = <&gpio_exp_6c 1 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_6c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					max9286_des0ep0: endpoint@0 {
@@ -19933,7 +19933,7 @@ index 0000000..47e2b2d
 +				POC0-gpios = <&gpio_exp_6c 8 GPIO_ACTIVE_HIGH>;
 +				POC1-gpios = <&gpio_exp_6c 9 GPIO_ACTIVE_HIGH>;
 +				POC2-gpios = <&gpio_exp_6c 10 GPIO_ACTIVE_HIGH>;
-+				POC3-gpios = <&gpio_exp_6c 1 GPIO_ACTIVE_HIGH>;
++				POC3-gpios = <&gpio_exp_6c 11 GPIO_ACTIVE_HIGH>;
 +
 +				port@0 {
 +					ti9x4_des0ep0: endpoint@0 {
