@@ -129,6 +129,7 @@ KERNEL_DEVICETREE_append_v3msk = " \
     renesas/r8a7797-v3msk.dtb \
     renesas/r8a7797-v3msk-kf.dtb \
     renesas/r8a7797-v3msk-vbm.dtb \
+    renesas/r8a7797-v3msk-vbm-v2.dtb \
     renesas/r8a7797-v3msk-view.dtb \
 "
 
