@@ -25,13 +25,14 @@ V3MZF board on R8A7797 SoC
 Videobox Mini board on R8A7795 ES1.x SoC
 Videobox Mini board on R8A7795 SoC
 Videobox Mini board on R8A7797 SoC
+Videobox Mini V2 board on R8A7797 SoC
 Videobox2 board on R8A7795 ES1.x SoC
 Videobox2 board on R8A7795 SoC
 Condor board on R8A7798 SoC
 
 Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile               |   22 +
+ arch/arm64/boot/dts/renesas/Makefile               |   23 +
  arch/arm64/boot/dts/renesas/legacy/Makefile        |    8 +
  .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts    | 1624 +++++++++++++++++++
  .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts    |  441 ++++++
@@ -66,7 +67,8 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  .../boot/dts/renesas/r8a7797-eagle-function.dts    |   62 +
  arch/arm64/boot/dts/renesas/r8a7797-eagle.dts      |  575 +++++++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts   |  520 ++++++
- arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts  |  513 ++++++
+ .../boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts      |   82 +
+ arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts  |  507 ++++++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk-view.dts |  297 ++++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts      |  314 ++++
  arch/arm64/boot/dts/renesas/r8a7797-v3mzf.dts      |  424 +++++
@@ -77,9 +79,9 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           | 1458 +++++++++++++++++
  arch/arm64/boot/dts/renesas/ulcb-vb-cn12.dtsi      |  459 ++++++
  arch/arm64/boot/dts/renesas/ulcb-vb.dtsi           | 1610 +++++++++++++++++++
- arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi          | 1656 ++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi          | 1660 ++++++++++++++++++++
  arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi          |  543 +++++++
- 48 files changed, 19769 insertions(+)
+ 49 files changed, 19850 insertions(+)
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/Makefile
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts
@@ -114,6 +116,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-eagle-function.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-eagle.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-view.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts
@@ -129,10 +132,10 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  create mode 100644 arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
 
 diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index f9c71df..6ca2c60 100644
+index f9c71df..8af9300 100644
 --- a/arch/arm64/boot/dts/renesas/Makefile
 +++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -6,5 +6,27 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+@@ -6,5 +6,28 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs.dtb
  
@@ -152,6 +155,7 @@ index f9c71df..6ca2c60 100644
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-view.dtb
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-kf.dtb
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-vbm.dtb
++dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-vbm-v2.dtb
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3mzf.dtb
 +dtb-$(CONFIG_ARCH_R8A7798) += r8a7798-condor.dtb
 +
@@ -11336,12 +11340,100 @@ index 0000000..862236f
 +		};
 +	};
 +};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts
+new file mode 100644
+index 0000000..49d6dda
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts
+@@ -0,0 +1,82 @@
++/*
++ * Device Tree Source for the V3MSK Videobox Mini board V2 on r8a7797
++ *
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7797-v3msk-vbm.dts"
++
++/ {
++	model = "Renesas V3MSK Videobox Mini board V2 based on r8a7797";
++
++	leds {
++		compatible = "gpio-leds";
++
++		led5 {
++			label = "board:status";
++			gpios = <&gpio3 16 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++};
++
++&gpio0 {
++	/delete-node/can0stby;
++
++	can0_stby {
++		gpio-hog;
++		gpios = <12 GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "CAN0STBY";
++	};
++
++	can1_stby {
++		gpio-hog;
++		gpios = <14 GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "CAN1STBY";
++	};
++};
++
++&pfc {
++	msiof1_pins: msiof1 {
++		groups = "msiof1_clk", "msiof1_txd", "msiof1_rxd";
++		function = "msiof1";
++	};
++
++	msiof2_pins: msiof2 {
++		groups = "msiof2_clk", "msiof2_sync", "msiof2_txd", "msiof2_rxd";
++		function = "msiof2";
++	};
++};
++
++&scif3 {
++	/* pin conflict with msiof2 */
++	/* set R240 and remove R241 before enabling */
++	status = "disabled";
++};
++
++&msiof1 {
++	pinctrl-0 = <&msiof1_pins>;
++	pinctrl-names = "default";
++	cs-gpios = <&gpio3 3 0>;
++
++	status = "okay";
++	spidev@0 {
++		compatible = "spidev";
++		reg = <0>;
++		spi-max-frequency = <66666666>;
++	};
++};
++
++&msiof2 {
++	pinctrl-0 = <&msiof2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	slave;
++};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
 new file mode 100644
-index 0000000..226b659
+index 0000000..c987799
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
-@@ -0,0 +1,513 @@
+@@ -0,0 +1,507 @@
 +/*
 + * Device Tree Source for the V3MSK Videobox Mini board on r8a7797
 + *
@@ -11643,6 +11735,18 @@ index 0000000..226b659
 +				};
 +			};
 +		};
++
++		i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <3>;
++
++			/* fan node - lm96063 */
++			fan_ctrl: lm96063@4c {
++				compatible = "lm96163";
++				reg = <0x4c>;
++			};
++		};
 +	};
 +};
 +
@@ -11669,28 +11773,20 @@ index 0000000..226b659
 +		output-low;
 +		line-name = "can0_120R_load";
 +	};
-+};
 +
-+&msiof1 {
-+	pinctrl-0 = <&msiof1_pins>;
-+	pinctrl-names = "default";
-+	cs-gpios = <&gpio3 3 0>;
-+
-+	status = "okay";
-+	spidev@0 {
-+		compatible = "renesas,sh-msiof";
-+		reg = <0>;
-+		spi-max-frequency = <66666666>;
++	wake_pin_7 {
++		gpio-hog;
++		gpios = <8 GPIO_ACTIVE_HIGH>;
++		input;
++		line-name = "WAKE INPUT PIN 7";
 +	};
 +
-+};
-+
-+&msiof3 {
-+	pinctrl-0 = <&msiof3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	slave;
++	wake_pin_8 {
++		gpio-hog;
++		gpios = <9 GPIO_ACTIVE_HIGH>;
++		input;
++		line-name = "WAKE INPUT PIN 8";
++	};
 +};
 +
 +&pfc {
@@ -11707,16 +11803,6 @@ index 0000000..226b659
 +	i2c1_pins: i2c1 {
 +		groups = "i2c1";
 +		function = "i2c1";
-+	};
-+
-+	msiof1_pins: msiof1 {
-+		groups = "msiof1_clk", "msiof1_txd", "msiof1_rxd";
-+		function = "msiof1";
-+	};
-+
-+	msiof3_pins: msiof3 {
-+		groups = "msiof3_clk", "msiof3_txd", "msiof3_rxd", "msiof3_sync";
-+		function = "msiof3";
 +	};
 +
 +	scif3_pins: scif3 {
@@ -17980,7 +18066,7 @@ index 0000000..0185e46
 +//#include "ulcb-vb-cn12.dtsi"
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi
 new file mode 100644
-index 0000000..92a3300
+index 0000000..280c3b7
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi
 @@ -0,0 +1,1660 @@
@@ -19646,7 +19732,7 @@ index 0000000..92a3300
 +//#include "ulcb-vb2-cn12.dtsi"
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi b/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
 new file mode 100644
-index 0000000..47e2b2d
+index 0000000..ed04695
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
 @@ -0,0 +1,543 @@
