@@ -81,6 +81,7 @@ SRC_URI_append = " \
     file://0103-gpu-drm-rcar-du-Extend-VSP1-DRM-interface.patch \
     file://0104-media-vsp1-extend-DRM-VSP1-interface.patch \
     file://0105-media-rcar-imr-IMR-driver-updates-for-raw-DL.patch \
+    file://0106-media-rcar-imr-Add-RSE-support.patch \
 "
 
 SRC_URI_append_h3ulcb = " file://ulcb.cfg"

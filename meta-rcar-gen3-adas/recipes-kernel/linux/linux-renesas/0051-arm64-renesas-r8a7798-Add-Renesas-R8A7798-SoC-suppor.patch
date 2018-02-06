@@ -79,7 +79,7 @@ new file mode 100644
 index 0000000..e2b3404
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7798.dtsi
-@@ -0,0 +1,1628 @@
+@@ -0,0 +1,1630 @@
 +/*
 + * Device Tree Source for the r8a7798 SoC
 + *
@@ -1697,6 +1697,7 @@ index 0000000..e2b3404
 +			interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 707>;
 +			power-domains = <&sysc R8A7798_PD_ALWAYS_ON>;
++			rse;
 +		};
 +
 +		imrlx4_ch5: imr-lx4@fe8b0000 {
@@ -1705,6 +1706,7 @@ index 0000000..e2b3404
 +			interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 706>;
 +			power-domains = <&sysc R8A7798_PD_ALWAYS_ON>;
++			rse;
 +		};
 +	};
 +};
