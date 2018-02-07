@@ -53,6 +53,7 @@ SRC_URI_append = " \
     file://0049-clk-r8a779x-add-IMP-clock.patch \
     file://0050-arm64-dts-renesas-r8a779x-add-IMP-nodes.patch \
     file://0051-arm64-renesas-r8a7798-Add-Renesas-R8A7798-SoC-suppor.patch \
+    file://0052-soc-renesas-rcar-sysc-Add-workaround-for-A3-PD-issue.patch \
     file://0062-IIO-lsm9ds0-add-IMU-driver.patch \
     file://0063-ASoC-PCM3168A-add-TDM-modes-merge-ADC-and-DAC.patch \
     file://0064-ADV7511-limit-maximum-pixelclock.patch \

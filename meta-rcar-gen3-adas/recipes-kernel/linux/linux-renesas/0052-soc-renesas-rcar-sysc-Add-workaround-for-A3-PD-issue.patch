@@ -1,0 +1,278 @@
+From 01fdcd06bd73807c03a6c8cf077fa53841861b58 Mon Sep 17 00:00:00 2001
+From: Shinyu Ninomiya <shinyu.ninomiya.pd@renesas.com>
+Date: Fri, 26 Jan 2018 21:38:58 +0900
+Subject: [PATCH] soc: renesas: rcar-sysc: Add workaround for A3 PD issue
+
+Before turning ON/OFF power domain of A3VIP0, A3VIP1, A3VIP2 the clock is supplied for BoschIP 
+by deactivating MSTP assigned for BoschIP before. This issue is also occurred at A3IR. 
+MSTP for impdes0 and impc0 should be deactivated before turning off A3IR domain.
+This implements workaround to implement the sequence above.
+
+Signed-off-by: Shinyu Ninomiya <shinyu.ninomiya.pd@renesas.com>
+---
+ drivers/soc/renesas/r8a7797-sysc.c |   3 +-
+ drivers/soc/renesas/r8a7798-sysc.c |  12 +++--
+ drivers/soc/renesas/rcar-sysc.c    | 108 ++++++++++++++++++++++++++++++++++++-
+ drivers/soc/renesas/rcar-sysc.h    |   6 +++
+ 4 files changed, 123 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/soc/renesas/r8a7797-sysc.c b/drivers/soc/renesas/r8a7797-sysc.c
+index cde7d9e..5725ad0 100644
+--- a/drivers/soc/renesas/r8a7797-sysc.c
++++ b/drivers/soc/renesas/r8a7797-sysc.c
+@@ -24,7 +24,8 @@ static const struct rcar_sysc_area r8a7797_areas[] __initconst = {
+ 	{ "ca53-cpu1",	0x200, 1, R8A7797_PD_CA53_CPU1,	R8A7797_PD_CA53_SCU,
+ 	  PD_CPU_NOCR },
+ 	{ "cr7",	0x240, 0, R8A7797_PD_CR7,	R8A7797_PD_ALWAYS_ON },
+-	{ "a3ir",	0x180, 0, R8A7797_PD_A3IR,	R8A7797_PD_ALWAYS_ON },
++	{ "a3ir",	0x180, 0, R8A7797_PD_A3IR,	R8A7797_PD_ALWAYS_ON,
++	  PD_WA_CLK, {"impram"} },
+ 	{ "a2ir0",	0x400, 0, R8A7797_PD_A2IR0,	R8A7797_PD_A3IR },
+ 	{ "a2ir1",	0x400, 1, R8A7797_PD_A2IR1,	R8A7797_PD_A3IR },
+ 	{ "a2ir2",	0x400, 2, R8A7797_PD_A2IR2,	R8A7797_PD_A3IR },
+diff --git a/drivers/soc/renesas/r8a7798-sysc.c b/drivers/soc/renesas/r8a7798-sysc.c
+index 128e79d..2affaa2 100644
+--- a/drivers/soc/renesas/r8a7798-sysc.c
++++ b/drivers/soc/renesas/r8a7798-sysc.c
+@@ -30,7 +30,8 @@ static const struct rcar_sysc_area r8a7798_areas[] __initconst = {
+ 	  PD_CPU_NOCR },
+ 	{ "cr7",	0x240, 0, R8A7798_PD_CR7,	R8A7798_PD_ALWAYS_ON },
+ 
+-	{ "a3ir",	0x180, 0, R8A7798_PD_A3IR,	R8A7798_PD_ALWAYS_ON },
++	{ "a3ir",	0x180, 0, R8A7798_PD_A3IR,	R8A7798_PD_ALWAYS_ON,
++	  PD_WA_CLK, {"impram"} },
+ 	{ "a2ir0",	0x400, 0, R8A7798_PD_A2IR0,	R8A7798_PD_A3IR },
+ 	{ "a2ir1",	0x400, 1, R8A7798_PD_A2IR1,	R8A7798_PD_A3IR },
+ 	{ "a2ir2",	0x400, 2, R8A7798_PD_A2IR2,	R8A7798_PD_A3IR },
+@@ -46,9 +47,12 @@ static const struct rcar_sysc_area r8a7798_areas[] __initconst = {
+ 	{ "a2pd1",	0x400, 12, R8A7798_PD_A2PD1,	R8A7798_PD_A3IR },
+ 	{ "a2cn",	0x400, 13, R8A7798_PD_A2CN,	R8A7798_PD_A3IR },
+ 
+-	{ "a3vip",	0x2c0, 0, R8A7798_PD_A3VIP,	R8A7798_PD_ALWAYS_ON },
+-	{ "a3vip1",	0x300, 0, R8A7798_PD_A3VIP1,	R8A7798_PD_ALWAYS_ON },
+-	{ "a3vip2",	0x280, 0, R8A7798_PD_A3VIP2,	R8A7798_PD_ALWAYS_ON },
++	{ "a3vip",	0x2c0, 0, R8A7798_PD_A3VIP,	R8A7798_PD_ALWAYS_ON,
++	  PD_WA_CLK, {"disp"} },
++	{ "a3vip1",	0x300, 0, R8A7798_PD_A3VIP1,	R8A7798_PD_ALWAYS_ON,
++	  PD_WA_CLK, {"umf", "smd_post", "smd_est", "smd_ps"} },
++	{ "a3vip2",	0x280, 0, R8A7798_PD_A3VIP2,	R8A7798_PD_ALWAYS_ON,
++	  PD_WA_CLK, {"cle0", "cle1", "cle2", "cle3", "cle4"} },
+ };
+ 
+ const struct rcar_sysc_info r8a7798_sysc_info __initconst = {
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index bfde184..f3f18d0 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -20,6 +20,8 @@
+ #include <linux/syscore_ops.h>
+ #include <linux/io.h>
+ #include <linux/soc/renesas/rcar-sysc.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ 
+ #include "rcar-sysc.h"
+ 
+@@ -64,6 +66,7 @@ static DEFINE_SPINLOCK(rcar_sysc_lock); /* SMP CPUs + I/O devices */
+ 
+ 
+ static const char *to_pd_name(const struct rcar_sysc_ch *sysc_ch);
++static int rcar_sysc_wa_clk(const struct rcar_sysc_ch *sysc_ch, int en);
+ 
+ static int rcar_sysc_pwr_on_off(const struct rcar_sysc_ch *sysc_ch, bool on)
+ {
+@@ -110,6 +113,12 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
+ 	int ret = 0;
+ 	int k;
+ 
++	ret = rcar_sysc_wa_clk(sysc_ch, 1);
++	if (ret) {
++		pr_err("%s: Failed to enable clock for workaround\n", to_pd_name(sysc_ch));
++		return ret;
++	}
++
+ 	spin_lock_irqsave(&rcar_sysc_lock, flags);
+ 
+ 	iowrite32(isr_mask, rcar_sysc_base + SYSCISCR);
+@@ -148,6 +157,8 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
+  out:
+ 	spin_unlock_irqrestore(&rcar_sysc_lock, flags);
+ 
++	rcar_sysc_wa_clk(sysc_ch, 0);
++
+ 	pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
+ 		 sysc_ch->isr_bit, ioread32(rcar_sysc_base + SYSCISR), ret);
+ 	return ret;
+@@ -178,9 +189,35 @@ struct rcar_sysc_pd {
+ 	struct generic_pm_domain genpd;
+ 	struct rcar_sysc_ch ch;
+ 	unsigned int flags;
++	struct clk *wa_clk[RCAR_SYSC_MAX_WA_CLKS];
+ 	char name[0];
+ };
+ 
++static int rcar_sysc_wa_clk(const struct rcar_sysc_ch *sysc_ch, int en)
++{
++	int i, ret;
++	struct rcar_sysc_pd *pd = container_of(sysc_ch, struct rcar_sysc_pd, ch);
++
++	if (pd->flags & PD_WA_CLK) {
++		if (!(pd->flags & PD_WA_CLK_RDY))
++			return -EBUSY;
++
++		for (i = 0; i < RCAR_SYSC_MAX_WA_CLKS; i++) {
++			if (!pd->wa_clk[i])
++				break;
++
++			if (en) {
++				ret = clk_enable(pd->wa_clk[i]);
++				if (ret)
++					return ret;
++			} else
++				clk_disable(pd->wa_clk[i]);
++		}
++	}
++
++	return 0;
++}
++
+ static inline struct rcar_sysc_pd *to_rcar_pd(struct generic_pm_domain *d)
+ {
+ 	return container_of(d, struct rcar_sysc_pd, genpd);
+@@ -231,6 +268,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 	struct generic_pm_domain *genpd = &pd->genpd;
+ 	const char *name = pd->genpd.name;
+ 	struct dev_power_governor *gov = &simple_qos_governor;
++	bool is_off = false;
+ 
+ 	if (pd->flags & PD_CPU) {
+ 		/*
+@@ -278,6 +316,12 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 		goto finalize;
+ 	}
+ 
++	if (pd->flags & PD_NO_INIT_ON) {
++		is_off = rcar_sysc_power_is_off(&pd->ch);
++		pr_debug("%s: %s is initialy %s\n", __func__, genpd->name, is_off ? "off" : "on");
++		goto finalize;
++	}
++
+ 	if (!rcar_sysc_power_is_off(&pd->ch)) {
+ 		pr_debug("%s: %s is already powered\n", __func__, genpd->name);
+ 		goto finalize;
+@@ -286,7 +330,7 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 	rcar_sysc_power_up(&pd->ch);
+ 
+ finalize:
+-	pm_genpd_init(genpd, gov, false);
++	pm_genpd_init(genpd, gov, is_off);
+ }
+ 
+ static const struct of_device_id rcar_sysc_matches[] = {
+@@ -442,6 +486,12 @@ static int __init rcar_sysc_pd_init(void)
+ 		pd->ch.isr_bit = area->isr_bit;
+ 		pd->flags = area->flags;
+ 
++		if ((pd->flags & PD_WA_CLK) ||
++			(area->parent >= 0 && (container_of(domains->domains[area->parent],
++			struct rcar_sysc_pd, genpd)->flags & PD_NO_INIT_ON))
++			)
++			pd->flags |= PD_NO_INIT_ON;
++
+ 		rcar_sysc_pd_setup(pd);
+ 		if (area->parent >= 0)
+ 			pm_genpd_add_subdomain(domains->domains[area->parent],
+@@ -479,6 +529,62 @@ static int __init rcar_sysc_pd_init2(void)
+ postcore_initcall(rcar_sysc_pd_init2);
+ #endif
+ 
++#if IS_ENABLED(CONFIG_ARCH_R8A7797)  || \
++    IS_ENABLED(CONFIG_ARCH_R8A7798)
++static int __init rcar_sysc_pd_init3(void)
++{
++	const struct rcar_sysc_info *info;
++	const struct of_device_id *match;
++	struct device_node *np;
++	unsigned int i, j;
++
++	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
++	if (!np)
++		return -ENODEV;
++
++	info = match->data;
++
++	for (i = 0; i < info->num_areas; i++) {
++		const struct rcar_sysc_area *area = &info->areas[i];
++		struct rcar_sysc_pd *pd = rcar_domains[i];
++
++		if (pd->flags & PD_WA_CLK) {
++			int err = 0;
++
++			for (j = 0; j < RCAR_SYSC_MAX_WA_CLKS; j++) {
++				struct clk *wa_clk;
++				const char *wa_clk_name = area->wa_clk_names[j];
++
++				if (!wa_clk_name)
++					break;
++
++				wa_clk = __clk_lookup(wa_clk_name);
++				if (!wa_clk) {
++					err = -ENODEV;
++					pr_err("%s: Unable to get clock %s for workaround\n", pd->name, wa_clk_name);
++					break;
++				}
++
++				err = clk_prepare(wa_clk);
++				if (err) {
++					pr_err("%s: Unable to prepare clock %s for workaround\n", pd->name, wa_clk_name);
++					break;
++				}
++
++				pd->wa_clk[j] = wa_clk;
++			}
++
++			if (!err)
++				pd->flags |= PD_WA_CLK_RDY;
++		}
++	}
++
++	return 0;
++}
++/* Should be called after cpg_mssr_driver is initialized */
++subsys_initcall_sync(rcar_sysc_pd_init3);
++#endif
++
+ void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+ {
+ 	u32 syscimr;
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index dc58a58..b991103 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -23,10 +23,15 @@
+ #define PD_BUSY		BIT(3)	/* Busy, for internal use only */
+ #define PD_ON_ONCE	BIT(4)  /* Turned on once at boot */
+ 
++#define PD_WA_CLK	BIT(5)  /* Use clocks for workaround */
++#define PD_WA_CLK_RDY	BIT(6)  /* Clock ready, for internal use only */
++#define PD_NO_INIT_ON	BIT(7)  /* Do not power on at initialization, for internal use */
++
+ #define PD_CPU_CR	PD_CPU		  /* CPU area has CR (R-Car H1) */
+ #define PD_CPU_NOCR	PD_CPU | PD_NO_CR /* CPU area lacks CR (R-Car Gen2/3) */
+ #define PD_ALWAYS_ON	PD_NO_CR	  /* Always-on area */
+ 
++#define RCAR_SYSC_MAX_WA_CLKS	8
+ 
+ /*
+  * Description of a Power Area
+@@ -39,6 +44,7 @@ struct rcar_sysc_area {
+ 	u8 isr_bit;		/* Bit in SYSCI*R */
+ 	int parent;		/* -1 if none */
+ 	unsigned int flags;	/* See PD_* */
++	const char* wa_clk_names[RCAR_SYSC_MAX_WA_CLKS];	/* Clocks needed by workaround for A3 PD issue */
+ };
+ 
+ 
+-- 
+2.7.4
+

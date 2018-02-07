@@ -7,11 +7,11 @@ This adds Renesas R8A7797 SoC support
 
 Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- arch/arm64/Kconfig.platforms                  |    6 +
+ arch/arm64/Kconfig.platforms                  |    8 +
  arch/arm64/boot/dts/renesas/r8a7797.dtsi      | 1156 +++++++++++
  drivers/clk/renesas/Kconfig                   |    1 +
  drivers/clk/renesas/Makefile                  |    1 +
- drivers/clk/renesas/r8a7797-cpg-mssr.c        |  231 +++
+ drivers/clk/renesas/r8a7797-cpg-mssr.c        |  232 +++
  drivers/clk/renesas/rcar-gen3-cpg.c           |   41 +-
  drivers/clk/renesas/rcar-gen3-cpg.h           |    6 +
  drivers/clk/renesas/renesas-cpg-mssr.c        |    6 +
@@ -47,7 +47,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  drivers/thermal/rcar_gen3_thermal.c           |   29 +
  include/dt-bindings/clock/r8a7797-cpg-mssr.h  |   48 +
  include/dt-bindings/power/r8a7797-sysc.h      |   32 +
- 40 files changed, 4486 insertions(+), 29 deletions(-)
+ 40 files changed, 4489 insertions(+), 29 deletions(-)
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797.dtsi
  create mode 100644 drivers/clk/renesas/r8a7797-cpg-mssr.c
  create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7797.c
@@ -56,7 +56,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  create mode 100644 include/dt-bindings/power/r8a7797-sysc.h
 
 diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index ebe0a37..d3b6771 100644
+index ebe0a37..9cebaad 100644
 --- a/arch/arm64/Kconfig.platforms
 +++ b/arch/arm64/Kconfig.platforms
 @@ -166,6 +166,14 @@ config ARCH_R8A77965
@@ -76,7 +76,7 @@ index ebe0a37..d3b6771 100644
  	help
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797.dtsi b/arch/arm64/boot/dts/renesas/r8a7797.dtsi
 new file mode 100644
-index 0000000..0dd374f
+index 0000000..5319b1a
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797.dtsi
 @@ -0,0 +1,1156 @@
@@ -1262,7 +1262,7 @@ index 2c224e9..c2ef11e 100644
  obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o clk-div6.o
 diff --git a/drivers/clk/renesas/r8a7797-cpg-mssr.c b/drivers/clk/renesas/r8a7797-cpg-mssr.c
 new file mode 100644
-index 0000000..6f481a4
+index 0000000..0460ed4
 --- /dev/null
 +++ b/drivers/clk/renesas/r8a7797-cpg-mssr.c
 @@ -0,0 +1,232 @@
@@ -5032,7 +5032,7 @@ index 29b8a4d..2ba6a76 100644
  obj-$(CONFIG_RCAR_DDR_BACKUP)	+= s2ram_ddr_backup.o
 diff --git a/drivers/soc/renesas/r8a7797-sysc.c b/drivers/soc/renesas/r8a7797-sysc.c
 new file mode 100644
-index 0000000..b71bdedb
+index 0000000..cde7d9e
 --- /dev/null
 +++ b/drivers/soc/renesas/r8a7797-sysc.c
 @@ -0,0 +1,39 @@
@@ -5063,12 +5063,12 @@ index 0000000..b71bdedb
 +	  PD_CPU_NOCR },
 +	{ "cr7",	0x240, 0, R8A7797_PD_CR7,	R8A7797_PD_ALWAYS_ON },
 +	{ "a3ir",	0x180, 0, R8A7797_PD_A3IR,	R8A7797_PD_ALWAYS_ON },
-+	{ "a2ir0",	0x400, 0, R8A7797_PD_A2IR0,	R8A7797_PD_ALWAYS_ON },
-+	{ "a2ir1",	0x400, 1, R8A7797_PD_A2IR1,	R8A7797_PD_A2IR0 },
-+	{ "a2ir2",	0x400, 2, R8A7797_PD_A2IR2,	R8A7797_PD_A2IR0 },
-+	{ "a2ir3",	0x400, 3, R8A7797_PD_A2IR3,	R8A7797_PD_A2IR0 },
-+	{ "a2sc0",	0x400, 4, R8A7797_PD_A2SC0,	R8A7797_PD_ALWAYS_ON },
-+	{ "a2sc1",	0x400, 5, R8A7797_PD_A2SC1,	R8A7797_PD_A2SC0 },
++	{ "a2ir0",	0x400, 0, R8A7797_PD_A2IR0,	R8A7797_PD_A3IR },
++	{ "a2ir1",	0x400, 1, R8A7797_PD_A2IR1,	R8A7797_PD_A3IR },
++	{ "a2ir2",	0x400, 2, R8A7797_PD_A2IR2,	R8A7797_PD_A3IR },
++	{ "a2ir3",	0x400, 3, R8A7797_PD_A2IR3,	R8A7797_PD_A3IR },
++	{ "a2sc0",	0x400, 4, R8A7797_PD_A2SC0,	R8A7797_PD_A3IR },
++	{ "a2sc1",	0x400, 5, R8A7797_PD_A2SC1,	R8A7797_PD_A3IR },
 +};
 +
 +const struct rcar_sysc_info r8a7797_sysc_info __initconst = {

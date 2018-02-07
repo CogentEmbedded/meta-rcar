@@ -198,7 +198,7 @@ index e79f9e6..753763d 100644
 +			(format->code != MEDIA_BUS_FMT_ARGB8888_1X32 ? VI6_LIF_CTRL_CFMT : 0) |
  			VI6_LIF_CTRL_REQSEL | VI6_LIF_CTRL_LIF_EN);
  
- 	if (soc_device_match(r8a7797_8))
+ 	if (soc_device_match(r8a7797))
 diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
 index 8379962..86d4a85 100644
 --- a/drivers/media/platform/vsp1/vsp1_pipe.c
