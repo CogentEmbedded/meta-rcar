@@ -70,7 +70,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  .../boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts      |   82 +
  arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts  |  507 ++++++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk-view.dts |  297 ++++
- arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts      |  314 ++++
+ arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts      |  345 ++++
  arch/arm64/boot/dts/renesas/r8a7797-v3mzf.dts      |  424 +++++
  arch/arm64/boot/dts/renesas/r8a7798-condor.dts     |  963 ++++++++++++
  arch/arm64/boot/dts/renesas/ulcb-kf-cn11.dtsi      |  462 ++++++
@@ -81,7 +81,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  arch/arm64/boot/dts/renesas/ulcb-vb.dtsi           | 1610 +++++++++++++++++++
  arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi          | 1660 ++++++++++++++++++++
  arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi          |  543 +++++++
- 49 files changed, 19880 insertions(+)
+ 49 files changed, 19911 insertions(+)
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/Makefile
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts
@@ -12276,10 +12276,10 @@ index 0000000..58f82bf
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts
 new file mode 100644
-index 0000000..91d10c5
+index 0000000..c1e805d
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk.dts
-@@ -0,0 +1,314 @@
+@@ -0,0 +1,345 @@
 +/*
 + * Device Tree Source for the V3M Starter Kit board on r8a7797
 + *
@@ -12547,6 +12547,37 @@ index 0000000..91d10c5
 +			};
 +		};
 +	};
++
++	pmic@5A {
++		compatible = "dlg,da9063";
++		reg = <0x5A>;
++		interrupt-parent = <&intc_ex>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++
++		rtc {
++			compatible = "dlg,da9063-rtc";
++		};
++
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++
++		regulators {
++			DA9063_LDO11: bmem {
++				regulator-name = "bmem";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++		};
++
++		onkey {
++			compatible = "dlg,da9063-onkey";
++		};
++	};
++
 +};
 +
 +&wdt0 {
@@ -13026,7 +13057,7 @@ index 0000000..7926d2e
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7798-condor.dts b/arch/arm64/boot/dts/renesas/r8a7798-condor.dts
 new file mode 100644
-index 0000000..cdd9844
+index 0000000..4dd7a28
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7798-condor.dts
 @@ -0,0 +1,963 @@
