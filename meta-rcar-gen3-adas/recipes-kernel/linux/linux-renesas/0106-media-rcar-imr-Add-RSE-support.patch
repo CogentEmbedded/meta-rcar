@@ -290,7 +290,7 @@ index 7b8ed0c..19fdbae 100644
  #define IMR_MAP_BFE                     (1 << 7)
  
 +/* ...extended functionality (rotation/scaling) enable flag */
-+#define IMR_MAP_RSE                     (1 << 8)
++#define IMR_MAP_RSE                     (1 << 21)
 +
  /* ...source coordinate decimal point position bit index */
  #define __IMR_MAP_UVDPOR_SHIFT          8
