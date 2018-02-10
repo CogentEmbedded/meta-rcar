@@ -12312,7 +12312,7 @@ index 0000000..91d10c5
 +	memory@48000000 {
 +		device_type = "memory";
 +		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
++		reg = <0x0 0x48000000 0x0 0x78000000>;
 +	};
 +
 +	reserved-memory {
@@ -13064,7 +13064,7 @@ index 0000000..cdd9844
 +	memory@48000000 {
 +		device_type = "memory";
 +		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
++		reg = <0x0 0x48000000 0x0 0x78000000>;
 +	};
 +
 +	reserved-memory {
