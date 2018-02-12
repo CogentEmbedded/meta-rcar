@@ -14,25 +14,25 @@ H3ULCB.HAD board on R8A7795 SoC
 Kingfisher board on R8A7795 ES1.x SoC
 Kingfisher board on R8A7795 SoC
 Kingfisher board on R8A7796 SoC
-Kingfisher board on R8A7797 SoC
+Kingfisher board on R8A7797 ES1.0/2.0 SoC
 Videobox board on R8A7795 ES1.x SoC
 Videobox board on R8A7795 SoC
-Eagle board on R8A7797 SoC
-Eagle Function board on R8A7797 SoC
-V3MSK board on R8A7797 SoC
-V3MSK.View board on R8A7797 SoC
+Eagle board on R8A7797 ES1.0/2.0 SoC
+Eagle Function board on R8A7797 ES1.0/2.0 SoC
+V3MSK board on R8A7797 ES1.0/2.0 SoC
+V3MSK.View board on R8A7797 ES1.0/2.0 SoC
 V3MZF board on R8A7797 SoC
 Videobox Mini board on R8A7795 ES1.x SoC
 Videobox Mini board on R8A7795 SoC
-Videobox Mini board on R8A7797 SoC
-Videobox Mini V2 board on R8A7797 SoC
+Videobox Mini board on R8A7797 ES1.0/2.0 SoC
+Videobox Mini V2 board on R8A7797 ES1.0/2.0 SoC
 Videobox2 board on R8A7795 ES1.x SoC
 Videobox2 board on R8A7795 SoC
 Condor board on R8A7798 SoC
 
 Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile               |   23 +
+ arch/arm64/boot/dts/renesas/Makefile               |   24 +
  arch/arm64/boot/dts/renesas/legacy/Makefile        |    8 +
  .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts    | 1624 +++++++++++++++++++
  .../renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts    |  441 ++++++
@@ -66,6 +66,14 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  .../boot/dts/renesas/r8a7796-salvator-x-view.dts   |  317 ++++
  .../boot/dts/renesas/r8a7797-eagle-function.dts    |   62 +
  arch/arm64/boot/dts/renesas/r8a7797-eagle.dts      |  605 +++++++
+ .../dts/renesas/r8a7797-es1-eagle-function.dts     |   17 +
+ arch/arm64/boot/dts/renesas/r8a7797-es1-eagle.dts  |   17 +
+ .../boot/dts/renesas/r8a7797-es1-v3msk-kf.dts      |   17 +
+ .../boot/dts/renesas/r8a7797-es1-v3msk-vbm-v2.dts  |   17 +
+ .../boot/dts/renesas/r8a7797-es1-v3msk-vbm.dts     |   17 +
+ .../boot/dts/renesas/r8a7797-es1-v3msk-view.dts    |   17 +
+ arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk.dts  |   17 +
+ arch/arm64/boot/dts/renesas/r8a7797-es1.dtsi       |  116 ++
  arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts   |  520 ++++++
  .../boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts      |   82 +
  arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts  |  507 ++++++
@@ -81,7 +89,7 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  arch/arm64/boot/dts/renesas/ulcb-vb.dtsi           | 1610 +++++++++++++++++++
  arch/arm64/boot/dts/renesas/ulcb-vb2.dtsi          | 1660 ++++++++++++++++++++
  arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi          |  543 +++++++
- 49 files changed, 19911 insertions(+)
+ 57 files changed, 20147 insertions(+)
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/Makefile
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v0.dts
  create mode 100644 arch/arm64/boot/dts/renesas/legacy/r8a7795-es1-h3ulcb-kf-v1.dts
@@ -115,6 +123,14 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-salvator-x-view.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-eagle-function.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-eagle.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-es1-eagle-function.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-es1-eagle.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-kf.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-vbm-v2.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-vbm.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-view.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-es1.dtsi
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
@@ -132,10 +148,10 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
  create mode 100644 arch/arm64/boot/dts/renesas/ulcb-vbm.dtsi
 
 diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index f9c71df..8af9300 100644
+index f9c71df..6cdbdaf 100644
 --- a/arch/arm64/boot/dts/renesas/Makefile
 +++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -6,5 +6,28 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
+@@ -6,5 +6,29 @@ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
  dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs.dtb
  
@@ -151,11 +167,12 @@ index f9c71df..8af9300 100644
 +dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-vb2.dtb r8a7795-es1-h3ulcb-vb2.dtb
 +dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-vbm.dtb r8a7795-es1-h3ulcb-vbm.dtb
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-eagle.dtb r8a7797-eagle-function.dtb
-+dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk.dtb
-+dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-view.dtb
-+dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-kf.dtb
-+dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-vbm.dtb
-+dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-vbm-v2.dtb
++dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-es1-eagle.dtb r8a7797-es1-eagle-function.dtb
++dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk.dtb r8a7797-es1-v3msk.dtb
++dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-view.dtb r8a7797-es1-v3msk-view.dtb
++dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-kf.dtb r8a7797-es1-v3msk-kf.dtb
++dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-vbm.dtb r8a7797-es1-v3msk-vbm.dtb
++dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3msk-vbm-v2.dtb r8a7797-es1-v3msk-vbm-v2.dtb
 +dtb-$(CONFIG_ARCH_R8A7797) += r8a7797-v3mzf.dtb
 +dtb-$(CONFIG_ARCH_R8A7798) += r8a7798-condor.dtb
 +
@@ -10844,6 +10861,289 @@ index 0000000..db17b03
 +		};
 +	};
 +};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-es1-eagle-function.dts b/arch/arm64/boot/dts/renesas/r8a7797-es1-eagle-function.dts
+new file mode 100644
+index 0000000..74351b8
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-es1-eagle-function.dts
+@@ -0,0 +1,17 @@
++/*
++ * Device Tree Source for the Eagle Function board on r8a7797 ES1.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7797-eagle-function.dts"
++#include "r8a7797-es1.dtsi"
++
++/ {
++	model = "Renesas Eagle Function board based on r8a7797 ES1.0";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-es1-eagle.dts b/arch/arm64/boot/dts/renesas/r8a7797-es1-eagle.dts
+new file mode 100644
+index 0000000..f65f69d
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-es1-eagle.dts
+@@ -0,0 +1,17 @@
++/*
++ * Device Tree Source for the Eagle board on r8a7797 ES1.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7797-eagle.dts"
++#include "r8a7797-es1.dtsi"
++
++/ {
++	model = "Renesas Eagle board based on r8a7797 ES1.0";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-kf.dts b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-kf.dts
+new file mode 100644
+index 0000000..c811e6f
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-kf.dts
+@@ -0,0 +1,17 @@
++/*
++ * Device Tree Source for the V3MSK Kingfisher board on r8a7797 ES1.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7797-v3msk-kf.dts"
++#include "r8a7797-es1.dtsi"
++
++/ {
++	model = "Renesas V3MSK Kingfisher board based on r8a7797 ES1.0";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-vbm-v2.dts b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-vbm-v2.dts
+new file mode 100644
+index 0000000..c6fcffd
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-vbm-v2.dts
+@@ -0,0 +1,17 @@
++/*
++ * Device Tree Source for the V3MSK Videobox Mini V2 board on r8a7797 ES1.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7797-v3msk-vbm-v2.dts"
++#include "r8a7797-es1.dtsi"
++
++/ {
++	model = "Renesas V3MSK Videobox Mini V2 board based on r8a7797 ES1.0";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-vbm.dts b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-vbm.dts
+new file mode 100644
+index 0000000..90b7439
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-vbm.dts
+@@ -0,0 +1,17 @@
++/*
++ * Device Tree Source for the V3MSK Videobox Mini board on r8a7797 ES1.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7797-v3msk-vbm.dts"
++#include "r8a7797-es1.dtsi"
++
++/ {
++	model = "Renesas V3MSK Videobox Mini board based on r8a7797 ES1.0";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-view.dts b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-view.dts
+new file mode 100644
+index 0000000..576d21c
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk-view.dts
+@@ -0,0 +1,17 @@
++/*
++ * Device Tree Source for the V3MSK View board on r8a7797 ES1.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7797-v3msk-view.dts"
++#include "r8a7797-es1.dtsi"
++
++/ {
++	model = "Renesas V3MSK View board based on r8a7797 ES1.0";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk.dts
+new file mode 100644
+index 0000000..3257d7e
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-es1-v3msk.dts
+@@ -0,0 +1,17 @@
++/*
++ * Device Tree Source for the V3M Starter Kit board on r8a7797 ES1.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a7797-v3msk.dts"
++#include "r8a7797-es1.dtsi"
++
++/ {
++	model = "Renesas V3M Starter Kit board based on r8a7797 ES1.0";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7797-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7797-es1.dtsi
+new file mode 100644
+index 0000000..dab9adc
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7797-es1.dtsi
+@@ -0,0 +1,116 @@
++/*
++ * Device Tree Source for the r8a7797 SoC ES1.0 SoC
++ *   (append to r8a7797 SoC ES2.0 SoC)
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/ {
++	soc {
++		imp_distributer: impdes0 {
++			compatible = "renesas,impx4-distributer";
++			reg = <0 0xffa00000 0 0x10000>;
++			interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 830>;
++			power-domains = <&sysc R8A7797_PD_A3IR>;
++			interrupt-controller;
++			#interrupt-cells = <1>;
++		};
++
++		imp0 {
++			compatible = "renesas,impx4-legacy";
++			reg = <0 0xff900000 0 0x20000>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <0>;
++			clocks = <&cpg CPG_MOD 827>;
++			power-domains = <&sysc R8A7797_PD_A2IR0>;
++		};
++
++		imp1 {
++			compatible = "renesas,impx4-legacy";
++			reg = <0 0xff920000 0 0x20000>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <1>;
++			clocks = <&cpg CPG_MOD 826>;
++			power-domains = <&sysc R8A7797_PD_A2IR1>;
++		};
++
++		imp2 {
++			compatible = "renesas,impx4-legacy";
++			reg = <0 0xff940000 0 0x20000>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <2>;
++			clocks = <&cpg CPG_MOD 825>;
++			power-domains = <&sysc R8A7797_PD_A2IR2>;
++		};
++
++		imp3 {
++			compatible = "renesas,impx4-legacy";
++			reg = <0 0xff960000 0 0x20000>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <3>;
++			clocks = <&cpg CPG_MOD 824>;
++			power-domains = <&sysc R8A7797_PD_A2IR3>;
++		};
++
++		impsc0 {
++			compatible = "renesas,impx4-shader";
++			reg = <0 0xff980000 0 0x10000>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <4>;
++			clocks = <&cpg CPG_MOD 829>;
++			power-domains = <&sysc R8A7797_PD_A2SC0>;
++		};
++
++		impsc1 {
++			compatible = "renesas,impx4-shader";
++			reg = <0 0xff990000 0 0x10000>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <5>;
++			clocks = <&cpg CPG_MOD 828>;
++			power-domains = <&sysc R8A7797_PD_A2SC1>;
++		};
++
++		impdm0 {
++			compatible = "renesas,impx5-dmac";
++			reg = <0 0xffa10000 0 0x1000>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <16>;
++			clocks = <&cpg CPG_MOD 830>;
++			power-domains = <&sysc R8A7797_PD_A3IR>;
++		};
++
++		impdm1 {
++			compatible = "renesas,impx5-dmac";
++			reg = <0 0xffa10000 0 0x1000>,
++			      <0 0xffa10800 0 0x0800>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <17>;
++			clocks = <&cpg CPG_MOD 830>;
++			power-domains = <&sysc R8A7797_PD_A3IR>;
++		};
++
++		imppsc0 {
++			compatible = "renesas,impx5+-psc";
++			reg = <0 0xffa20000 0 0x4000>;
++			interrupt-parent = <&imp_distributer>;
++			interrupts = <12>;
++			clocks = <&cpg CPG_MOD 830>;
++			power-domains = <&sysc R8A7797_PD_A3IR>;
++		};
++
++		/delete-node/impcnn0;
++
++		impc0 {
++			compatible = "renesas,impx4-memory";
++			reg = <0 0xed000000 0 0xe0000>;
++			clocks = <&cpg CPG_MOD 830>;
++			power-domains = <&sysc R8A7797_PD_A3IR>;
++		};
++	};
++};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-kf.dts
 new file mode 100644
 index 0000000..862236f
@@ -11372,7 +11672,7 @@ index 0000000..862236f
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts
 new file mode 100644
-index 0000000..49d6dda
+index 0000000..dbbd3d2
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm-v2.dts
 @@ -0,0 +1,82 @@
@@ -11460,7 +11760,7 @@ index 0000000..49d6dda
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
 new file mode 100644
-index 0000000..c987799
+index 0000000..70c0f66
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7797-v3msk-vbm.dts
 @@ -0,0 +1,507 @@
