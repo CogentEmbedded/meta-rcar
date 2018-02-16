@@ -1,0 +1,38 @@
+From ebf30e31e7417531021dc171b89e86d3e639c88a Mon Sep 17 00:00:00 2001
+From: Petr Nechaev <petr.nechaev@cogentembedded.com>
+Date: Thu, 15 Feb 2018 21:31:03 +0300
+Subject: [PATCH 1/1] Fix pkg config generation error
+
+QA Issue: opencv.pc failed sanity test (tmpdir)
+---
+ cmake/OpenCVGenPkgconfig.cmake | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/cmake/OpenCVGenPkgconfig.cmake b/cmake/OpenCVGenPkgconfig.cmake
+index cd7566f..3e44a91 100644
+--- a/cmake/OpenCVGenPkgconfig.cmake
++++ b/cmake/OpenCVGenPkgconfig.cmake
+@@ -31,7 +31,7 @@ macro(fix_prefix lst isown)
+       get_filename_component(libdir "${item}" PATH)
+       get_filename_component(_libname "${item}" NAME)
+       ocv_get_libname(libname "${_libname}")
+-      list(APPEND _lst "-L${libdir}" "-l${libname}")
++      list(APPEND _lst "-l${libname}")
+     else()
+       list(APPEND _lst "-l${item}")
+     endif()
+@@ -133,7 +133,10 @@ set(OPENCV_PC_LIBS
+   "${_modules}"
+ )
+ if(BUILD_SHARED_LIBS)
+-  set(OPENCV_PC_LIBS_PRIVATE "${_extra}")
++  set(OPENCV_PC_LIBS_PRIVATE
++      "-L\${exec_prefix}/${OPENCV_LIB_INSTALL_PATH}"
++      "${_extra}"
++  )
+ else()
+   set(OPENCV_PC_LIBS_PRIVATE
+     "-L\${exec_prefix}/${OPENCV_3P_LIB_INSTALL_PATH}"
+-- 
+2.9.5
+

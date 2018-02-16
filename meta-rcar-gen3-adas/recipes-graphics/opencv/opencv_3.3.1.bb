@@ -8,64 +8,85 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=2b2f8752cc5edf504d283107d033f544"
 ARM_INSTRUCTION_SET_armv4 = "arm"
 ARM_INSTRUCTION_SET_armv5 = "arm"
 
-DEPENDS = "libtool swig-native bzip2 zlib glib-2.0"
+DEPENDS = "libtool swig-native bzip2 zlib glib-2.0 libwebp"
 
-#DEPENDS = "libwebp"
-
-SRCREV_opencv = "70bbf17b133496bd7d54d034b0f94bd869e0e810"
-SRCREV_contrib = "86342522b0eb2b16fa851c020cc4e0fef4e010b7"
-SRCREV_ipp = "81a676001ca8075ada498583e4166079e5744668"
-SRCREV_bootdesc = "34e4206aef44d50e6bbcd0ab06354b52e7466d26"
+SRCREV_opencv = "a871f9e4f7d83dc5851f965bdba5cd01bb7527fe"
+SRCREV_contrib = "0bd061f07b665a7fb3f744122550393b337c50e5"
+SRCREV_ipp = "dfe3162c237af211e98b8960018b564bc209261d"
+SRCREV_boostdesc = "34e4206aef44d50e6bbcd0ab06354b52e7466d26"
 SRCREV_vgg = "fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"
-IPP_MD5 = "808b791a6eac9ed78d32a7666804320e"
+SRC_URI[tinydnn.md5sum] = "adb1c512e09ca2c7a6faef36f9c53e59"
+SRC_URI[tinydnn.sha256sum] = "e2c61ce8c5debaa644121179e9dbdcf83f497f39de853f8dd5175846505aa18b"
 
-SRCREV_FORMAT = "opencv"
+def ipp_filename(d):
+    import re
+    arch = d.getVar('TARGET_ARCH', True)
+    if re.match("i.86$", arch):
+        return "ippicv_2017u3_lnx_ia32_general_20170822.tgz"
+    else:
+        return "ippicv_2017u3_lnx_intel64_general_20170822.tgz"
+
+def ipp_md5sum(d):
+    import re
+    arch = d.getVar('TARGET_ARCH', True)
+    if re.match("i.86$", arch):
+        return "f6093624dd943ab32ef5c22aed3429fc"
+    else:
+        return "516b00065c1b8858c92749ba2ebd9e67"
+
+IPP_FILENAME = "${@ipp_filename(d)}"
+IPP_MD5 = "${@ipp_md5sum(d)}"
+
+SRCREV_FORMAT = "opencv_contrib_ipp_boostdesc_vgg"
 SRC_URI = "git://github.com/opencv/opencv.git;name=opencv \
     git://github.com/opencv/opencv_contrib.git;destsuffix=contrib;name=contrib \
-    git://github.com/opencv/opencv_3rdparty.git;branch=ippicv/master_20151201;destsuffix=ipp;name=ipp \
-    git://github.com/opencv/opencv_3rdparty.git;branch=contrib_xfeatures2d_boostdesc_20161012;destsuffix=bootdesc;name=bootdesc \
+    git://github.com/opencv/opencv_3rdparty.git;branch=ippicv/master_20170822;destsuffix=ipp;name=ipp \
+    git://github.com/opencv/opencv_3rdparty.git;branch=contrib_xfeatures2d_boostdesc_20161012;destsuffix=boostdesc;name=boostdesc \
     git://github.com/opencv/opencv_3rdparty.git;branch=contrib_xfeatures2d_vgg_20160317;destsuffix=vgg;name=vgg \
+    https://github.com/tiny-dnn/tiny-dnn/archive/v1.0.0a3.tar.gz;destsuffix=git/3rdparty/tinydnn/tiny-dnn-1.0.0a3;name=tinydnn;unpack=false \
     file://0001-3rdparty-ippicv-Use-pre-downloaded-ipp.patch \
-    file://fixpkgconfig.patch \
     file://uselocalxfeatures.patch;patchdir=../contrib/ \
-    file://useoeprotobuf.patch;patchdir=../contrib/ \
-    file://0001-Revert-cuda-fix-fp16-compilation.patch \
+    file://tinydnn.patch;patchdir=../contrib/ \
+    file://0002-Make-opencv-ts-create-share-library-intead-of-static.patch \
+    file://0003-To-fix-errors-as-following.patch \
+    file://0001-Dont-use-isystem.patch \
+    file://javagen.patch \
+    file://protobuf.patch \
+    file://0001-Fix-pkg-config-generation-error.patch \
 "
-#    file://0002-Revert-check-FP16-build-condition-correctly.patch \
-#
-
-PV = "3.2+git${SRCPV}"
+PV = "3.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
 do_unpack_extra() {
-    tar xzf ${WORKDIR}/ipp/ippicv/ippicv_linux_20151201.tgz -C ${WORKDIR}
+    mkdir -p ${S}/3rdparty/tinydnn/
+    tar xzf ${WORKDIR}/v1.0.0a3.tar.gz -C ${S}/3rdparty/tinydnn/
+    tar xzf ${WORKDIR}/ipp/ippicv/${IPP_FILENAME} -C ${WORKDIR}
     cp ${WORKDIR}/vgg/*.i ${WORKDIR}/contrib/modules/xfeatures2d/src
-    cp ${WORKDIR}/bootdesc/*.i ${WORKDIR}/contrib/modules/xfeatures2d/src
+    cp ${WORKDIR}/boostdesc/*.i ${WORKDIR}/contrib/modules/xfeatures2d/src
 }
 addtask unpack_extra after do_unpack before do_patch
 
 EXTRA_OECMAKE = "-DOPENCV_EXTRA_MODULES_PATH=${WORKDIR}/contrib/modules \
     -DWITH_1394=OFF \
     -DCMAKE_SKIP_RPATH=ON \
-    -DOPENCV_ICV_PACKAGE_DOWNLOADED=${IPP_MD5} \
-    -DOPENCV_ICV_PATH=${WORKDIR}/ippicv_lnx \
+    -DOPENCV_ICV_HASH=${IPP_MD5} \
+    -DIPPROOT=${WORKDIR}/ippicv_lnx \
     ${@bb.utils.contains("TARGET_CC_ARCH", "-msse3", "-DENABLE_SSE=1 -DENABLE_SSE2=1 -DENABLE_SSE3=1 -DENABLE_SSSE3=1", "", d)} \
     ${@bb.utils.contains("TARGET_CC_ARCH", "-msse4.1", "-DENABLE_SSE=1 -DENABLE_SSE2=1 -DENABLE_SSE3=1 -DENABLE_SSSE3=1 -DENABLE_SSE41=1", "", d)} \
     ${@bb.utils.contains("TARGET_CC_ARCH", "-msse4.2", "-DENABLE_SSE=1 -DENABLE_SSE2=1 -DENABLE_SSE3=1 -DENABLE_SSSE3=1 -DENABLE_SSE41=1 -DENABLE_SSE42=1", "", d)} \
-    ${@base_conditional("libdir", "/usr/lib64", "-DLIB_SUFFIX=64", "", d)} \
-    ${@base_conditional("libdir", "/usr/lib32", "-DLIB_SUFFIX=32", "", d)} \
+    ${@oe.utils.conditional("libdir", "/usr/lib64", "-DLIB_SUFFIX=64", "", d)} \
+    ${@oe.utils.conditional("libdir", "/usr/lib32", "-DLIB_SUFFIX=32", "", d)} \
 "
 EXTRA_OECMAKE_append_x86 = " -DX86=ON"
 
-PACKAGECONFIG ??=  "eigen jpeg png tiff v4l libv4l gstreamer samples tbb \
+PACKAGECONFIG ??= "python3 eigen jpeg png tiff v4l libv4l gstreamer samples tbb gphoto2 \
     ${@bb.utils.contains("DISTRO_FEATURES", "x11", "gtk", "", d)} \
-    ${@bb.utils.contains("LICENSE_FLAGS_WHITELIST", "commercial", "libav", "", d)} \
-    ${@bb.utils.contains("DISTRO_FEATURES", "qt5", "qt5", "", d)}"
+    ${@bb.utils.contains("LICENSE_FLAGS_WHITELIST", "commercial", "libav", "", d)}"
 
 PACKAGECONFIG[amdblas] = "-DWITH_OPENCLAMDBLAS=ON,-DWITH_OPENCLAMDBLAS=OFF,libclamdblas,"
 PACKAGECONFIG[amdfft] = "-DWITH_OPENCLAMDFFT=ON,-DWITH_OPENCLAMDFFT=OFF,libclamdfft,"
-PACKAGECONFIG[dnn] = "-DBUILD_opencv_dnn=ON -DUPDATE_PROTO_FILES=ON -DBUILD_PROTOBUF=OFF,-DBUILD_opencv_dnn=OFF,lapack protobuf protobuf-native,"
+PACKAGECONFIG[dnn] = "-DBUILD_opencv_dnn=ON -DPROTOBUF_UPDATE_FILES=ON -DBUILD_PROTOBUF=OFF,-DBUILD_opencv_dnn=OFF,protobuf protobuf-native,"
 PACKAGECONFIG[eigen] = "-DWITH_EIGEN=ON,-DWITH_EIGEN=OFF,libeigen gflags glog,"
 PACKAGECONFIG[freetype] = "-DBUILD_opencv_freetype=ON,-DBUILD_opencv_freetype=OFF,freetype,"
 PACKAGECONFIG[gphoto2] = "-DWITH_GPHOTO2=ON,-DWITH_GPHOTO2=OFF,libgphoto2,"
@@ -86,9 +107,8 @@ PACKAGECONFIG[tbb] = "-DWITH_TBB=ON,-DWITH_TBB=OFF,tbb,"
 PACKAGECONFIG[text] = "-DBUILD_opencv_text=ON,-DBUILD_opencv_text=OFF,tesseract,"
 PACKAGECONFIG[tiff] = "-DWITH_TIFF=ON,-DWITH_TIFF=OFF,tiff,"
 PACKAGECONFIG[v4l] = "-DWITH_V4L=ON,-DWITH_V4L=OFF,v4l-utils,"
-PACKAGECONFIG[qt5] = "-DWITH_QT=ON,-DWITH_QT=OFF,qtbase,"
 
-inherit pkgconfig cmake ${@bb.utils.contains( 'DISTRO_FEATURES', 'qt5', 'cmake_qt5','', d)}
+inherit pkgconfig cmake
 
 inherit ${@bb.utils.contains('PACKAGECONFIG', 'python3', 'distutils3-base', '', d)}
 inherit ${@bb.utils.contains('PACKAGECONFIG', 'python2', 'distutils-base', '', d)}
@@ -127,13 +147,13 @@ python populate_packages_prepend () {
     d.setVar('RRECOMMENDS_' + metapkg, ' '.join(metapkg_rdepends))
 
     metapkg =  pn
-    blacklist = [ metapkg ]
+    d.setVar('ALLOW_EMPTY_' + metapkg, "1")
+    blacklist = [ metapkg, "libopencv-ts" ]
     metapkg_rdepends = [ ]
     for pkg in packages[1:]:
         if not pkg in blacklist and not pkg in metapkg_rdepends and not pkg.endswith('-dev') and not pkg.endswith('-dbg') and not pkg.endswith('-doc') and not pkg.endswith('-locale') and not pkg.endswith('-staticdev'):
             metapkg_rdepends.append(pkg)
     d.setVar('RDEPENDS_' + metapkg, ' '.join(metapkg_rdepends))
-
 }
 
 PACKAGES_DYNAMIC += "^libopencv-.*"
