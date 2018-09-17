@@ -8,8 +8,7 @@ inherit update-rc.d
 INITSCRIPT_NAME="uim-sysfs"
 INITSCRIPT_PARAMS = "start 20 2 3 4 5 ."
 
-PR = "0+gitr${SRCPV}"
-PV = "0.1"
+PV = "0.1+git${SRCPV}"
 
 SRC_URI = "git://git.ti.com/ti-bt/uim.git;protocol=git \
     file://0001-fix-poll-restart-after-fail.patch \
