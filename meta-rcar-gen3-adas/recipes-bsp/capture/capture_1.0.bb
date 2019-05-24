@@ -6,6 +6,7 @@ S = "${WORKDIR}/capture"
 
 SRC_URI = " \
     file://capture.tar.gz \
+    file://0001-fix-fpsCount-bug.patch \
 "
 
 do_compile() {
