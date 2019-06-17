@@ -1,0 +1,31 @@
+From 2d4436aed62e9ca71c4b551a112981740d37b510 Mon Sep 17 00:00:00 2001
+From: bernardo araujo rodrigues <bernardo.araujo@silicon-gears.com>
+Date: Thu, 30 May 2019 17:41:36 +0200
+Subject: [PATCH] fix fpsCount bug
+
+---
+ capture.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/capture.c b/capture.c
+index 6fd2b85..7b74a39 100644
+--- a/capture.c
++++ b/capture.c
+@@ -101,10 +101,11 @@ static void fpsCount(int dev)
+         struct timeval t;
+ 
+         gettimeofday(&t, NULL);
+-        usec[dev] += frames[dev]++ ? uSecElapsed(&t, &frame_time[dev]) : 0;
++	frames[dev]++;
++	usec[dev] += uSecElapsed(&t, &frame_time[dev]);
+         frame_time[dev] = t;
+-        if (usec[dev] >= 1000000) {
+-                unsigned fps = ((unsigned long long)frames[dev] * 10000000 + usec[dev] - 1) / usec[dev];
++        if (usec[dev] >= 990000) {
++		unsigned fps = ((unsigned long long)frames[dev] * 10000000) / usec[dev];
+                 fprintf(stderr, "%s FPS: %3u.%1u\n", dev_name[dev], fps / 10, fps % 10);
+                 usec[dev] = 0;
+                 frames[dev] = 0;
+-- 
+2.7.4
+
